@@ -1,0 +1,4392 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HR Setup - Frappe HR Desk</title>
+  <meta name="description" content="Frappe HR Desk HR Setup, Employee Directory, Payroll Processing, and Attendance tracking.">
+  <meta property="og:title" content="HR Setup - Frappe HR Desk">
+  <meta property="og:description" content="Frappe HR Desk HR Setup, Employee Directory, Payroll Processing, and Attendance tracking.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       CSS Variables & Themes
+       ========================================================================== */
+    :root {
+      /* Dark Theme (Default) */
+      --bg-page: #0b0f17;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #162032;
+      --bg-card: rgba(22, 32, 50, 0.7);
+      --bg-card-hover: rgba(28, 41, 65, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-card: rgba(255, 255, 255, 0.1);
+      --border-card-hover: rgba(99, 102, 241, 0.4);
+      --border-focus: #6366f1;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-inverse: #0b0f17;
+
+      --accent-primary: #6366f1;
+      --accent-primary-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --accent-blue: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --accent-rose: #f43f5e;
+
+      --sidebar-bg: #0d131f;
+      --sidebar-border: rgba(255, 255, 255, 0.06);
+      --sidebar-item-active: rgba(99, 102, 241, 0.15);
+      --sidebar-item-hover: rgba(255, 255, 255, 0.04);
+
+      --badge-bg: rgba(255, 255, 255, 0.06);
+      --badge-text: #cbd5e1;
+
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.45);
+      --shadow-card-hover: 0 12px 28px -6px rgba(0, 0, 0, 0.5), 0 0 15px 1px rgba(99, 102, 241, 0.15);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+
+      --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-spring: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    [data-theme="light"] {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: #ffffff;
+      --border-subtle: #e2e8f0;
+      --border-card: #e2e8f0;
+      --border-card-hover: #818cf8;
+      --border-focus: #4f46e5;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --text-inverse: #ffffff;
+
+      --accent-primary: #4f46e5;
+      --accent-primary-hover: #4338ca;
+      --accent-glow: rgba(79, 70, 229, 0.18);
+
+      --sidebar-bg: #ffffff;
+      --sidebar-border: #e2e8f0;
+      --sidebar-item-active: #eef2ff;
+      --sidebar-item-hover: #f1f5f9;
+
+      --badge-bg: #f1f5f9;
+      --badge-text: #475569;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 14px 28px -4px rgba(15, 23, 42, 0.1);
+      --shadow-card-hover: 0 12px 24px -4px rgba(79, 70, 229, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+    }
+
+    /* ==========================================================================
+       Global Resets & Base Styles
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 60%, rgba(56, 189, 248, 0.05) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.45);
+    }
+
+    /* ==========================================================================
+       Sidebar Component
+       ========================================================================== */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      border-right: 1px solid var(--sidebar-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      user-select: none;
+      z-index: 100;
+      transition: transform var(--transition-normal), width var(--transition-normal), background-color var(--transition-normal);
+    }
+
+    .sidebar-header {
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--sidebar-border);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    .sidebar-header:hover {
+      background-color: var(--sidebar-item-hover);
+    }
+
+    .brand-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .brand-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-name .badge-pro {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.2);
+      color: var(--accent-primary);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .header-chevron {
+      color: var(--text-muted);
+      font-size: 11px;
+      transition: transform var(--transition-fast);
+    }
+
+    /* Sidebar Quick Search */
+    .sidebar-search-box {
+      margin: 14px 14px 8px;
+      background: var(--badge-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .sidebar-search-box:hover {
+      border-color: var(--border-focus);
+      background: rgba(99, 102, 241, 0.05);
+      color: var(--text-primary);
+    }
+
+    .search-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-hint {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--bg-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      letter-spacing: 0.3px;
+    }
+
+    /* Notification Pill */
+    .sidebar-notifications {
+      margin: 4px 14px 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), color var(--transition-fast);
+    }
+    .sidebar-notifications:hover {
+      background-color: var(--sidebar-item-hover);
+      color: var(--text-primary);
+    }
+
+    .notif-count {
+      background: rgba(244, 63, 94, 0.15);
+      color: var(--accent-rose);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .menu-item:hover {
+      background: var(--sidebar-item-hover);
+      color: var(--text-primary);
+      transform: translateX(2px);
+    }
+
+    .menu-item.active {
+      background: var(--sidebar-item-active);
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .menu-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      background: var(--accent-primary);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .menu-icon {
+      width: 17px;
+      height: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: currentColor;
+      flex-shrink: 0;
+    }
+
+    .menu-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    .sidebar-footer {
+      padding: 14px 16px;
+      border-top: 1px solid var(--sidebar-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--sidebar-bg);
+      gap: 10px;
+    }
+
+    .user-profile-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .user-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+
+    .status-dot {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10b981;
+      border: 2px solid var(--sidebar-bg);
+    }
+
+    .user-meta {
+      font-size: 12px;
+      line-height: 1.3;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-email {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ==========================================================================
+       Main Workspace
+       ========================================================================== */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      height: 56px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      background: rgba(11, 15, 23, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      transition: background-color var(--transition-normal);
+    }
+
+    [data-theme="light"] .top-navbar {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .breadcrumb a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color var(--transition-fast);
+    }
+    .breadcrumb a:hover {
+      color: var(--text-primary);
+    }
+
+    .breadcrumb-sep {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .breadcrumb-current {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--badge-bg);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .action-icon-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+      border-color: var(--border-card);
+      transform: translateY(-1px);
+    }
+
+    /* Workspace Content Area */
+    .workspace-content {
+      padding: 28px 36px 64px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      animation: fadeInPage 0.45s ease-out;
+    }
+
+    @keyframes fadeInPage {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Page Header Section */
+    .page-header {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .title-area h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-area p {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      max-width: 650px;
+      line-height: 1.5;
+    }
+
+    .live-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulseAnim 2s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Metrics Strip */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+    }
+    .metric-card:hover {
+      border-color: var(--border-card-hover);
+      transform: translateY(-2px);
+      background: var(--bg-card-hover);
+    }
+
+    .metric-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .metric-icon-box.indigo { background: rgba(99, 102, 241, 0.15); color: var(--accent-primary); }
+    .metric-icon-box.blue { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
+    .metric-icon-box.emerald { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .metric-icon-box.purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+
+    .metric-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .metric-value {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Filter & Search Bar */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .category-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      max-width: 100%;
+    }
+
+    .pill-btn {
+      border: 1px solid var(--border-subtle);
+      background: var(--badge-bg);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+      border-color: var(--border-card);
+    }
+    .pill-btn.active {
+      background: var(--accent-primary);
+      color: #ffffff;
+      border-color: var(--accent-primary);
+      box-shadow: 0 2px 8px var(--accent-glow);
+    }
+
+    .search-filter-wrapper {
+      position: relative;
+      min-width: 280px;
+    }
+
+    .search-filter-input {
+      width: 100%;
+      height: 38px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      padding: 8px 36px 8px 34px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+    .search-filter-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: var(--bg-surface);
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px;
+      display: none;
+    }
+    .clear-search-btn:hover {
+      color: var(--text-primary);
+    }
+
+    /* Workspace Grid */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    /* Workspace Cards */
+    .workspace-card {
+      background-color: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .workspace-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, transparent);
+      transition: background var(--transition-normal);
+    }
+
+    .workspace-card:hover {
+      border-color: var(--border-card-hover);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card-hover);
+      background-color: var(--bg-card-hover);
+    }
+
+    .workspace-card:hover::before {
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-blue));
+    }
+
+    /* Card Header */
+    .card-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: currentColor;
+    }
+
+    .card-icon-badge.indigo { background: rgba(99, 102, 241, 0.12); color: #818cf8; }
+    .card-icon-badge.blue { background: rgba(56, 189, 248, 0.12); color: #38bdf8; }
+    .card-icon-badge.emerald { background: rgba(16, 185, 129, 0.12); color: #34d399; }
+    .card-icon-badge.amber { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
+    .card-icon-badge.purple { background: rgba(168, 85, 247, 0.12); color: #c084fc; }
+    .card-icon-badge.rose { background: rgba(244, 63, 94, 0.12); color: #fb7185; }
+    .card-icon-badge.cyan { background: rgba(6, 182, 212, 0.12); color: #22d3ee; }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+    }
+
+    .card-badge-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--badge-bg);
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Links List */
+    .link-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .card-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 400;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .card-link:hover {
+      color: var(--text-primary);
+      background: var(--badge-bg);
+      transform: translateX(3px);
+    }
+
+    .link-left {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .link-bullet {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.5;
+      transition: all var(--transition-fast);
+      flex-shrink: 0;
+    }
+    .card-link:hover .link-bullet {
+      background: var(--accent-primary);
+      opacity: 1;
+      transform: scale(1.4);
+    }
+
+    .arrow-icon {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: all var(--transition-fast);
+      opacity: 0.4;
+      flex-shrink: 0;
+      margin-left: 6px;
+    }
+
+    .card-link:hover .arrow-icon {
+      color: var(--accent-primary);
+      opacity: 1;
+      transform: translate(2px, -2px);
+    }
+
+    /* Highlight Search Match */
+    .highlight-match {
+      background: rgba(99, 102, 241, 0.35);
+      color: #ffffff;
+      padding: 1px 3px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .empty-search-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border-card);
+      border-radius: var(--radius-lg);
+      display: none;
+    }
+    .empty-search-state.show {
+      display: block;
+    }
+
+    /* ==========================================================================
+       Command Palette Modal (Ctrl+K)
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 12vh;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .command-palette {
+      width: 100%;
+      max-width: 580px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalScaleUp {
+      from { transform: scale(0.96) translateY(-10px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .palette-search-header {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .palette-search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: var(--text-primary);
+    }
+    .palette-search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .palette-results {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .palette-group-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      margin-top: 6px;
+    }
+
+    .palette-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .palette-item:hover, .palette-item.active {
+      background: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    .palette-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .palette-footer {
+      padding: 10px 18px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--badge-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .shortcut-hints {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .kbd {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 10.5px;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      color: var(--text-primary);
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      pointer-events: auto;
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1), toastOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) 2.7s forwards;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes toastOut {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(20px); opacity: 0; }
+    }
+
+    /* Mobile Backdrop */
+    .mobile-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 90;
+    }
+    .mobile-backdrop.active {
+      display: block;
+    }
+
+    /* ==========================================================================
+       Responsive Breakpoints
+       ========================================================================== */
+    @media (max-width: 1200px) {
+      .workspace-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+
+      .workspace-content {
+        padding: 20px 20px 48px;
+      }
+
+      .top-navbar {
+        padding: 0 18px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-filter-wrapper {
+        min-width: 100%;
+      }
+
+      .category-pills {
+        width: 100%;
+      }
+
+      .breadcrumb-item-parent {
+        display: none;
+      }
+    }
+  
+    /* ==========================================================================
+       Multi-View Workspace & Interactive Enterprise Components
+       ========================================================================== */
+    .workspace-view {
+      display: none;
+      animation: viewFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .workspace-view.active {
+      display: block;
+    }
+    @keyframes viewFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Enterprise Data Table */
+    .table-container {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      margin-top: 18px;
+      transition: all var(--transition-normal);
+    }
+    .table-container:hover {
+      border-color: var(--border-card-hover);
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .table-toolbar {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .table-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 260px;
+    }
+    .table-search-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px 8px 36px;
+      color: var(--text-primary);
+      font-size: 13px;
+      width: 100%;
+      max-width: 320px;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+    .table-search-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .modern-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .modern-table th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+    }
+    .modern-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      vertical-align: middle;
+      transition: background-color var(--transition-fast);
+    }
+    .modern-table tr:last-child td {
+      border-bottom: none;
+    }
+    .modern-table tbody tr:hover td {
+      background: rgba(99, 102, 241, 0.04);
+    }
+
+    /* Status Pills */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .status-badge.success {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-badge.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .status-badge.danger {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+    .status-badge.info {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    /* Employee Directory Cards Grid */
+    .employee-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+    .employee-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .employee-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-card-hover);
+      box-shadow: var(--shadow-card-hover);
+    }
+    .employee-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-blue));
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+    .employee-card:hover::before {
+      opacity: 1;
+    }
+
+    .emp-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .emp-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    }
+    .emp-name-title {
+      flex: 1;
+      min-width: 0;
+    }
+    .emp-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .emp-id-chip {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--badge-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+    .emp-designation {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .emp-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px 0;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+    .emp-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .emp-detail-label {
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .emp-detail-val {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .emp-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-emp-action {
+      flex: 1;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid var(--border-subtle);
+      background: var(--badge-bg);
+      color: var(--text-primary);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+    .btn-emp-action:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--border-focus);
+      color: var(--accent-primary);
+    }
+    .btn-emp-action.primary {
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #4338ca 100%);
+      color: #ffffff;
+      border: none;
+    }
+    .btn-emp-action.primary:hover {
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Stepper & Execution Cockpit */
+    .stepper-container {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 28px 0 32px;
+    }
+    .stepper-container::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 40px;
+      right: 40px;
+      height: 2px;
+      background: var(--border-subtle);
+      z-index: 1;
+    }
+    .step-node {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .step-bubble {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg-surface-elevated);
+      border: 2px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: all var(--transition-normal);
+    }
+    .step-node.completed .step-bubble {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+      color: #ffffff;
+    }
+    .step-node.active .step-bubble {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
+    }
+    .step-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .step-node.active .step-title {
+      color: var(--text-primary);
+    }
+
+    /* Progress bar */
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--badge-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 12px 0 6px;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #38bdf8);
+      width: 0%;
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    /* Modal Payslip Sheet */
+    .payslip-modal-content {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      max-width: 640px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .payslip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid var(--border-subtle);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .payslip-breakdown-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .breakdown-box {
+      background: var(--badge-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .breakdown-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      padding: 5px 0;
+      color: var(--text-secondary);
+    }
+    .breakdown-row.total {
+      font-weight: 700;
+      color: var(--text-primary);
+      border-top: 1px dashed var(--border-subtle);
+      margin-top: 6px;
+      padding-top: 8px;
+    }
+
+    /* FIX-1 #3: account menu styles */
+    .sidebar-footer { position: relative; }
+    .user-profile-trigger { cursor: pointer; }
+    .user-menu {
+      display: none;
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: calc(100% + 6px);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      z-index: 200;
+    }
+    .user-menu.open { display: block; }
+    .user-menu a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .user-menu a:hover { background: var(--sidebar-item-hover); }
+    .user-menu a.danger { color: var(--accent-rose); }
+    .user-menu-sep { height: 1px; background: var(--border-subtle); margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <!-- FIX-1 #1: Frappe passes the security token and the logged-in user (was: static page with no login) -->
+  <script>
+    window.csrf_token = {{ csrf_token | tojson }};
+    window.hrDesk = {{ hr_desk_boot | tojson }};
+  </script>
+
+  <!-- Root element for React mounting -->
+  <!-- FIX-1 #1: removed empty React mount point (no React app exists) -->
+
+  <!-- Mobile Backdrop Overlay -->
+  <div class="mobile-backdrop" id="mobileBackdrop" onclick="toggleSidebar(false)"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <!-- FIX-1 #7: removed fake "workspace switched" pop-up -->
+    <div class="sidebar-header">
+      <div class="brand-avatar">H</div>
+      <div class="brand-meta">
+        <div class="brand-name">
+          <span>HR Setup</span>
+          <span class="badge-pro">v{{ frappe_major | e }}</span>
+        </div>
+        <div class="brand-sub">Frappe HR Desk</div>
+      </div>
+      <span class="header-chevron">▼</span>
+    </div>
+
+    <!-- Quick Search button -->
+    <div class="sidebar-search-box" onclick="openCommandPalette()">
+      <div class="search-left">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Quick search</span>
+      </div>
+      <span class="search-hint">Ctrl+K</span>
+    </div>
+
+    <!-- Notification pill -->
+    <!-- FIX-1 #7: notifications open the real list; badge shows the real unread count (was: fixed "3 New") -->
+    <div class="sidebar-notifications" onclick="window.location.href = window.hrDesk.deskUrl + '/notification-log'">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span>Notifications</span>
+      </div>
+      <span class="notif-count" id="notifCount" style="display: none;"></span>
+    </div>
+
+    <!-- Sidebar Navigation Menu -->
+    <nav class="sidebar-menu">
+      <a href="#" class="menu-item active" onclick="navigateSidebar(event, 'HR Setup')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </span>
+        <span class="menu-text">HR Setup</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Employee Master')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </span>
+        <span class="menu-text">Employee Master</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Salary Structure Assignment')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </span>
+        <span class="menu-text">Salary Structure Assignm...</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Process Payroll')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </span>
+        <span class="menu-text">Process Payroll</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Salary Slips')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </span>
+        <span class="menu-text">Salary Slips</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Attendance')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </span>
+        <span class="menu-text">Attendance</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Leave Applications')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </span>
+        <span class="menu-text">Leave Applications</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Departments')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 21h18"></path>
+            <path d="M5 21V7l8-4v18"></path>
+            <path d="M19 21V11l-6-3"></path>
+          </svg>
+        </span>
+        <span class="menu-text">Departments</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Designations')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </span>
+        <span class="menu-text">Designations</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Work Locations')">
+        <span class="menu-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </span>
+        <span class="menu-text">Work Locations</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar User Footer -->
+    <div class="sidebar-footer">
+      <!-- FIX-1 #3: real user and account menu (was: hard-coded Administrator + pop-up) -->
+      <div class="user-profile-trigger" onclick="toggleUserMenu(event)">
+        <div class="user-avatar-wrap">
+          <div class="user-avatar">{{ user_initial | e }}</div>
+          <div class="status-dot"></div>
+        </div>
+        <div class="user-meta">
+          <div class="user-name">{{ full_name | e }}</div>
+          <div class="user-email">{{ user_email | e }}</div>
+        </div>
+      </div>
+      <a href="#" class="action-icon-btn" onclick="toggleUserMenu(event); return false;" title="Account menu" style="text-decoration: none;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </a>
+      <!-- FIX-1 #3: account menu - My Settings, Switch to Classic Desk, Log out -->
+      <div class="user-menu" id="userMenu" role="menu">
+        <a href="#" role="menuitem" onclick="openMySettings(); return false;">My Settings</a>
+        <a href="#" role="menuitem" onclick="window.location.href = window.hrDesk.deskUrl; return false;">Switch to Classic Desk</a>
+        <div class="user-menu-sep"></div>
+        <a href="#" role="menuitem" class="danger" onclick="hrDeskLogout(); return false;">Log out</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View -->
+  <main class="main-wrapper" id="mainWrapper">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+      <div class="nav-left">
+        <button class="mobile-menu-btn" onclick="toggleSidebar(true)" aria-label="Open navigation menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <!-- FIX-1 #3: Home breadcrumb goes to HR Setup (was: pop-up) -->
+          <a href="#" onclick="navigateSidebar(event, 'HR Setup'); return false;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </a>
+          <span class="breadcrumb-sep">/</span>
+          <a href="#" class="breadcrumb-item-parent" onclick="navigateSidebar(event, 'HR Setup'); return false;">HR</a>
+          <span class="breadcrumb-sep breadcrumb-item-parent">/</span>
+          <span class="breadcrumb-current">HR Setup</span>
+        </nav>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Back to Frappe Desk -->
+        <a href="/app/hr-setup" class="btn-emp-action" style="padding: 6px 12px; font-size: 12px; text-decoration: none; display: flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500;" title="Return to Frappe ERPNext Desk">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <span>Back to Desk</span>
+        </a>
+
+        <!-- Theme Toggle -->
+        <button class="action-icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme (Dark/Light)">
+          <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <!-- Command Palette Trigger -->
+        <button class="action-icon-btn" onclick="openCommandPalette()" title="Command Palette (Ctrl+K)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- Options Menu -->
+        <button class="action-icon-btn" onclick="toggleUserMenu(event)" title="Account menu">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Workspace Content -->
+    <div class="workspace-content">
+      <!-- VIEW 1: HR SETUP -->
+      <div class="workspace-view active" id="view-hr-setup">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Reports &amp; Masters</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>Active</span>
+                </span>
+              </h1>
+              <p>Configure company policies, employee databases, payroll mechanisms, attendance tracking, and generate real-time analytics.</p>
+            </div>
+          </div>
+
+          <!-- Metric Overview Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-box indigo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">10</div>
+                <div class="metric-label">Configuration Groups</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">17</div>
+                <div class="metric-label">Master DocTypes</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">11</div>
+                <div class="metric-label">Standard &amp; Custom Reports</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">100%</div>
+                <div class="metric-label">Setup Completion</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Category Filter Tabs & Realtime Search -->
+        <div class="controls-bar">
+          <div class="category-pills">
+            <button class="pill-btn active" data-category="all" onclick="filterCategory('all', this)">
+              <span>All Categories</span>
+              <span class="card-badge-count" style="padding: 1px 5px;">10</span>
+            </button>
+            <button class="pill-btn" data-category="masters" onclick="filterCategory('masters', this)">
+              <span>Masters &amp; Setup</span>
+            </button>
+            <button class="pill-btn" data-category="operations" onclick="filterCategory('operations', this)">
+              <span>Operations &amp; Leaves</span>
+            </button>
+            <button class="pill-btn" data-category="reports" onclick="filterCategory('reports', this)">
+              <span>Reports &amp; Analytics</span>
+            </button>
+            <button class="pill-btn" data-category="custom" onclick="filterCategory('custom', this)">
+              <span>Custom</span>
+            </button>
+          </div>
+
+          <div class="search-filter-wrapper">
+            <svg class="search-icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              id="workspaceSearchInput" 
+              class="search-filter-input" 
+              placeholder="Search masters, reports..." 
+              oninput="handleWorkspaceFilter(this.value)"
+              autocomplete="off"
+            >
+            <button class="clear-search-btn" id="clearSearchBtn" onclick="clearWorkspaceFilter()" title="Clear filter">✕</button>
+          </div>
+        </div>
+
+        <!-- Workspace Cards Grid -->
+        <div class="workspace-grid" id="workspaceCardsGrid">
+
+          <!-- 1. Setup -->
+          <div class="workspace-card" data-category="masters" data-card-title="Setup">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge indigo">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"></path>
+                    <path d="M5 21V7l8-4v18"></path>
+                    <path d="M19 21V11l-6-3"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Setup</h3>
+              </div>
+              <span class="card-badge-count">4 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Company')"><span class="link-left"><span class="link-bullet"></span><span>Company</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Branch')"><span class="link-left"><span class="link-bullet"></span><span>Branch</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Department')"><span class="link-left"><span class="link-bullet"></span><span>Department</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Designation')"><span class="link-left"><span class="link-bullet"></span><span>Designation</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 2. Employee -->
+          <div class="workspace-card" data-category="masters" data-card-title="Employee">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge blue">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Employee</h3>
+              </div>
+              <span class="card-badge-count">3 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee')"><span class="link-left"><span class="link-bullet"></span><span>Employee</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Group')"><span class="link-left"><span class="link-bullet"></span><span>Employee Group</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Grade')"><span class="link-left"><span class="link-bullet"></span><span>Employee Grade</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 3. Leaves -->
+          <div class="workspace-card" data-category="operations" data-card-title="Leaves">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge emerald">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <h3 class="card-title">Leaves</h3>
+              </div>
+              <span class="card-badge-count">2 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Leave Application')"><span class="link-left"><span class="link-bullet"></span><span>Leave Application</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Compensatory Leave Request')"><span class="link-left"><span class="link-bullet"></span><span>Compensatory Leave Request</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 4. Settings -->
+          <div class="workspace-card" data-category="masters" data-card-title="Settings">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge amber">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Settings</h3>
+              </div>
+              <span class="card-badge-count">3 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'HR Settings')"><span class="link-left"><span class="link-bullet"></span><span>HR Settings</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Payroll Settings')"><span class="link-left"><span class="link-bullet"></span><span>Payroll Settings</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Daily Work Summary Group')"><span class="link-left"><span class="link-bullet"></span><span>Daily Work Summary Group</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 5. Attendance -->
+          <div class="workspace-card" data-category="operations" data-card-title="Attendance">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge cyan">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <h3 class="card-title">Attendance</h3>
+              </div>
+              <span class="card-badge-count">3 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Attendance')"><span class="link-left"><span class="link-bullet"></span><span>Attendance</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Attendance Request')"><span class="link-left"><span class="link-bullet"></span><span>Attendance Request</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Checkin')"><span class="link-left"><span class="link-bullet"></span><span>Employee Checkin</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 6. Expense Claim -->
+          <div class="workspace-card" data-category="operations" data-card-title="Expense Claim">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge rose">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Expense Claim</h3>
+              </div>
+              <span class="card-badge-count">3 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Expense Claim')"><span class="link-left"><span class="link-bullet"></span><span>Expense Claim</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Advance')"><span class="link-left"><span class="link-bullet"></span><span>Employee Advance</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Travel Request')"><span class="link-left"><span class="link-bullet"></span><span>Travel Request</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 7. Key Reports -->
+          <div class="workspace-card" data-category="reports" data-card-title="Key Reports">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge indigo">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <h3 class="card-title">Key Reports</h3>
+              </div>
+              <span class="card-badge-count">7 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Monthly Attendance Sheet')"><span class="link-left"><span class="link-bullet"></span><span>Monthly Attendance Sheet</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Recruitment Analytics')"><span class="link-left"><span class="link-bullet"></span><span>Recruitment Analytics</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Analytics')"><span class="link-left"><span class="link-bullet"></span><span>Employee Analytics</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Leave Balance')"><span class="link-left"><span class="link-bullet"></span><span>Employee Leave Balance</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Leave Balance Summary')"><span class="link-left"><span class="link-bullet"></span><span>Employee Leave Balance Summary</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Advance Summary')"><span class="link-left"><span class="link-bullet"></span><span>Employee Advance Summary</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Exits')"><span class="link-left"><span class="link-bullet"></span><span>Employee Exits</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 8. Other Reports -->
+          <div class="workspace-card" data-category="reports" data-card-title="Other Reports">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge blue">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
+                <h3 class="card-title">Other Reports</h3>
+              </div>
+              <span class="card-badge-count">4 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Information')"><span class="link-left"><span class="link-bullet"></span><span>Employee Information</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Birthday')"><span class="link-left"><span class="link-bullet"></span><span>Employee Birthday</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employees Working on a Holiday')"><span class="link-left"><span class="link-bullet"></span><span>Employees Working on a Holiday</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Daily Work Summary Replies')"><span class="link-left"><span class="link-bullet"></span><span>Daily Work Summary Replies</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 9. Custom Documents -->
+          <div class="workspace-card" data-category="custom" data-card-title="Custom Documents">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge purple">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                </div>
+                <h3 class="card-title">Custom Documents</h3>
+              </div>
+              <span class="card-badge-count">2 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Compliance Rule')"><span class="link-left"><span class="link-bullet"></span><span>Compliance Rule</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Offer Letter Formula Settings')"><span class="link-left"><span class="link-bullet"></span><span>Offer Letter Formula Settings</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 10. Custom Reports -->
+          <div class="workspace-card" data-category="custom" data-card-title="Custom Reports">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge amber">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </div>
+                <h3 class="card-title">Custom Reports</h3>
+              </div>
+              <span class="card-badge-count">1 item</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee KYC Exception Report')"><span class="link-left"><span class="link-bullet"></span><span>Employee KYC Exception Report</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- 11. Exit & Settlement (FnF) -->
+          <div class="workspace-card" data-category="operations" data-card-title="Exit & Settlement (FnF)">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge rose">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 17l5-5-5-5"></path>
+                    <path d="M21 12H9"></path>
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  </svg>
+                </div>
+                <h3 class="card-title">Exit &amp; Settlement (FnF)</h3>
+              </div>
+              <span class="card-badge-count">4 items</span>
+            </div>
+            <ul class="link-list">
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Full and Final Statement')"><span class="link-left"><span class="link-bullet"></span><span>Full and Final Statement</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Separation')"><span class="link-left"><span class="link-bullet"></span><span>Employee Separation</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Employee Exits')"><span class="link-left"><span class="link-bullet"></span><span>Employee Exits Report</span></span><span class="arrow-icon">↗</span></a></li>
+              <li><a href="#" class="card-link" onclick="handleLinkClick(event, 'Relieving & Experience Letters')"><span class="link-left"><span class="link-bullet"></span><span>Relieving &amp; Experience Letters</span></span><span class="arrow-icon">↗</span></a></li>
+            </ul>
+          </div>
+
+          <!-- Empty search result card -->
+          <div class="empty-search-state" id="emptySearchState">
+            <div style="font-size: 32px; margin-bottom: 12px; color: var(--text-muted);">🔍</div>
+            <h4 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">No matching items found</h4>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;" id="emptySearchText">Try adjusting your keyword or reset filters.</p>
+            <button class="pill-btn active" onclick="clearWorkspaceFilter()" style="margin: 0 auto;">Reset Filter</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VIEW 2: EMPLOYEE MASTER DIRECTORY -->
+      <div class="workspace-view" id="view-employee-master">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Employee Directory</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>248 Total Records</span>
+                </span>
+              </h1>
+              <p>Search, manage, and inspect verified employee records, organizational departments, and active onboarding workflows.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Opening New Employee Form...', 'info')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New Employee
+              </button>
+              <button class="btn-emp-action" onclick="showToast('Initiating Master Data Excel Sync...', 'info')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Sync Excel
+              </button>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-box emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">234</div>
+                <div class="metric-label">Active Staff</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">8</div>
+                <div class="metric-label">On Leave Today</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">6</div>
+                <div class="metric-label">Probation Period</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">12</div>
+                <div class="metric-label">New Hires (Q3)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filter Toolbar -->
+        <div class="controls-bar">
+          <div class="search-filter-wrapper">
+            <svg class="search-icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="employeeSearchInput" class="search-filter-input" placeholder="Filter by employee name, ID, role or department..." oninput="filterEmployeeCards(this.value)">
+          </div>
+          <div class="category-pills">
+            <button class="pill-btn active" onclick="filterEmployeeDept('all', this)">All Teams</button>
+            <button class="pill-btn" onclick="filterEmployeeDept('Engineering', this)">Engineering</button>
+            <button class="pill-btn" onclick="filterEmployeeDept('Human Resources', this)">HR</button>
+            <button class="pill-btn" onclick="filterEmployeeDept('Sales & Marketing', this)">Sales</button>
+            <button class="pill-btn" onclick="filterEmployeeDept('Finance', this)">Finance</button>
+            <button class="pill-btn" onclick="filterEmployeeDept('Operations', this)">Operations</button>
+          </div>
+        </div>
+
+        <!-- Employee Cards Grid -->
+        <div class="employee-grid" id="employeeCardsContainer">
+          <!-- Card 1 -->
+          <div class="employee-card" data-dept="Engineering" data-name="Praveen Kumar" data-id="EMP-001">
+            <div>
+              <div class="emp-header">
+                <div class="emp-avatar">PK</div>
+                <div class="emp-name-title">
+                  <div class="emp-name">
+                    <span>Praveen Kumar</span>
+                    <span class="emp-id-chip">EMP-001</span>
+                  </div>
+                  <div class="emp-designation">Senior Full Stack Architect</div>
+                </div>
+              </div>
+              <div class="emp-details">
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Department</span>
+                  <span class="emp-detail-val">Engineering</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Status</span>
+                  <span class="status-badge success">Active</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Joined</span>
+                  <span class="emp-detail-val">12 Jan 2023</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Location</span>
+                  <span class="emp-detail-val">Bengaluru Hub</span>
+                </div>
+              </div>
+            </div>
+            <div class="emp-card-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Viewing Praveen Kumar Profile', 'info')">View Profile</button>
+              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-001...', 'success')">Offer Letter ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="employee-card" data-dept="Human Resources" data-name="Ananya Sharma" data-id="EMP-002">
+            <div>
+              <div class="emp-header">
+                <div class="emp-avatar" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">AS</div>
+                <div class="emp-name-title">
+                  <div class="emp-name">
+                    <span>Ananya Sharma</span>
+                    <span class="emp-id-chip">EMP-002</span>
+                  </div>
+                  <div class="emp-designation">Lead Talent Acquisition Specialist</div>
+                </div>
+              </div>
+              <div class="emp-details">
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Department</span>
+                  <span class="emp-detail-val">Human Resources</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Status</span>
+                  <span class="status-badge success">Active</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Joined</span>
+                  <span class="emp-detail-val">04 Mar 2023</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Location</span>
+                  <span class="emp-detail-val">Mumbai HQ</span>
+                </div>
+              </div>
+            </div>
+            <div class="emp-card-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Viewing Ananya Sharma Profile', 'info')">View Profile</button>
+              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-002...', 'success')">Offer Letter ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="employee-card" data-dept="Finance" data-name="Rahul Mehta" data-id="EMP-003">
+            <div>
+              <div class="emp-header">
+                <div class="emp-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">RM</div>
+                <div class="emp-name-title">
+                  <div class="emp-name">
+                    <span>Rahul Mehta</span>
+                    <span class="emp-id-chip">EMP-003</span>
+                  </div>
+                  <div class="emp-designation">Financial Controller</div>
+                </div>
+              </div>
+              <div class="emp-details">
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Department</span>
+                  <span class="emp-detail-val">Finance</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Status</span>
+                  <span class="status-badge success">Active</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Joined</span>
+                  <span class="emp-detail-val">15 Jun 2022</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Location</span>
+                  <span class="emp-detail-val">Delhi Branch</span>
+                </div>
+              </div>
+            </div>
+            <div class="emp-card-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Viewing Rahul Mehta Profile', 'info')">View Profile</button>
+              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-003...', 'success')">Offer Letter ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="employee-card" data-dept="Sales & Marketing" data-name="Neha Verma" data-id="EMP-004">
+            <div>
+              <div class="emp-header">
+                <div class="emp-avatar" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">NV</div>
+                <div class="emp-name-title">
+                  <div class="emp-name">
+                    <span>Neha Verma</span>
+                    <span class="emp-id-chip">EMP-004</span>
+                  </div>
+                  <div class="emp-designation">VP Enterprise Growth</div>
+                </div>
+              </div>
+              <div class="emp-details">
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Department</span>
+                  <span class="emp-detail-val">Sales & Marketing</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Status</span>
+                  <span class="status-badge warning">On Leave</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Joined</span>
+                  <span class="emp-detail-val">01 Sep 2021</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Location</span>
+                  <span class="emp-detail-val">Mumbai HQ</span>
+                </div>
+              </div>
+            </div>
+            <div class="emp-card-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Viewing Neha Verma Profile', 'info')">View Profile</button>
+              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-004...', 'success')">Offer Letter ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="employee-card" data-dept="Engineering" data-name="Vikram Rao" data-id="EMP-005">
+            <div>
+              <div class="emp-header">
+                <div class="emp-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);">VR</div>
+                <div class="emp-name-title">
+                  <div class="emp-name">
+                    <span>Vikram Rao</span>
+                    <span class="emp-id-chip">EMP-005</span>
+                  </div>
+                  <div class="emp-designation">DevOps & Cloud Engineer</div>
+                </div>
+              </div>
+              <div class="emp-details">
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Department</span>
+                  <span class="emp-detail-val">Engineering</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Status</span>
+                  <span class="status-badge success">Active</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Joined</span>
+                  <span class="emp-detail-val">10 Nov 2023</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Location</span>
+                  <span class="emp-detail-val">Remote (India)</span>
+                </div>
+              </div>
+            </div>
+            <div class="emp-card-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Viewing Vikram Rao Profile', 'info')">View Profile</button>
+              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-005...', 'success')">Offer Letter ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="employee-card" data-dept="Operations" data-name="Divya Iyer" data-id="EMP-006">
+            <div>
+              <div class="emp-header">
+                <div class="emp-avatar" style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);">DI</div>
+                <div class="emp-name-title">
+                  <div class="emp-name">
+                    <span>Divya Iyer</span>
+                    <span class="emp-id-chip">EMP-006</span>
+                  </div>
+                  <div class="emp-designation">Operations Director</div>
+                </div>
+              </div>
+              <div class="emp-details">
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Department</span>
+                  <span class="emp-detail-val">Operations</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Status</span>
+                  <span class="status-badge success">Active</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Joined</span>
+                  <span class="emp-detail-val">18 Jul 2021</span>
+                </div>
+                <div class="emp-detail-item">
+                  <span class="emp-detail-label">Location</span>
+                  <span class="emp-detail-val">Bengaluru Hub</span>
+                </div>
+              </div>
+            </div>
+            <div class="emp-card-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Viewing Divya Iyer Profile', 'info')">View Profile</button>
+              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-006...', 'success')">Offer Letter ↗</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 3: SALARY STRUCTURE ASSIGNMENT -->
+      <div class="workspace-view" id="view-salary-structure">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Salary Structure &amp; Grade Assignment</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>Configured</span>
+                </span>
+              </h1>
+              <p>Map remuneration packages, CTC components, tax allowances, and effective lifecycle dates across employee grade bands.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('New Salary Structure Assignment Modal', 'info')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Assign Structure
+              </button>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-box emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">₹1.42 Cr</div>
+                <div class="metric-label">Monthly Payroll CTC</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">245</div>
+                <div class="metric-label">Assigned Staff</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">3</div>
+                <div class="metric-label">Pending Reviews</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box indigo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">6 Bands</div>
+                <div class="metric-label">Grade Tiers</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Structure Assignment Table -->
+        <div class="table-container">
+          <div class="table-toolbar">
+            <div class="table-toolbar-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" class="table-search-input" placeholder="Search employee salary assignments...">
+            </div>
+            <div>
+              <span class="status-badge info">Active Cycle: Sep 2026</span>
+            </div>
+          </div>
+
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Salary Structure</th>
+                <th>Base Pay (p.m.)</th>
+                <th>Allowances</th>
+                <th>Monthly CTC</th>
+                <th>Effective From</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Praveen Kumar</strong>
+                  <div style="font-size: 11px; color: var(--text-muted);">EMP-001 &bull; Engineering</div>
+                </td>
+                <td>Senior Tech Grade A</td>
+                <td>₹90,000</td>
+                <td>₹50,000</td>
+                <td><strong style="color: var(--accent-emerald);">₹1,40,000</strong></td>
+                <td>01 Jan 2024</td>
+                <td><span class="status-badge success">Active</span></td>
+                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-001')">Modify</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Ananya Sharma</strong>
+                  <div style="font-size: 11px; color: var(--text-muted);">EMP-002 &bull; HR</div>
+                </td>
+                <td>HR Lead Scale B</td>
+                <td>₹75,000</td>
+                <td>₹35,000</td>
+                <td><strong style="color: var(--accent-emerald);">₹1,10,000</strong></td>
+                <td>01 Apr 2024</td>
+                <td><span class="status-badge success">Active</span></td>
+                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-002')">Modify</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Rahul Mehta</strong>
+                  <div style="font-size: 11px; color: var(--text-muted);">EMP-003 &bull; Finance</div>
+                </td>
+                <td>Finance Executive Scale A</td>
+                <td>₹1,10,000</td>
+                <td>₹55,000</td>
+                <td><strong style="color: var(--accent-emerald);">₹1,65,000</strong></td>
+                <td>01 Oct 2023</td>
+                <td><span class="status-badge success">Active</span></td>
+                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-003')">Modify</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Neha Verma</strong>
+                  <div style="font-size: 11px; color: var(--text-muted);">EMP-004 &bull; Sales</div>
+                </td>
+                <td>Executive VP Scale S</td>
+                <td>₹1,30,000</td>
+                <td>₹70,000</td>
+                <td><strong style="color: var(--accent-emerald);">₹2,00,000</strong></td>
+                <td>01 Mar 2023</td>
+                <td><span class="status-badge success">Active</span></td>
+                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-004')">Modify</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 4: PROCESS PAYROLL COCKPIT -->
+      <div class="workspace-view" id="view-process-payroll">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Process Payroll Engine</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>Ready for Execution</span>
+                </span>
+              </h1>
+              <p>Automate monthly salary disbursements, generate verified tax slips, compute deductions, and trigger direct bank remittances.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" id="btnRunPayroll" onclick="executePayrollProcessing()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Run Automated Payroll
+              </button>
+            </div>
+          </div>
+
+          <!-- Stepper Pipeline -->
+          <div class="stepper-container">
+            <div class="step-node completed">
+              <div class="step-bubble">✓</div>
+              <div class="step-title">1. Period Setup</div>
+            </div>
+            <div class="step-node completed">
+              <div class="step-bubble">✓</div>
+              <div class="step-title">2. Attendance Sync</div>
+            </div>
+            <div class="step-node active">
+              <div class="step-bubble">3</div>
+              <div class="step-title">3. Compute Deductions</div>
+            </div>
+            <div class="step-node">
+              <div class="step-bubble">4</div>
+              <div class="step-title">4. Generate Slips</div>
+            </div>
+            <div class="step-node">
+              <div class="step-bubble">5</div>
+              <div class="step-title">5. Bank Remittance</div>
+            </div>
+          </div>
+
+          <!-- Processing Card -->
+          <div class="workspace-card" style="border-color: var(--accent-primary); box-shadow: var(--shadow-card-hover);">
+            <div class="card-header-row">
+              <div class="card-title-group">
+                <div class="card-icon-badge indigo" style="background: rgba(99, 102, 241, 0.15); color: var(--accent-primary);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <div>
+                  <h3 class="card-title">September 2026 Disbursement Cycle</h3>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Monthly Automated Payroll</div>
+                </div>
+              </div>
+              <span class="status-badge warning" id="payrollStatusBadge">Awaiting Final Run</span>
+            </div>
+
+            <div style="padding: 18px 0;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+                <span style="color: var(--text-secondary);">Batch Processing Verification Progress</span>
+                <span id="payrollPercentText" style="font-weight: 700; color: var(--accent-primary);">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="payrollProgressBar"></div>
+              </div>
+              <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;" id="payrollSubtext">248 employees queued for biometric validation and tax withholding calculations.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+              <div>
+                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Company Account</span>
+                <div style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Frappe HR Global Complete Solutions</div>
+              </div>
+              <div>
+                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Total Payout Est.</span>
+                <div style="font-weight: 700; font-size: 14px; color: var(--accent-emerald);">₹1,42,85,000</div>
+              </div>
+              <div>
+                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Scheduled Date</span>
+                <div style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">30 Sep 2026</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 5: SALARY SLIPS REGISTER -->
+      <div class="workspace-view" id="view-salary-slips">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Salary Slips Register</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>September 2026</span>
+                </span>
+              </h1>
+              <p>Audit, inspect, download and issue digital salary slips with statutory breakdowns, PF, ESI, PT, and income tax withholdings.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Bulk emailing salary slips...', 'info')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                Email All Slips
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-toolbar">
+              <div class="table-toolbar-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="table-search-input" placeholder="Search slip ID, employee name, or department...">
+              </div>
+              <div class="header-actions" style="display: flex; gap: 8px;">
+                <button class="pill-btn active">All Slips</button>
+                <button class="pill-btn">Submitted</button>
+                <button class="pill-btn">Draft</button>
+              </div>
+            </div>
+
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Slip ID</th>
+                  <th>Employee</th>
+                  <th>Month</th>
+                  <th>Gross Pay</th>
+                  <th>Deductions</th>
+                  <th>Net Pay</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SLIP-2026-09-001</strong></td>
+                  <td>
+                    <strong>Praveen Kumar</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">Senior Full Stack Architect</div>
+                  </td>
+                  <td>Sep 2026</td>
+                  <td>₹1,40,000</td>
+                  <td>₹27,600</td>
+                  <td><strong style="color: var(--accent-emerald);">₹1,12,400</strong></td>
+                  <td><span class="status-badge success">Disbursed</span></td>
+                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Praveen Kumar', 'EMP-001', 'Senior Full Stack Architect', '1,40,000', '27,600', '1,12,400')">View Slip</button></td>
+                </tr>
+                <tr>
+                  <td><strong>SLIP-2026-09-002</strong></td>
+                  <td>
+                    <strong>Ananya Sharma</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">Lead Talent Acquisition</div>
+                  </td>
+                  <td>Sep 2026</td>
+                  <td>₹1,10,000</td>
+                  <td>₹18,400</td>
+                  <td><strong style="color: var(--accent-emerald);">₹91,600</strong></td>
+                  <td><span class="status-badge success">Disbursed</span></td>
+                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Ananya Sharma', 'EMP-002', 'Lead Talent Acquisition', '1,10,000', '18,400', '91,600')">View Slip</button></td>
+                </tr>
+                <tr>
+                  <td><strong>SLIP-2026-09-003</strong></td>
+                  <td>
+                    <strong>Rahul Mehta</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">Financial Controller</div>
+                  </td>
+                  <td>Sep 2026</td>
+                  <td>₹1,65,000</td>
+                  <td>₹36,200</td>
+                  <td><strong style="color: var(--accent-emerald);">₹1,28,800</strong></td>
+                  <td><span class="status-badge success">Disbursed</span></td>
+                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Rahul Mehta', 'EMP-003', 'Financial Controller', '1,65,000', '36,200', '1,28,800')">View Slip</button></td>
+                </tr>
+                <tr>
+                  <td><strong>SLIP-2026-09-004</strong></td>
+                  <td>
+                    <strong>Neha Verma</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">VP Growth</div>
+                  </td>
+                  <td>Sep 2026</td>
+                  <td>₹2,00,000</td>
+                  <td>₹45,000</td>
+                  <td><strong style="color: var(--accent-emerald);">₹1,55,000</strong></td>
+                  <td><span class="status-badge warning">Queued</span></td>
+                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Neha Verma', 'EMP-004', 'VP Growth', '2,00,000', '45,000', '1,55,000')">View Slip</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 6: ATTENDANCE & BIOMETRIC LOGS -->
+      <div class="workspace-view" id="view-attendance">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Attendance &amp; Biometrics</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>94.8% Present Today</span>
+                </span>
+              </h1>
+              <p>Real-time biometric punch logs, shift schedules, overtime calculations, and geofenced mobile clock-ins.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Punching biometric check-in...', 'success')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Punch Clock-In
+              </button>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-box emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">234 / 248</div>
+                <div class="metric-label">Checked In Today</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">6</div>
+                <div class="metric-label">Late Clock-Ins (&gt;9:30 AM)</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">8</div>
+                <div class="metric-label">Approved Leaves</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">8.4 hrs</div>
+                <div class="metric-label">Average Work Hours</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-toolbar">
+              <div class="table-toolbar-left">
+                <span style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Today's Biometric Log &bull; 25 Sep 2026</span>
+              </div>
+              <button class="pill-btn active" onclick="showToast('Exporting attendance report...', 'info')">Export CSV</button>
+            </div>
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Shift</th>
+                  <th>Clock In</th>
+                  <th>Clock Out</th>
+                  <th>Work Hours</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Praveen Kumar (EMP-001)</strong></td>
+                  <td>General (9:00 - 18:00)</td>
+                  <td>09:02 AM</td>
+                  <td>18:15 PM</td>
+                  <td>9h 13m</td>
+                  <td><span class="status-badge success">Present &bull; On Time</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Ananya Sharma (EMP-002)</strong></td>
+                  <td>General (9:00 - 18:00)</td>
+                  <td>08:58 AM</td>
+                  <td>18:05 PM</td>
+                  <td>9h 07m</td>
+                  <td><span class="status-badge success">Present &bull; On Time</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Rahul Mehta (EMP-003)</strong></td>
+                  <td>General (9:00 - 18:00)</td>
+                  <td>09:42 AM</td>
+                  <td>18:45 PM</td>
+                  <td>9h 03m</td>
+                  <td><span class="status-badge warning">Present &bull; Late In</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Neha Verma (EMP-004)</strong></td>
+                  <td>General (9:00 - 18:00)</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>0h 00m</td>
+                  <td><span class="status-badge info">On Casual Leave</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 7: LEAVE APPLICATIONS -->
+      <div class="workspace-view" id="view-leave-applications">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Leave Applications &amp; Approvals</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>3 Pending Requests</span>
+                </span>
+              </h1>
+              <p>Review leave applications, manage employee leave balances, configure holiday lists, and audit compensatory offs.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Opening Leave Application Form...', 'info')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Apply for Leave
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-toolbar">
+              <div class="table-toolbar-left">
+                <span style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Approval Queue</span>
+              </div>
+              <span class="status-badge warning">3 Awaiting Action</span>
+            </div>
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Applicant</th>
+                  <th>Leave Type</th>
+                  <th>Dates</th>
+                  <th>Duration</th>
+                  <th>Reason</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="leaveRow1">
+                  <td>
+                    <strong>Vikram Rao</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">EMP-005 &bull; Engineering</div>
+                  </td>
+                  <td><span class="status-badge info">Privilege Leave</span></td>
+                  <td>28 Sep - 30 Sep 2026</td>
+                  <td>3 Days</td>
+                  <td>Family function &amp; personal travel</td>
+                  <td>
+                    <div style="display: flex; gap: 6px;">
+                      <button class="btn-emp-action primary" onclick="approveLeave('leaveRow1', 'Vikram Rao')">Approve</button>
+                      <button class="btn-emp-action" onclick="rejectLeave('leaveRow1', 'Vikram Rao')">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr id="leaveRow2">
+                  <td>
+                    <strong>Divya Iyer</strong>
+                    <div style="font-size: 11px; color: var(--text-muted);">EMP-006 &bull; Operations</div>
+                  </td>
+                  <td><span class="status-badge warning">Sick Leave</span></td>
+                  <td>26 Sep 2026</td>
+                  <td>1 Day</td>
+                  <td>Medical consultation</td>
+                  <td>
+                    <div style="display: flex; gap: 6px;">
+                      <button class="btn-emp-action primary" onclick="approveLeave('leaveRow2', 'Divya Iyer')">Approve</button>
+                      <button class="btn-emp-action" onclick="rejectLeave('leaveRow2', 'Divya Iyer')">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW: COMPANY PROFILE & LEGAL ENTITY -->
+      <div class="workspace-view" id="view-company">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Company Masters &amp; Legal Entities</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>Primary Entity: Global Complete Solutions</span>
+                </span>
+              </h1>
+              <p>Corporate registration credentials, statutory compliance settings, default currency, chart of accounts, and official letterheads.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Edit Company Master details...', 'info')">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Edit Entity
+              </button>
+              <button class="btn-emp-action" onclick="showToast('Add Subsidiary Company...', 'info')">+ Add Subsidiary</button>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon-box indigo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-3"></path></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">GCS Ltd</div>
+                <div class="metric-label">Company Abbr</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">INR (₹)</div>
+                <div class="metric-label">Base Currency</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">2026-2027</div>
+                <div class="metric-label">Fiscal Year</div>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-box purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+              <div class="metric-info">
+                <div class="metric-value">4 Branches</div>
+                <div class="metric-label">Operating Locations</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container" style="padding: 24px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+              <div>
+                <span class="emp-detail-label">Registered Legal Name</span>
+                <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">Global Complete Solutions Pvt Ltd</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">CIN: U72900MH2021PTC123456 &bull; GSTIN: 27AABCG1234F1Z5</div>
+              </div>
+              <div>
+                <span class="emp-detail-label">Default Contact Email</span>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">accounts@globalcompletesolutions.com</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">HR: hr@globalcompletesolutions.com</div>
+              </div>
+              <div>
+                <span class="emp-detail-label">Registered Headquarters</span>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">Bandra Kurla Complex, Mumbai, Maharashtra 400051</div>
+              </div>
+              <div>
+                <span class="emp-detail-label">Default Holiday Schedule</span>
+                <div style="font-size: 14px; font-weight: 600; color: var(--accent-emerald); margin-top: 4px;">Indian National Holidays 2026 (14 Days)</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 8: DEPARTMENTS -->
+      <div class="workspace-view" id="view-departments">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Departmental Hierarchy</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>5 Active Divisions</span>
+                </span>
+              </h1>
+              <p>Company organizational tree, budget allocation, cost centers, and departmental leadership oversight.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('New Department Form', 'info')">+ Add Department</button>
+            </div>
+          </div>
+
+          <div class="employee-grid">
+            <div class="employee-card">
+              <div>
+                <div class="emp-header">
+                  <div class="emp-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);">ENG</div>
+                  <div class="emp-name-title">
+                    <div class="emp-name">Engineering &amp; Technology</div>
+                    <div class="emp-designation">Lead: Praveen Kumar</div>
+                  </div>
+                </div>
+                <div class="emp-details">
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Team Strength</span>
+                    <span class="emp-detail-val">112 Staff</span>
+                  </div>
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Cost Center</span>
+                    <span class="emp-detail-val">CC-TECH-01</span>
+                  </div>
+                </div>
+              </div>
+              <div class="emp-card-actions">
+                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (112)</button>
+              </div>
+            </div>
+
+            <div class="employee-card">
+              <div>
+                <div class="emp-header">
+                  <div class="emp-avatar" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">HR</div>
+                  <div class="emp-name-title">
+                    <div class="emp-name">Human Resources</div>
+                    <div class="emp-designation">Lead: Ananya Sharma</div>
+                  </div>
+                </div>
+                <div class="emp-details">
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Team Strength</span>
+                    <span class="emp-detail-val">18 Staff</span>
+                  </div>
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Cost Center</span>
+                    <span class="emp-detail-val">CC-HR-02</span>
+                  </div>
+                </div>
+              </div>
+              <div class="emp-card-actions">
+                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (18)</button>
+              </div>
+            </div>
+
+            <div class="employee-card">
+              <div>
+                <div class="emp-header">
+                  <div class="emp-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">FIN</div>
+                  <div class="emp-name-title">
+                    <div class="emp-name">Finance &amp; Accounts</div>
+                    <div class="emp-designation">Lead: Rahul Mehta</div>
+                  </div>
+                </div>
+                <div class="emp-details">
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Team Strength</span>
+                    <span class="emp-detail-val">24 Staff</span>
+                  </div>
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Cost Center</span>
+                    <span class="emp-detail-val">CC-FIN-03</span>
+                  </div>
+                </div>
+              </div>
+              <div class="emp-card-actions">
+                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (24)</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 9: DESIGNATIONS -->
+      <div class="workspace-view" id="view-designations">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Designations &amp; Job Matrix</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>14 Standard Roles</span>
+                </span>
+              </h1>
+              <p>Career bands, competency frameworks, salary grades, and standard job descriptions across Frappe HR.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('New Designation Form', 'info')">+ Add Designation</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Job Title</th>
+                  <th>Grade Level</th>
+                  <th>Department</th>
+                  <th>Open Positions</th>
+                  <th>Active Employees</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Senior Full Stack Architect</strong></td>
+                  <td><span class="status-badge info">Grade A1</span></td>
+                  <td>Engineering</td>
+                  <td><span class="status-badge warning">2 Open</span></td>
+                  <td>14</td>
+                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Talent Acquisition Lead</strong></td>
+                  <td><span class="status-badge info">Grade B1</span></td>
+                  <td>Human Resources</td>
+                  <td><span class="status-badge success">Filled</span></td>
+                  <td>4</td>
+                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
+                </tr>
+                <tr>
+                  <td><strong>Financial Controller</strong></td>
+                  <td><span class="status-badge info">Grade A2</span></td>
+                  <td>Finance</td>
+                  <td><span class="status-badge success">Filled</span></td>
+                  <td>3</td>
+                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 10: WORK LOCATIONS -->
+      <div class="workspace-view" id="view-work-locations">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Office Branches &amp; Work Locations</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span>4 Operating Hubs</span>
+                </span>
+              </h1>
+              <p>Corporate headquarters, tech innovation centers, regional offices, and GPS geofence radiuses for attendance validation.</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn-emp-action primary" onclick="showToast('Add New Work Location', 'info')">+ New Location</button>
+            </div>
+          </div>
+
+          <div class="employee-grid">
+            <div class="employee-card">
+              <div>
+                <div class="emp-header">
+                  <div class="emp-avatar" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">MUM</div>
+                  <div class="emp-name-title">
+                    <div class="emp-name">Mumbai Corporate HQ</div>
+                    <div class="emp-designation">Bandra Kurla Complex, Mumbai</div>
+                  </div>
+                </div>
+                <div class="emp-details">
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Staff Count</span>
+                    <span class="emp-detail-val">120 Employees</span>
+                  </div>
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Geofence</span>
+                    <span class="status-badge success">Active (150m)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="emp-card-actions">
+                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 19.0657° N, 72.8687° E')">Geofence Map</button>
+              </div>
+            </div>
+
+            <div class="employee-card">
+              <div>
+                <div class="emp-header">
+                  <div class="emp-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">BLR</div>
+                  <div class="emp-name-title">
+                    <div class="emp-name">Bengaluru Technology Hub</div>
+                    <div class="emp-designation">Outer Ring Road, Bellandur, Bengaluru</div>
+                  </div>
+                </div>
+                <div class="emp-details">
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Staff Count</span>
+                    <span class="emp-detail-val">95 Employees</span>
+                  </div>
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Geofence</span>
+                    <span class="status-badge success">Active (200m)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="emp-card-actions">
+                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 12.9279° N, 77.6271° E')">Geofence Map</button>
+              </div>
+            </div>
+
+            <div class="employee-card">
+              <div>
+                <div class="emp-header">
+                  <div class="emp-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);">DEL</div>
+                  <div class="emp-name-title">
+                    <div class="emp-name">Delhi Regional Office</div>
+                    <div class="emp-designation">Barakhamba Road, Connaught Place, New Delhi</div>
+                  </div>
+                </div>
+                <div class="emp-details">
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Staff Count</span>
+                    <span class="emp-detail-val">33 Employees</span>
+                  </div>
+                  <div class="emp-detail-item">
+                    <span class="emp-detail-label">Geofence</span>
+                    <span class="status-badge success">Active (100m)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="emp-card-actions">
+                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 28.6304° N, 77.2177° E')">Geofence Map</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Command Palette (Ctrl + K) -->
+  <div class="modal-overlay" id="commandModal" onclick="handleModalBackdrop(event)">
+    <div class="command-palette">
+      <div class="palette-search-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="text" 
+          id="paletteInput" 
+          class="palette-search-input" 
+          placeholder="Search all HR masters, doctypes, reports..." 
+          oninput="handlePaletteSearch(this.value)"
+        >
+        <span class="kbd">ESC</span>
+      </div>
+
+      <div class="palette-results" id="paletteResults"></div>
+
+      <div class="palette-footer">
+        <div class="shortcut-hints">
+          <span><span class="kbd">↑</span> <span class="kbd">↓</span> Navigate</span>
+          <span><span class="kbd">↵</span> Select</span>
+          <span><span class="kbd">esc</span> Close</span>
+        </div>
+        <span>Frappe HR v15 Desk</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Salary Slip Preview Modal -->
+  <div class="modal-overlay" id="slipModal" onclick="handleSlipModalBackdrop(event)">
+    <div class="payslip-modal-content">
+      <div class="payslip-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="brand-avatar" style="width: 32px; height: 32px; font-size: 14px;">F</div>
+            <strong style="font-size: 16px; color: var(--text-primary);">Frappe HR &bull; Global Complete Solutions</strong>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Salary Slip for September 2026</div>
+        </div>
+        <button class="action-icon-btn" onclick="closeSlipModal()" title="Close">✕</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; margin-bottom: 16px; padding: 12px; background: var(--badge-bg); border-radius: var(--radius-sm);">
+        <div><span style="color: var(--text-muted);">Employee:</span> <strong id="modalSlipEmpName" style="color: var(--text-primary);">-</strong></div>
+        <div><span style="color: var(--text-muted);">Employee ID:</span> <span id="modalSlipEmpId" style="font-weight: 600;">-</span></div>
+        <div><span style="color: var(--text-muted);">Designation:</span> <span id="modalSlipEmpDesig">-</span></div>
+        <div><span style="color: var(--text-muted);">Payment Mode:</span> <span>Direct Bank Wire</span></div>
+      </div>
+
+      <div class="payslip-breakdown-grid">
+        <div class="breakdown-box">
+          <div class="breakdown-title" style="color: var(--accent-emerald);">Earnings (Credits)</div>
+          <div class="breakdown-row"><span>Basic Salary</span><span>₹65,000</span></div>
+          <div class="breakdown-row"><span>House Rent Allowance (HRA)</span><span>₹35,000</span></div>
+          <div class="breakdown-row"><span>Special Allowance</span><span>₹30,000</span></div>
+          <div class="breakdown-row"><span>Conveyance Allowance</span><span>₹10,000</span></div>
+          <div class="breakdown-row total"><span>Total Gross Pay</span><span id="modalSlipGross" style="color: var(--accent-emerald);">-</span></div>
+        </div>
+
+        <div class="breakdown-box">
+          <div class="breakdown-title" style="color: var(--accent-rose);">Deductions (Debits)</div>
+          <div class="breakdown-row"><span>Provident Fund (PF)</span><span>₹7,800</span></div>
+          <div class="breakdown-row"><span>Professional Tax (PT)</span><span>₹200</span></div>
+          <div class="breakdown-row"><span>Income Tax (TDS)</span><span id="modalSlipTds">₹19,600</span></div>
+          <div class="breakdown-row total"><span>Total Deductions</span><span id="modalSlipDeduct" style="color: var(--accent-rose);">-</span></div>
+        </div>
+      </div>
+
+      <div style="padding: 16px; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600;">Net Disbursed Take-Home Pay</div>
+          <div style="font-size: 22px; font-weight: 800; color: var(--accent-primary);" id="modalSlipNet">-</div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-emp-action primary" onclick="window.print()">Print Slip</button>
+          <button class="btn-emp-action" onclick="closeSlipModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Main JavaScript Application Logic -->
+  <script>
+    // All Master Links Data (Synchronized with cards for search/palette)
+    const masterData = [
+      { name: "Company", category: "Setup", group: "masters" },
+      { name: "Branch", category: "Setup", group: "masters" },
+      { name: "Department", category: "Setup", group: "masters" },
+      { name: "Designation", category: "Setup", group: "masters" },
+      { name: "Employee", category: "Employee", group: "masters" },
+      { name: "Employee Group", category: "Employee", group: "masters" },
+      { name: "Employee Grade", category: "Employee", group: "masters" },
+      { name: "Leave Application", category: "Leaves", group: "operations" },
+      { name: "Compensatory Leave Request", category: "Leaves", group: "operations" },
+      { name: "HR Settings", category: "Settings", group: "masters" },
+      { name: "Payroll Settings", category: "Settings", group: "masters" },
+      { name: "Daily Work Summary Group", category: "Settings", group: "masters" },
+      { name: "Attendance", category: "Attendance", group: "operations" },
+      { name: "Attendance Request", category: "Attendance", group: "operations" },
+      { name: "Employee Checkin", category: "Attendance", group: "operations" },
+      { name: "Expense Claim", category: "Expense Claim", group: "operations" },
+      { name: "Employee Advance", category: "Expense Claim", group: "operations" },
+      { name: "Travel Request", category: "Expense Claim", group: "operations" },
+      { name: "Monthly Attendance Sheet", category: "Key Reports", group: "reports" },
+      { name: "Recruitment Analytics", category: "Key Reports", group: "reports" },
+      { name: "Employee Analytics", category: "Key Reports", group: "reports" },
+      { name: "Employee Leave Balance", category: "Key Reports", group: "reports" },
+      { name: "Employee Leave Balance Summary", category: "Key Reports", group: "reports" },
+      { name: "Employee Advance Summary", category: "Key Reports", group: "reports" },
+      { name: "Employee Exits", category: "Key Reports", group: "reports" },
+      { name: "Employee Information", category: "Other Reports", group: "reports" },
+      { name: "Employee Birthday", category: "Other Reports", group: "reports" },
+      { name: "Employees Working on a Holiday", category: "Other Reports", group: "reports" },
+      { name: "Daily Work Summary Replies", category: "Other Reports", group: "reports" },
+      { name: "Compliance Rule", category: "Custom Documents", group: "custom" },
+      { name: "Offer Letter Formula Settings", category: "Custom Documents", group: "custom" },
+      { name: "Employee KYC Exception Report", category: "Custom Reports", group: "custom" },
+      { name: "Full and Final Statement", category: "Exit & Settlement", group: "operations" },
+      { name: "Employee Separation", category: "Exit & Settlement", group: "operations" },
+      { name: "Employee Exits Report", category: "Exit & Settlement", group: "reports" },
+      { name: "Relieving & Experience Letters", category: "Exit & Settlement", group: "operations" }
+    ];
+
+    let currentCategory = 'all';
+    let currentSearchTerm = '';
+    let selectedPaletteIndex = 0;
+
+    // Theme Toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('frappe_theme', newTheme);
+      updateThemeIcon(newTheme);
+      showToast('Switched to ' + (newTheme === 'dark' ? 'Dark' : 'Light') + ' theme');
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (!icon) return;
+      if (theme === 'light') {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      } else {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      }
+    }
+
+    // Initialize saved theme
+    (function initTheme() {
+      const saved = localStorage.getItem('frappe_theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        updateThemeIcon(saved);
+      }
+    })();
+
+    // Responsive Mobile Sidebar Toggle
+    function toggleSidebar(forceState) {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('mobileBackdrop');
+      if (!sidebar || !backdrop) return;
+      const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('open');
+      
+      if (isOpen) {
+        sidebar.classList.add('open');
+        backdrop.classList.add('active');
+      } else {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('active');
+      }
+    }
+
+    // Category Tabs Filter
+    function filterCategory(category, buttonEl) {
+      currentCategory = category;
+      document.querySelectorAll('.category-pills .pill-btn').forEach(btn => btn.classList.remove('active'));
+      if (buttonEl) buttonEl.classList.add('active');
+      applyCombinedFilter();
+    }
+
+    // Realtime Search Filter on Workspace
+    function handleWorkspaceFilter(val) {
+      currentSearchTerm = val.trim().toLowerCase();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (clearBtn) clearBtn.style.display = currentSearchTerm ? 'block' : 'none';
+      applyCombinedFilter();
+    }
+
+    function clearWorkspaceFilter() {
+      const input = document.getElementById('workspaceSearchInput');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      currentSearchTerm = '';
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (clearBtn) clearBtn.style.display = 'none';
+      applyCombinedFilter();
+    }
+
+    // Combined filter function
+    function applyCombinedFilter() {
+      const cards = document.querySelectorAll('#workspaceCardsGrid .workspace-card');
+      const emptyState = document.getElementById('emptySearchState');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+        const cardTitle = (card.getAttribute('data-card-title') || '').toLowerCase();
+        const links = card.querySelectorAll('.card-link');
+        
+        let matchesCategory = (currentCategory === 'all' || cardCategory === currentCategory);
+        let matchingLinksCount = 0;
+
+        links.forEach(link => {
+          const spanText = link.querySelector('.link-left span:last-child');
+          if (!spanText) return;
+          const originalText = spanText.getAttribute('data-original') || spanText.textContent;
+          if (!spanText.getAttribute('data-original')) {
+            spanText.setAttribute('data-original', originalText);
+          }
+
+          if (!currentSearchTerm) {
+            spanText.innerHTML = originalText;
+            link.style.display = 'flex';
+            matchingLinksCount++;
+          } else {
+            const lowerText = originalText.toLowerCase();
+            if (lowerText.includes(currentSearchTerm) || cardTitle.includes(currentSearchTerm)) {
+              const regex = new RegExp('(' + currentSearchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+              spanText.innerHTML = originalText.replace(regex, '<span class="highlight-match">$1</span>');
+              link.style.display = 'flex';
+              matchingLinksCount++;
+            } else {
+              link.style.display = 'none';
+            }
+          }
+        });
+
+        if (matchesCategory && (matchingLinksCount > 0 || (!currentSearchTerm && matchesCategory))) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.add('show');
+          const emptyText = document.getElementById('emptySearchText');
+          if (emptyText) {
+            emptyText.textContent = currentSearchTerm 
+              ? 'No items found matching "' + currentSearchTerm + '" in this category.' 
+              : 'No records available in this view.';
+          }
+        } else {
+          emptyState.classList.remove('show');
+        }
+      }
+    }
+
+    // Toast Notification
+    function showToast(msg, type) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      const strokeColor = type === 'error' ? '#f43f5e' : (type === 'info' ? '#6366f1' : '#10b981');
+      toast.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>${msg}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentNode === container) {
+          container.removeChild(toast);
+        }
+      }, 3000);
+    }
+
+    // Command Palette Modal Logic
+    function openCommandPalette() {
+      const modal = document.getElementById('commandModal');
+      const input = document.getElementById('paletteInput');
+      if (!modal || !input) return;
+      modal.classList.add('open');
+      input.value = '';
+      renderPaletteResults('');
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeCommandPalette() {
+      const modal = document.getElementById('commandModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function handleModalBackdrop(event) {
+      if (event.target.id === 'commandModal') {
+        closeCommandPalette();
+      }
+    }
+
+    function handlePaletteSearch(val) {
+      renderPaletteResults(val.trim().toLowerCase());
+    }
+
+    function renderPaletteResults(query) {
+      const container = document.getElementById('paletteResults');
+      if (!container) return;
+      container.innerHTML = '';
+      selectedPaletteIndex = 0;
+
+      const filtered = masterData.filter(item => {
+        return !query || item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">No documents matching "' + query + '"</div>';
+        return;
+      }
+
+      const groups = {};
+      filtered.forEach(item => {
+        if (!groups[item.category]) groups[item.category] = [];
+        groups[item.category].push(item);
+      });
+
+      let overallIndex = 0;
+      Object.keys(groups).forEach(cat => {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'palette-group-title';
+        titleEl.textContent = cat;
+        container.appendChild(titleEl);
+
+        groups[cat].forEach(item => {
+          const itemEl = document.createElement('div');
+          itemEl.className = `palette-item ${overallIndex === 0 ? 'active' : ''}`;
+          itemEl.setAttribute('data-index', overallIndex);
+          itemEl.onclick = () => {
+            closeCommandPalette();
+            handleLinkClick(null, item.name);
+          };
+
+          itemEl.innerHTML = `
+            <div class="palette-item-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.7;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              <span>${item.name}</span>
+            </div>
+            <span style="font-size: 11px; opacity: 0.6;">${cat}</span>
+          `;
+          container.appendChild(itemEl);
+          overallIndex++;
+        });
+      });
+    }
+
+    // Keyboard Shortcuts (Ctrl+K, Esc, Arrow Keys in Command Palette)
+    window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('commandModal');
+      const isPaletteOpen = modal && modal.classList.contains('open');
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (isPaletteOpen) closeCommandPalette();
+        else openCommandPalette();
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        if (isPaletteOpen) {
+          closeCommandPalette();
+          return;
+        }
+        const slipModal = document.getElementById('slipModal');
+        if (slipModal && slipModal.classList.contains('open')) {
+          closeSlipModal();
+          return;
+        }
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('open')) {
+          toggleSidebar(false);
+          return;
+        }
+      }
+
+      if (isPaletteOpen) {
+        const items = document.querySelectorAll('.palette-item');
+        if (items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          items[selectedPaletteIndex]?.classList.remove('active');
+          selectedPaletteIndex = (selectedPaletteIndex + 1) % items.length;
+          items[selectedPaletteIndex]?.classList.add('active');
+          items[selectedPaletteIndex]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          items[selectedPaletteIndex]?.classList.remove('active');
+          selectedPaletteIndex = (selectedPaletteIndex - 1 + items.length) % items.length;
+          items[selectedPaletteIndex]?.classList.add('active');
+          items[selectedPaletteIndex]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          items[selectedPaletteIndex]?.click();
+        }
+      }
+    });
+
+    // Multi-View Navigation Router
+    const viewTitleMap = {
+      'HR Setup': 'view-hr-setup',
+      'Employee Master': 'view-employee-master',
+      'Salary Structure Assignment': 'view-salary-structure',
+      'Process Payroll': 'view-process-payroll',
+      'Salary Slips': 'view-salary-slips',
+      'Attendance': 'view-attendance',
+      'Leave Applications': 'view-leave-applications',
+      'Departments': 'view-departments',
+      'Designations': 'view-designations',
+      'Work Locations': 'view-work-locations',
+      'Company': 'view-company',
+      'Branch': 'view-work-locations',
+      'Department': 'view-departments',
+      'Designation': 'view-designations',
+      'Employee': 'view-employee-master',
+      'Salary Structure': 'view-salary-structure'
+    };
+
+    function navigateSidebar(event, title) {
+      if (event && event.preventDefault) event.preventDefault();
+      
+      const targetViewId = viewTitleMap[title] || 'view-hr-setup';
+      
+      document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => {
+        const text = el.querySelector('.menu-text')?.textContent?.trim();
+        if (text && (text === title || title.startsWith(text.replace('...', '')))) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+
+      document.querySelectorAll('.workspace-view').forEach(view => {
+        view.classList.remove('active');
+      });
+
+      const activeView = document.getElementById(targetViewId);
+      if (activeView) {
+        activeView.classList.add('active');
+      }
+
+      const breadcrumbCurrent = document.querySelector('.breadcrumb-current');
+      if (breadcrumbCurrent) {
+        breadcrumbCurrent.textContent = title;
+      }
+
+      toggleSidebar(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const hash = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      history.replaceState(null, '', '#' + hash);
+
+      showToast('Switched view to: ' + title, 'info');
+    }
+
+    function handleLinkClick(event, docName) {
+      if (event && event.preventDefault) event.preventDefault();
+      const directMap = {
+        'Company': 'Company',
+        'Branch': 'Work Locations',
+        'Department': 'Departments',
+        'Designation': 'Designations',
+        'Employee': 'Employee Master',
+        'Employee Group': 'Employee Master',
+        'Employee Grade': 'Salary Structure Assignment',
+        'Salary Structure': 'Salary Structure Assignment',
+        'Salary Structure Assignment': 'Salary Structure Assignment',
+        'Payroll Entry': 'Process Payroll',
+        'Salary Slip': 'Salary Slips',
+        'Attendance': 'Attendance',
+        'Leave Application': 'Leave Applications'
+      };
+
+      const directDeskLinks = {
+        'Full and Final Statement': '/app/full-and-final-statement',
+        'Employee Separation': '/app/employee-separation',
+        'Employee Exits': '/app/query-report/Employee%20Exits',
+        'Employee Exits Report': '/app/query-report/Employee%20Exits',
+        'HR Settings': '/app/hr-settings',
+        'Payroll Settings': '/app/payroll-settings',
+        'Expense Claim': '/app/expense-claim',
+        'Employee Advance': '/app/employee-advance',
+        'Travel Request': '/app/travel-request',
+        'Monthly Attendance Sheet': '/app/query-report/Monthly%20Attendance%20Sheet',
+        'Recruitment Analytics': '/app/query-report/Recruitment%20Analytics',
+        'Employee Analytics': '/app/query-report/Employee%20Analytics',
+        'Employee Leave Balance': '/app/query-report/Employee%20Leave%20Balance',
+        'Employee Leave Balance Summary': '/app/query-report/Employee%20Leave%20Balance%20Summary',
+        'Employee Advance Summary': '/app/query-report/Employee%20Advance%20Summary',
+        'Employee Information': '/app/query-report/Employee%20Information',
+        'Employee Birthday': '/app/query-report/Employee%20Birthday',
+        'Employees Working on a Holiday': '/app/query-report/Employees%20Working%20on%20a%20Holiday',
+        'Daily Work Summary Group': '/app/daily-work-summary-group',
+        'Daily Work Summary Replies': '/app/query-report/Daily%20Work%20Summary%20Replies',
+        'Compliance Rule': '/app/compliance-rule',
+        'Offer Letter Formula Settings': '/app/offer-letter-formula-settings',
+        'Employee KYC Exception Report': '/app/query-report/Employee%20KYC%20Exception%20Report',
+        'Relieving & Experience Letters': '/app/employee'
+      };
+
+      if (directMap[docName]) {
+        navigateSidebar(null, directMap[docName]);
+      } else if (directDeskLinks[docName]) {
+        showToast('Opening ' + docName + ' in Frappe Desk...', 'info');
+        window.open(directDeskLinks[docName], '_blank');
+      } else {
+        showToast('Opening ' + docName + '...', 'info');
+      }
+    }
+
+    function initRouteFromHash() {
+      const hash = window.location.hash.replace('#', '');
+      if (!hash) return;
+      for (const [title, viewId] of Object.entries(viewTitleMap)) {
+        if (title.toLowerCase().replace(/[^a-z0-9]/g, '-') === hash) {
+          navigateSidebar(null, title);
+          return;
+        }
+      }
+    }
+
+    // Filter employee cards
+    function filterEmployeeCards(term) {
+      const q = term.toLowerCase().trim();
+      const cards = document.querySelectorAll('#employeeCardsContainer .employee-card');
+      cards.forEach(card => {
+        const name = (card.getAttribute('data-name') || '').toLowerCase();
+        const dept = (card.getAttribute('data-dept') || '').toLowerCase();
+        const id = (card.getAttribute('data-id') || '').toLowerCase();
+        const text = card.textContent.toLowerCase();
+        if (!q || name.includes(q) || dept.includes(q) || id.includes(q) || text.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function filterEmployeeDept(dept, btn) {
+      document.querySelectorAll('#view-employee-master .category-pills .pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      const cards = document.querySelectorAll('#employeeCardsContainer .employee-card');
+      cards.forEach(card => {
+        const cardDept = card.getAttribute('data-dept') || '';
+        if (dept === 'all' || cardDept === dept) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Payroll automated processing simulation
+    function executePayrollProcessing() {
+      const btn = document.getElementById('btnRunPayroll');
+      const bar = document.getElementById('payrollProgressBar');
+      const pct = document.getElementById('payrollPercentText');
+      const badge = document.getElementById('payrollStatusBadge');
+      const sub = document.getElementById('payrollSubtext');
+
+      if (!btn || !bar || !pct || !badge || !sub) return;
+      btn.disabled = true;
+      badge.className = 'status-badge info';
+      badge.textContent = 'Processing...';
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        bar.style.width = progress + '%';
+        pct.textContent = progress + '%';
+
+        if (progress === 40) {
+          sub.textContent = 'Biometric attendance logs synced. Calculating PF & ESI contributions...';
+        } else if (progress === 70) {
+          sub.textContent = 'Generating 248 validated Salary Slips with digital signatures...';
+        } else if (progress >= 100) {
+          clearInterval(interval);
+          btn.disabled = false;
+          badge.className = 'status-badge success';
+          badge.textContent = 'Completed & Disbursed';
+          sub.textContent = 'All 248 salary slips generated. Remittance file queued for corporate banking.';
+          showToast('Payroll processing completed successfully! All slips issued.', 'success');
+        }
+      }, 150);
+    }
+
+    // Salary Slip Modal
+    function openSlipModal(name, id, desig, gross, deduct, net) {
+      const nameEl = document.getElementById('modalSlipEmpName');
+      const idEl = document.getElementById('modalSlipEmpId');
+      const desigEl = document.getElementById('modalSlipEmpDesig');
+      const grossEl = document.getElementById('modalSlipGross');
+      const deductEl = document.getElementById('modalSlipDeduct');
+      const netEl = document.getElementById('modalSlipNet');
+
+      if (nameEl) nameEl.textContent = name;
+      if (idEl) idEl.textContent = id;
+      if (desigEl) desigEl.textContent = desig;
+      if (grossEl) grossEl.textContent = '₹' + gross;
+      if (deductEl) deductEl.textContent = '₹' + deduct;
+      if (netEl) netEl.textContent = '₹' + net;
+
+      const modal = document.getElementById('slipModal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeSlipModal() {
+      const modal = document.getElementById('slipModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function handleSlipModalBackdrop(e) {
+      if (e.target.id === 'slipModal') {
+        closeSlipModal();
+      }
+    }
+
+    // Approve / Reject Leave Application
+    function approveLeave(rowId, applicant) {
+      const row = document.getElementById(rowId);
+      if (row) {
+        row.style.opacity = '0.5';
+        row.innerHTML = `<td colspan="6" style="text-align: center; color: var(--accent-emerald); font-weight: 600; padding: 12px;">✓ Leave Approved for ${applicant}</td>`;
+      }
+      showToast(`Leave application approved for ${applicant}`, 'success');
+    }
+
+    function rejectLeave(rowId, applicant) {
+      const row = document.getElementById(rowId);
+      if (row) {
+        row.style.opacity = '0.5';
+        row.innerHTML = `<td colspan="6" style="text-align: center; color: var(--accent-rose); font-weight: 600; padding: 12px;">✕ Leave Rejected for ${applicant}</td>`;
+      }
+      showToast(`Leave application rejected for ${applicant}`, 'error');
+    }
+
+    // Expose all handlers to global window scope
+    window.toggleTheme = toggleTheme;
+    window.toggleSidebar = toggleSidebar;
+    window.navigateSidebar = navigateSidebar;
+    window.filterCategory = filterCategory;
+    window.handleWorkspaceFilter = handleWorkspaceFilter;
+    window.clearWorkspaceFilter = clearWorkspaceFilter;
+    window.handleLinkClick = handleLinkClick;
+    window.showToast = showToast;
+    window.openCommandPalette = openCommandPalette;
+    window.closeCommandPalette = closeCommandPalette;
+    window.handleModalBackdrop = handleModalBackdrop;
+    window.handlePaletteSearch = handlePaletteSearch;
+    window.filterEmployeeCards = filterEmployeeCards;
+    window.filterEmployeeDept = filterEmployeeDept;
+    window.executePayrollProcessing = executePayrollProcessing;
+    window.openSlipModal = openSlipModal;
+    window.closeSlipModal = closeSlipModal;
+    window.handleSlipModalBackdrop = handleSlipModalBackdrop;
+    // ==========================================================================
+    // Live Frappe HR Backend API Synchronization (Dynamic REST Data)
+    // ==========================================================================
+    function formatINR(val) {
+      if (val === undefined || val === null || isNaN(val)) return '0';
+      return Number(val).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    }
+
+    async function syncLiveFrappeData() {
+      try {
+        // FIX-1 #7: the logged-in user is now rendered by Frappe (was: fetched here, fell back to fake Administrator)
+        loadUnreadNotifications();
+
+        // 2. Live Employees
+        const empRes = await fetch('/api/resource/Employee?fields=["name","employee_name","department","designation","status","company","date_of_joining"]&limit_page_length=80&order_by=creation desc', { credentials: 'include' });
+        if (empRes.ok) {
+          const empJson = await empRes.json();
+          if (empJson.data && empJson.data.length > 0) {
+            renderLiveEmployees(empJson.data);
+          }
+        }
+
+        // 3. Live Salary Slips
+        const slipRes = await fetch('/api/resource/Salary Slip?fields=["name","employee","employee_name","gross_pay","total_deduction","net_pay","status","posting_date"]&limit_page_length=40&order_by=creation desc', { credentials: 'include' });
+        if (slipRes.ok) {
+          const slipJson = await slipRes.json();
+          if (slipJson.data && slipJson.data.length > 0) {
+            renderLiveSalarySlips(slipJson.data);
+          }
+        }
+
+        // 4. Live Leave Applications
+        const leaveRes = await fetch('/api/resource/Leave Application?fields=["name","employee","employee_name","leave_type","from_date","to_date","total_leave_days","status","description"]&limit_page_length=20&order_by=creation desc', { credentials: 'include' });
+        if (leaveRes.ok) {
+          const leaveJson = await leaveRes.json();
+          if (leaveJson.data && leaveJson.data.length > 0) {
+            renderLiveLeaveApplications(leaveJson.data);
+          }
+        }
+      } catch (err) {
+        console.warn('Frappe API Notice: Running with default mock data.', err);
+      }
+    }
+
+    function renderLiveEmployees(list) {
+      const container = document.getElementById('employeeCardsContainer');
+      if (!container || !list || list.length === 0) return;
+
+      const totalPill = document.querySelector('#view-employee-master .live-status-pill span:last-child');
+      if (totalPill) totalPill.textContent = list.length + '+ Live Records';
+
+      container.innerHTML = '';
+      list.forEach(emp => {
+        const id = emp.name;
+        const name = emp.employee_name || emp.name;
+        const dept = emp.department || 'General';
+        const desig = emp.designation || 'Staff';
+        const status = emp.status || 'Active';
+        const statusClass = status.toLowerCase() === 'active' ? 'success' : 'warning';
+        const joined = emp.date_of_joining || 'Active';
+        const company = emp.company || 'Circle Outsourcing';
+        const initials = name.split(' ').filter(Boolean).map(n => n[0]).slice(0, 2).join('').toUpperCase() || 'EM';
+
+        const card = document.createElement('div');
+        card.className = 'employee-card';
+        card.setAttribute('data-dept', dept);
+        card.setAttribute('data-name', name);
+        card.setAttribute('data-id', id);
+        card.innerHTML = `
+          <div>
+            <div class="emp-header">
+              <div class="emp-avatar">${initials}</div>
+              <div class="emp-name-title">
+                <div class="emp-name">
+                  <span>${name}</span>
+                  <span class="emp-id-chip">${id}</span>
+                </div>
+                <div class="emp-designation">${desig}</div>
+              </div>
+            </div>
+            <div class="emp-details">
+              <div class="emp-detail-item">
+                <span class="emp-detail-label">Department</span>
+                <span class="emp-detail-val">${dept}</span>
+              </div>
+              <div class="emp-detail-item">
+                <span class="emp-detail-label">Status</span>
+                <span class="status-badge ${statusClass}">${status}</span>
+              </div>
+              <div class="emp-detail-item">
+                <span class="emp-detail-label">Joined</span>
+                <span class="emp-detail-val">${joined}</span>
+              </div>
+              <div class="emp-detail-item">
+                <span class="emp-detail-label">Company</span>
+                <span class="emp-detail-val">${company}</span>
+              </div>
+            </div>
+          </div>
+          <div class="emp-card-actions">
+            <a class="btn-emp-action primary" href="/app/employee/${id}" target="_blank" style="text-decoration: none; text-align: center;">View in Desk ↗</a>
+            <a class="btn-emp-action" href="/api/method/frappe.utils.print_format.download_pdf?doctype=Job Offer&name=Circle Outsourcing Appointment Letter&format=Circle Outsourcing Appointment Letter" target="_blank" style="text-decoration: none; text-align: center;">Appt. Letter ↗</a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderLiveSalarySlips(slips) {
+      const tbody = document.querySelector('#view-salary-slips tbody');
+      if (!tbody || !slips || slips.length === 0) return;
+
+      tbody.innerHTML = '';
+      slips.forEach(slip => {
+        const tr = document.createElement('tr');
+        const gross = slip.gross_pay || 0;
+        const deduct = slip.total_deduction || 0;
+        const net = slip.net_pay || 0;
+        const statusBadge = slip.status === 'Submitted' ? 'success' : (slip.status === 'Paid' ? 'success' : 'info');
+        const safeName = (slip.employee_name || slip.employee).replace(/'/g, "\\'");
+
+        tr.innerHTML = `
+          <td><strong>${slip.name}</strong></td>
+          <td>
+            <strong>${slip.employee_name || slip.employee}</strong>
+            <div style="font-size: 11px; color: var(--text-muted);">${slip.employee}</div>
+          </td>
+          <td>${slip.posting_date || 'Current'}</td>
+          <td>₹${formatINR(gross)}</td>
+          <td>₹${formatINR(deduct)}</td>
+          <td><strong style="color: var(--accent-emerald);">₹${formatINR(net)}</strong></td>
+          <td><span class="status-badge ${statusBadge}">${slip.status}</span></td>
+          <td style="display: flex; gap: 6px;">
+            <button class="btn-emp-action primary" onclick="openSlipModal('${safeName}', '${slip.employee}', 'Employee', '${formatINR(gross)}', '${formatINR(deduct)}', '${formatINR(net)}')">View Slip</button>
+            <a class="btn-emp-action" href="/app/salary-slip/${slip.name}" target="_blank" style="text-decoration: none;">Desk ↗</a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderLiveLeaveApplications(leaves) {
+      const tbody = document.querySelector('#view-leave-applications tbody');
+      if (!tbody || !leaves || leaves.length === 0) return;
+
+      tbody.innerHTML = '';
+      leaves.forEach((leave, idx) => {
+        const tr = document.createElement('tr');
+        const rowId = 'liveLeaveRow_' + idx;
+        tr.id = rowId;
+        const statusClass = leave.status === 'Approved' ? 'success' : (leave.status === 'Rejected' ? 'rose' : 'info');
+
+        tr.innerHTML = `
+          <td>
+            <strong>${leave.employee_name || leave.employee}</strong>
+            <div style="font-size: 11px; color: var(--text-muted);">${leave.employee}</div>
+          </td>
+          <td><span class="status-badge ${statusClass}">${leave.leave_type || 'Leave'}</span></td>
+          <td>${leave.from_date || ''} - ${leave.to_date || ''}</td>
+          <td>${leave.total_leave_days || 1} Days</td>
+          <td>${leave.description || 'Regular leave request'}</td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <a class="btn-emp-action primary" href="/app/leave-application/${leave.name}" target="_blank" style="text-decoration: none;">Open in Desk ↗</a>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // FIX-1 #3 / #7: account menu, real logout, real unread notification count
+    function toggleUserMenu(event) {
+      if (event) { event.preventDefault(); event.stopPropagation(); }
+      const menu = document.getElementById('userMenu');
+      if (menu) menu.classList.toggle('open');
+    }
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('userMenu');
+      if (menu && menu.classList.contains('open') && !menu.contains(e.target)) menu.classList.remove('open');
+    });
+    function openMySettings() {
+      window.location.href = window.hrDesk.deskUrl + '/user/' + encodeURIComponent(window.hrDesk.user);
+    }
+    async function hrDeskLogout() {
+      try {
+        await fetch('/api/method/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Accept': 'application/json', 'X-Frappe-CSRF-Token': window.csrf_token }
+        });
+      } catch (e) {}
+      window.location.href = '/login';
+    }
+    async function loadUnreadNotifications() {
+      try {
+        const filters = encodeURIComponent(JSON.stringify({ for_user: window.hrDesk.user, read: 0 }));
+        const r = await fetch('/api/method/frappe.client.get_count?doctype=Notification%20Log&filters=' + filters, { credentials: 'include' });
+        if (!r.ok) return;
+        const n = (await r.json()).message || 0;
+        const el = document.getElementById('notifCount');
+        if (el && n > 0) { el.textContent = n + ' New'; el.style.display = ''; }
+      } catch (e) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initRouteFromHash();
+      syncLiveFrappeData();
+    });
+  </script>
+
+  <!-- FIX-1 #1: removed dead script /src/main.tsx (returned 404 on the server) -->
+</body>
+</html>
