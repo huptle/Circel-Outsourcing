@@ -37,70 +37,63 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Ensure target staging directory exists on server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            mkdir -p /opt/erpnext-demo/deploy_staging /opt/erpnext-demo/apps/hrms/hrms/www /opt/erpnext-demo/hr-desk
+      - name: Deploy to Production Server via SSH
+        env:
+          RAW_HOST: ${{ secrets.SERVER_HOST }}
+          RAW_USER: ${{ secrets.SERVER_USER }}
+          SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SSH_PASS: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          # Sanitize host and user (strip any accidental trailing newlines/spaces)
+          HOST=$(echo "$RAW_HOST" | tr -d '[:space:]')
+          USER=$(echo "$RAW_USER" | tr -d '[:space:]')
+          if [ -z "$USER" ]; then USER="root"; fi
+          if [ -z "$HOST" ]; then HOST="187.127.133.225"; fi
 
-      - name: Upload Production Files to Server Staging
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          source: "index.html,hr-desk.html,hr_desk.py"
-          target: "/opt/erpnext-demo/deploy_staging/"
-          strip_components: 0
+          echo "Deploying to target host: $HOST as user: $USER"
 
-      - name: Atomic Deploy & Clear Cache
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            echo "==> Applying Production Release..."
-            cd /opt/erpnext-demo/deploy_staging
-            
-            # Copy hr-desk.html or index.html to Frappe www folder
-            if [ -f hr-desk.html ]; then
-              cp hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html
-            elif [ -f index.html ]; then
-              cp index.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          # Set up authentication (prefer SSH key, fallback to password)
+          if [ -n "$SSH_KEY" ]; then
+            echo "==> Configuring SSH key authentication..."
+            printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+            SSH_OPTS="-i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -p 22"
+            SSH_CMD="ssh $SSH_OPTS $USER@$HOST"
+            SCP_CMD="scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -P 22"
+          elif [ -n "$SSH_PASS" ]; then
+            echo "==> Configuring password authentication..."
+            sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+            SSH_CMD="sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -p 22 $USER@$HOST"
+            SCP_CMD="sshpass -p $SSH_PASS scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -P 22"
+          else
+            echo "ERROR: Neither SERVER_SSH_KEY nor SERVER_PASSWORD is provided in GitHub Secrets!"
+            exit 1
+          fi
+
+          echo "==> 1. Ensuring target staging directories exist on server..."
+          $SSH_CMD "mkdir -p /opt/erpnext-demo/deploy_staging /opt/erpnext-demo/apps/hrms/hrms/www /opt/erpnext-demo/hr-desk"
+
+          echo "==> 2. Uploading production files to staging..."
+          $SCP_CMD index.html hr-desk.html hr_desk.py "$USER@$HOST:/opt/erpnext-demo/deploy_staging/"
+
+          echo "==> 3. Applying release and clearing cache..."
+          $SSH_CMD "
+            cp /opt/erpnext-demo/deploy_staging/hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html
+            cp /opt/erpnext-demo/deploy_staging/index.html /opt/erpnext-demo/hr-desk/index.html
+            if [ -f /opt/erpnext-demo/deploy_staging/hr_desk.py ]; then
+              cp /opt/erpnext-demo/deploy_staging/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
             fi
-            
-            # Copy index.html to fallback static directory
-            if [ -f index.html ]; then
-              cp index.html /opt/erpnext-demo/hr-desk/index.html
-            fi
-            
-            # Copy Python context controller if updated
-            if [ -f hr_desk.py ]; then
-              cp hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
-            fi
-            
-            # Set permissions
             chmod 644 /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html 2>/dev/null || true
             chmod 644 /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py 2>/dev/null || true
             chmod 644 /opt/erpnext-demo/hr-desk/index.html 2>/dev/null || true
-            
-            echo "==> Clearing Frappe Bench Cache..."
             docker exec erpnext-demo-backend-1 bench --site frontend clear-cache || true
-            
-            echo "==> Reloading Nginx..."
             docker exec erpnext-demo-frontend-1 nginx -s reload || true
-            
-            echo "========================================================"
-            echo " Production Deployment Succeeded!"
-            echo " Live Production URL: http://${{ secrets.SERVER_HOST }}:8090/hr-desk"
-            echo "========================================================"
+          "
+
+          echo "=========================================================="
+          echo " Production Deployment Succeeded!"
+          echo " Live Production URL: http://$HOST:8090/hr-desk"
+          echo "=========================================================="

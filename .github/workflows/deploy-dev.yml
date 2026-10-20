@@ -33,46 +33,52 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Ensure target directory exists on server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            mkdir -p /opt/erpnext-demo/hr-desk-dev
+      - name: Deploy to Dev Server via SSH
+        env:
+          RAW_HOST: ${{ secrets.SERVER_HOST }}
+          RAW_USER: ${{ secrets.SERVER_USER }}
+          SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SSH_PASS: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          # Sanitize host and user (strip any accidental trailing newlines/spaces)
+          HOST=$(echo "$RAW_HOST" | tr -d '[:space:]')
+          USER=$(echo "$RAW_USER" | tr -d '[:space:]')
+          if [ -z "$USER" ]; then USER="root"; fi
+          if [ -z "$HOST" ]; then HOST="187.127.133.225"; fi
 
-      - name: Upload Dev Files via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          source: "index.html"
-          target: "/opt/erpnext-demo/hr-desk-dev/"
-          strip_components: 0
+          echo "Deploying to target host: $HOST as user: $USER"
 
-      - name: Update Container & Verify Dev Deployment
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER || 'root' }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || 22 }}
-          script: |
-            echo "==> Configuring Dev Assets..."
-            chmod 644 /opt/erpnext-demo/hr-desk-dev/index.html
-            
-            # Synchronize to running frontend container assets
-            docker exec erpnext-demo-frontend-1 mkdir -p /home/frappe/frappe-bench/assets/hr-desk-dev
-            docker cp /opt/erpnext-demo/hr-desk-dev/index.html erpnext-demo-frontend-1:/home/frappe/frappe-bench/assets/hr-desk-dev/index.html
-            
-            echo "========================================================"
-            echo " Dev Environment Deployed Successfully!"
-            echo " Dev Preview URL: http://${{ secrets.SERVER_HOST }}:8090/assets/hr-desk-dev/index.html"
-            echo "========================================================"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          # Set up authentication (prefer SSH key, fallback to password)
+          if [ -n "$SSH_KEY" ]; then
+            echo "==> Configuring SSH key authentication..."
+            printf "%s\n" "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+            SSH_OPTS="-i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -p 22"
+            SSH_CMD="ssh $SSH_OPTS $USER@$HOST"
+            SCP_CMD="scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -P 22"
+          elif [ -n "$SSH_PASS" ]; then
+            echo "==> Configuring password authentication..."
+            sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+            SSH_CMD="sshpass -p $SSH_PASS ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -p 22 $USER@$HOST"
+            SCP_CMD="sshpass -p $SSH_PASS scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -P 22"
+          else
+            echo "ERROR: Neither SERVER_SSH_KEY nor SERVER_PASSWORD is provided in GitHub Secrets!"
+            exit 1
+          fi
+
+          echo "==> 1. Ensuring dev directory exists on server..."
+          $SSH_CMD "mkdir -p /opt/erpnext-demo/hr-desk-dev"
+
+          echo "==> 2. Uploading index.html to dev environment..."
+          $SCP_CMD index.html "$USER@$HOST:/opt/erpnext-demo/hr-desk-dev/index.html"
+
+          echo "==> 3. Synchronizing assets to frontend container..."
+          $SSH_CMD "chmod 644 /opt/erpnext-demo/hr-desk-dev/index.html && docker exec erpnext-demo-frontend-1 mkdir -p /home/frappe/frappe-bench/assets/hr-desk-dev && docker cp /opt/erpnext-demo/hr-desk-dev/index.html erpnext-demo-frontend-1:/home/frappe/frappe-bench/assets/hr-desk-dev/index.html"
+
+          echo "=========================================================="
+          echo " Dev Environment Deployed Successfully!"
+          echo " Dev Preview URL: http://$HOST:8090/assets/hr-desk-dev/index.html"
+          echo "=========================================================="
