@@ -1,101 +1,46 @@
-# Circle Outsourcing — HR Desk Portal & CI/CD
+# Circle Outsourcing — HR Desk
 
-Welcome to the **Circle Outsourcing HR Desk Frontend & Customization Portal**. This repository powers the customized HR Desk interface for Circle Outsourcing, seamlessly integrated with Frappe HR / ERPNext.
+Custom HR Desk interface for Circle Outsourcing, served by Frappe HR / ERPNext (v16).
 
----
+## Files
 
-## 🚀 Environments & Architecture
+| File | What it is |
+| :--- | :--- |
+| `hr-desk.html` | The HR Desk page (Frappe web page template). **The only page file — edit this one.** |
+| `hr_desk.py` | Page controller: login check, allowed roles, logged-in user details, security token. |
+| `.github/workflows/deploy-dev.yml` | Deploys `dev` to the dev page. |
+| `.github/workflows/deploy-production.yml` | Deploys `main` to production. |
 
-We maintain two fully automated deployment environments:
+Every code change is marked with a comment naming the fix and issue, for example `FIX-1 #3: ...`.
 
-| Environment | Git Branch | Deployment Target | Live Access URL | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **Development (`dev`)** | `dev` | `/opt/erpnext-demo/hr-desk-dev/` | [Dev Preview](http://187.127.133.225:8090/assets/hr-desk-dev/index.html) | Sandbox for staging, testing UI revisions, and rapid validation. |
-| **Production (`main`)** | `main` | `/opt/erpnext-demo/apps/hrms/hrms/www/` | [Production HR Desk](http://187.127.133.225:8090/hr-desk) | Live enterprise system with Frappe session authentication & CSRF protection. |
+## Environments
 
----
+| Environment | Branch | URL (login required) | Server files |
+| :--- | :--- | :--- | :--- |
+| Development | `dev` | http://187.127.133.225:8090/hr-desk-dev | `apps/hrms/hrms/www/hr-desk-dev.html`, `hr_desk_dev.py` |
+| Production | `main` | http://187.127.133.225:8090/hr-desk | `apps/hrms/hrms/www/hr-desk.html`, `hr_desk.py` |
 
-## 🛠️ Developer Workflow (For Arun & Team)
+Both environments are served by Frappe with the same login, roles and security token, so what works on dev works the same on production. Both use the live site data.
 
-No direct server or SSH access is required! All code updates are deployed automatically via GitHub Actions:
+## Workflow
 
-```mermaid
-graph TD
-    A[Developer local work] -->|Push or PR| B(dev branch)
-    B -->|Trigger GitHub Action| C[deploy-dev.yml]
-    C -->|Auto-deploy| D[Dev Environment: :8090/assets/hr-desk-dev/index.html]
-    D -->|Test & Verify| E{Is UI Ready?}
-    E -->|Yes| F[Create Pull Request: dev -> main]
-    F -->|Merge to main| G[deploy-production.yml]
-    G -->|Auto-deploy| H[Production Environment: :8090/hr-desk]
-```
+1. Create a branch from `dev`: `git checkout dev && git pull && git checkout -b fix/<short-name>`
+2. Edit `hr-desk.html` (and `hr_desk.py` if needed). Mark each change with a `FIX-<n> #<issue>` comment.
+3. Open a pull request into `dev`. After merge, the dev page updates automatically. Test it at `/hr-desk-dev`.
+4. Open a pull request from `dev` into `main`. After approval and merge, production updates automatically.
 
-### 1. Working on Features or UI Changes
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/huptle/Circel-Outsourcing.git
-   cd Circel-Outsourcing
-   ```
-2. Checkout the `dev` branch:
-   ```bash
-   git checkout dev
-   ```
-3. Make your edits in `index.html` (or `src/` if working with the React/TypeScript source).
-4. Commit and push to `dev`:
-   ```bash
-   git add .
-   git commit -m "feat: updated HR Desk employee directory layout"
-   git push origin dev
-   ```
-5. Check GitHub Actions tab — within ~30 seconds, your changes are live on the **Dev Preview URL**!
+## GitHub Secrets
 
-### 2. Promoting Changes to Production
-1. Open a Pull Request from `dev` to `main` on GitHub.
-2. Review the changes.
-3. Once merged to `main`, GitHub Actions triggers `deploy-production.yml`.
-4. The production Frappe server is updated, cache cleared, and changes go live on `http://187.127.133.225:8090/hr-desk` immediately with zero downtime.
+Set under **Settings > Secrets and variables > Actions**. Never write secret values in this repository.
 
----
+| Secret | Purpose |
+| :--- | :--- |
+| `SERVER_HOST` | Server address |
+| `SERVER_USER` | Deployment user |
+| `SERVER_SSH_KEY` | SSH private key for deployment (preferred) |
+| `SERVER_PASSWORD` | Fallback only |
 
-## 🔐 GitHub Repository Secrets Configuration
+## Server notes
 
-To enable GitHub Actions deployment, configure the following secrets under **Settings > Secrets and variables > Actions > New repository secret**:
-
-| Secret Name | Value | Purpose |
-| :--- | :--- | :--- |
-| `SERVER_HOST` | `187.127.133.225` | Production & Dev server IP |
-| `SERVER_USER` | `root` | Deployment user |
-| `SERVER_SSH_KEY` | *(RSA Private Key)* | SSH Deploy Key for secure passwordless deployment |
-| `SERVER_PASSWORD` | `Huptle@001222` | Optional fallback password |
-| `SERVER_PORT` | `22` | SSH Port (default: 22) |
-
----
-
-## 📁 Repository Structure
-
-```text
-├── .github/
-│   └── workflows/
-│       ├── deploy-dev.yml          # GitHub Actions CI/CD for Development
-│       └── deploy-production.yml   # GitHub Actions CI/CD for Production
-├── index.html                      # Standalone, interactive HR Desk frontend
-├── hr-desk.html                    # Jinja-authenticated Frappe WWW template
-├── hr_desk.py                      # Python backend context & session controller
-├── src/                            # TypeScript / React source modules
-├── package.json                    # Project dependencies & build scripts
-├── vite.config.ts                  # Vite build configuration
-└── README.md                       # Documentation & Deployment guide
-```
-
----
-
-## 🌐 Local Testing
-
-You can run the app locally using any static web server, or with Node/Vite:
-
-```bash
-npm install
-npm run dev
-```
-
-The app will start at `http://localhost:3000`.
+- Do not use `sudo erpnext-ctl reload-ui`; it copies an old static page into the containers.
+- After changing `frappe.conf.template` on the server, recreate the frontend container: `sudo erpnext-ctl compose up -d --no-deps --force-recreate frontend`.

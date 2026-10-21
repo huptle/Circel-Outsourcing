@@ -1657,6 +1657,33 @@
     .user-menu a:hover { background: var(--sidebar-item-hover); }
     .user-menu a.danger { color: var(--accent-rose); }
     .user-menu-sep { height: 1px; background: var(--border-subtle); margin: 4px 0; }
+
+    /* FIX-2a #7: loading / empty / error states for live screens */
+    .hd-state { grid-column: 1 / -1; padding: 28px; text-align: center; color: var(--text-muted); font-size: 13px; }
+    .hd-state.error { color: var(--accent-rose); }
+    /* FIX-2b/3: list toolbar */
+    .hd-search { min-width: 240px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-card); background: var(--bg-surface); color: var(--text-primary); font-size: 13px; }
+    .hd-note { margin-left: 12px; font-size: 12px; color: var(--text-muted); }
+    .hd-sub { font-size: 11px; color: var(--text-muted); }
+    .hd-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .hd-actions a { text-decoration: none; white-space: nowrap; }
+    .metric-icon-box.amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    /* FIX-2d / FIX-2e #7: summary cards and cards that filter or open a list */
+    .metric-card.hd-filter { cursor: pointer; }
+    .metric-card.hd-filter:hover { border-color: var(--accent-primary); }
+    .metric-card.hd-filter:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+    .metric-card.hd-filter.active { border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-sm); }
+    .hd-pick .metric-label::after { content: ' ▾'; }
+    .employee-card.hd-filter, tr.hd-filter { cursor: pointer; }
+    .employee-card.hd-filter:hover { border-color: var(--accent-primary); }
+    .employee-card.hd-filter:focus-visible, tr.hd-filter:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+    .hd-clear { margin-left: 10px; font-size: 12px; color: var(--accent-primary); text-decoration: none; }
+    .hd-menu { position: absolute; z-index: 1000; max-height: 340px; max-width: 360px; overflow-y: auto; padding: 6px; border-radius: var(--radius-md); border: 1px solid var(--border-card); background: var(--bg-surface); box-shadow: var(--shadow-lg, 0 12px 32px rgba(0, 0, 0, 0.35)); }
+    .hd-menu-title { padding: 6px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); }
+    .hd-menu button { display: flex; width: 100%; justify-content: space-between; gap: 16px; padding: 8px 10px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-primary); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+    .hd-menu button:hover, .hd-menu button:focus { background: rgba(99, 102, 241, 0.15); outline: none; }
+    .hd-menu-count { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .metric-icon-box.rose { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
   </style>
 </head>
 <body>
@@ -1930,64 +1957,8 @@
             </div>
           </div>
 
-          <!-- Metric Overview Cards -->
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon-box indigo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="14" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">10</div>
-                <div class="metric-label">Configuration Groups</div>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">17</div>
-                <div class="metric-label">Master DocTypes</div>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon-box emerald">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="20" x2="18" y2="10"></line>
-                  <line x1="12" y1="20" x2="12" y2="4"></line>
-                  <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">11</div>
-                <div class="metric-label">Standard &amp; Custom Reports</div>
-              </div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-icon-box purple">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">100%</div>
-                <div class="metric-label">Setup Completion</div>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2b #7: real counts (was: fixed 10 / 17 / 11 / "100% Setup Completion") -->
+          <div class="metrics-grid" id="setupMetrics"></div>
         </section>
 
         <!-- Category Filter Tabs & Realtime Search -->
@@ -2296,312 +2267,24 @@
                 <span>Employee Directory</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>248 Total Records</span>
+                  <span id="employeePill">Loading…</span>
                 </span>
               </h1>
               <p>Search, manage, and inspect verified employee records, organizational departments, and active onboarding workflows.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Opening New Employee Form...', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                New Employee
-              </button>
-              <button class="btn-emp-action" onclick="showToast('Initiating Master Data Excel Sync...', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                Sync Excel
-              </button>
-            </div>
+            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('employee/new'); return false;" style="text-decoration: none;">New Employee ↗</a><a class="btn-emp-action" href="#" onclick="hdOpenDesk('employee'); return false;" style="text-decoration: none;">Excel Sync (Employee list) ↗</a></div>
           </div>
 
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon-box emerald">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">234</div>
-                <div class="metric-label">Active Staff</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">8</div>
-                <div class="metric-label">On Leave Today</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box amber">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">6</div>
-                <div class="metric-label">Probation Period</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box purple">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">12</div>
-                <div class="metric-label">New Hires (Q3)</div>
-              </div>
-            </div>
+          <!-- FIX-2b #7: real employees, all records, searchable from Frappe (was: 248 invented records, fake metrics and demo people) -->
+          <div class="metrics-grid" id="employeeMetrics"></div>
+          <div class="table-container">
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('employeeRows', this.value)"><span class="hd-note" id="employeeNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="employeeClear" style="display: none;" onclick="hdSetFilter('employee', null); return false;">Clear filter</a></div>
+            <table class="modern-table">
+              <thead><tr id="employeeHead"></tr></thead>
+              <tbody id="employeeRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
+            </table>
           </div>
         </section>
-
-        <!-- Filter Toolbar -->
-        <div class="controls-bar">
-          <div class="search-filter-wrapper">
-            <svg class="search-icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="employeeSearchInput" class="search-filter-input" placeholder="Filter by employee name, ID, role or department..." oninput="filterEmployeeCards(this.value)">
-          </div>
-          <div class="category-pills">
-            <button class="pill-btn active" onclick="filterEmployeeDept('all', this)">All Teams</button>
-            <button class="pill-btn" onclick="filterEmployeeDept('Engineering', this)">Engineering</button>
-            <button class="pill-btn" onclick="filterEmployeeDept('Human Resources', this)">HR</button>
-            <button class="pill-btn" onclick="filterEmployeeDept('Sales & Marketing', this)">Sales</button>
-            <button class="pill-btn" onclick="filterEmployeeDept('Finance', this)">Finance</button>
-            <button class="pill-btn" onclick="filterEmployeeDept('Operations', this)">Operations</button>
-          </div>
-        </div>
-
-        <!-- Employee Cards Grid -->
-        <div class="employee-grid" id="employeeCardsContainer">
-          <!-- Card 1 -->
-          <div class="employee-card" data-dept="Engineering" data-name="Praveen Kumar" data-id="EMP-001">
-            <div>
-              <div class="emp-header">
-                <div class="emp-avatar">PK</div>
-                <div class="emp-name-title">
-                  <div class="emp-name">
-                    <span>Praveen Kumar</span>
-                    <span class="emp-id-chip">EMP-001</span>
-                  </div>
-                  <div class="emp-designation">Senior Full Stack Architect</div>
-                </div>
-              </div>
-              <div class="emp-details">
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Department</span>
-                  <span class="emp-detail-val">Engineering</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Status</span>
-                  <span class="status-badge success">Active</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Joined</span>
-                  <span class="emp-detail-val">12 Jan 2023</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Location</span>
-                  <span class="emp-detail-val">Bengaluru Hub</span>
-                </div>
-              </div>
-            </div>
-            <div class="emp-card-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Viewing Praveen Kumar Profile', 'info')">View Profile</button>
-              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-001...', 'success')">Offer Letter ↗</button>
-            </div>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="employee-card" data-dept="Human Resources" data-name="Ananya Sharma" data-id="EMP-002">
-            <div>
-              <div class="emp-header">
-                <div class="emp-avatar" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">AS</div>
-                <div class="emp-name-title">
-                  <div class="emp-name">
-                    <span>Ananya Sharma</span>
-                    <span class="emp-id-chip">EMP-002</span>
-                  </div>
-                  <div class="emp-designation">Lead Talent Acquisition Specialist</div>
-                </div>
-              </div>
-              <div class="emp-details">
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Department</span>
-                  <span class="emp-detail-val">Human Resources</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Status</span>
-                  <span class="status-badge success">Active</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Joined</span>
-                  <span class="emp-detail-val">04 Mar 2023</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Location</span>
-                  <span class="emp-detail-val">Mumbai HQ</span>
-                </div>
-              </div>
-            </div>
-            <div class="emp-card-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Viewing Ananya Sharma Profile', 'info')">View Profile</button>
-              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-002...', 'success')">Offer Letter ↗</button>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="employee-card" data-dept="Finance" data-name="Rahul Mehta" data-id="EMP-003">
-            <div>
-              <div class="emp-header">
-                <div class="emp-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">RM</div>
-                <div class="emp-name-title">
-                  <div class="emp-name">
-                    <span>Rahul Mehta</span>
-                    <span class="emp-id-chip">EMP-003</span>
-                  </div>
-                  <div class="emp-designation">Financial Controller</div>
-                </div>
-              </div>
-              <div class="emp-details">
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Department</span>
-                  <span class="emp-detail-val">Finance</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Status</span>
-                  <span class="status-badge success">Active</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Joined</span>
-                  <span class="emp-detail-val">15 Jun 2022</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Location</span>
-                  <span class="emp-detail-val">Delhi Branch</span>
-                </div>
-              </div>
-            </div>
-            <div class="emp-card-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Viewing Rahul Mehta Profile', 'info')">View Profile</button>
-              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-003...', 'success')">Offer Letter ↗</button>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="employee-card" data-dept="Sales & Marketing" data-name="Neha Verma" data-id="EMP-004">
-            <div>
-              <div class="emp-header">
-                <div class="emp-avatar" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">NV</div>
-                <div class="emp-name-title">
-                  <div class="emp-name">
-                    <span>Neha Verma</span>
-                    <span class="emp-id-chip">EMP-004</span>
-                  </div>
-                  <div class="emp-designation">VP Enterprise Growth</div>
-                </div>
-              </div>
-              <div class="emp-details">
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Department</span>
-                  <span class="emp-detail-val">Sales & Marketing</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Status</span>
-                  <span class="status-badge warning">On Leave</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Joined</span>
-                  <span class="emp-detail-val">01 Sep 2021</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Location</span>
-                  <span class="emp-detail-val">Mumbai HQ</span>
-                </div>
-              </div>
-            </div>
-            <div class="emp-card-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Viewing Neha Verma Profile', 'info')">View Profile</button>
-              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-004...', 'success')">Offer Letter ↗</button>
-            </div>
-          </div>
-
-          <!-- Card 5 -->
-          <div class="employee-card" data-dept="Engineering" data-name="Vikram Rao" data-id="EMP-005">
-            <div>
-              <div class="emp-header">
-                <div class="emp-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);">VR</div>
-                <div class="emp-name-title">
-                  <div class="emp-name">
-                    <span>Vikram Rao</span>
-                    <span class="emp-id-chip">EMP-005</span>
-                  </div>
-                  <div class="emp-designation">DevOps & Cloud Engineer</div>
-                </div>
-              </div>
-              <div class="emp-details">
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Department</span>
-                  <span class="emp-detail-val">Engineering</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Status</span>
-                  <span class="status-badge success">Active</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Joined</span>
-                  <span class="emp-detail-val">10 Nov 2023</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Location</span>
-                  <span class="emp-detail-val">Remote (India)</span>
-                </div>
-              </div>
-            </div>
-            <div class="emp-card-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Viewing Vikram Rao Profile', 'info')">View Profile</button>
-              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-005...', 'success')">Offer Letter ↗</button>
-            </div>
-          </div>
-
-          <!-- Card 6 -->
-          <div class="employee-card" data-dept="Operations" data-name="Divya Iyer" data-id="EMP-006">
-            <div>
-              <div class="emp-header">
-                <div class="emp-avatar" style="background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);">DI</div>
-                <div class="emp-name-title">
-                  <div class="emp-name">
-                    <span>Divya Iyer</span>
-                    <span class="emp-id-chip">EMP-006</span>
-                  </div>
-                  <div class="emp-designation">Operations Director</div>
-                </div>
-              </div>
-              <div class="emp-details">
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Department</span>
-                  <span class="emp-detail-val">Operations</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Status</span>
-                  <span class="status-badge success">Active</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Joined</span>
-                  <span class="emp-detail-val">18 Jul 2021</span>
-                </div>
-                <div class="emp-detail-item">
-                  <span class="emp-detail-label">Location</span>
-                  <span class="emp-detail-val">Bengaluru Hub</span>
-                </div>
-              </div>
-            </div>
-            <div class="emp-card-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Viewing Divya Iyer Profile', 'info')">View Profile</button>
-              <button class="btn-emp-action" onclick="showToast('Downloading Offer Letter for EMP-006...', 'success')">Offer Letter ↗</button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- VIEW 3: SALARY STRUCTURE ASSIGNMENT -->
@@ -2613,143 +2296,24 @@
                 <span>Salary Structure &amp; Grade Assignment</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>Configured</span>
+                  <span id="ssaPill">Loading…</span>
                 </span>
               </h1>
               <p>Map remuneration packages, CTC components, tax allowances, and effective lifecycle dates across employee grade bands.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('New Salary Structure Assignment Modal', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Assign Structure
-              </button>
-            </div>
+            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('salary-structure-assignment/new'); return false;" style="text-decoration: none;">Assign Structure ↗</a></div>
           </div>
 
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon-box emerald">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">₹1.42 Cr</div>
-                <div class="metric-label">Monthly Payroll CTC</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">245</div>
-                <div class="metric-label">Assigned Staff</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box amber">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">3</div>
-                <div class="metric-label">Pending Reviews</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box indigo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">6 Bands</div>
-                <div class="metric-label">Grade Tiers</div>
-              </div>
-            </div>
+          <!-- FIX-2b #7: real salary structure assignments from Frappe (was: fake CTC, bands and demo employees) -->
+          <div class="metrics-grid" id="ssaMetrics"></div>
+          <div class="table-container">
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('ssaRows', this.value)"><span class="hd-note" id="ssaNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="ssaClear" style="display: none;" onclick="hdSetFilter('ssa', null); return false;">Clear filter</a></div>
+            <table class="modern-table">
+              <thead><tr id="ssaHead"></tr></thead>
+              <tbody id="ssaRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
+            </table>
           </div>
         </section>
-
-        <!-- Structure Assignment Table -->
-        <div class="table-container">
-          <div class="table-toolbar">
-            <div class="table-toolbar-left">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input type="text" class="table-search-input" placeholder="Search employee salary assignments...">
-            </div>
-            <div>
-              <span class="status-badge info">Active Cycle: Sep 2026</span>
-            </div>
-          </div>
-
-          <table class="modern-table">
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th>Salary Structure</th>
-                <th>Base Pay (p.m.)</th>
-                <th>Allowances</th>
-                <th>Monthly CTC</th>
-                <th>Effective From</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <strong>Praveen Kumar</strong>
-                  <div style="font-size: 11px; color: var(--text-muted);">EMP-001 &bull; Engineering</div>
-                </td>
-                <td>Senior Tech Grade A</td>
-                <td>₹90,000</td>
-                <td>₹50,000</td>
-                <td><strong style="color: var(--accent-emerald);">₹1,40,000</strong></td>
-                <td>01 Jan 2024</td>
-                <td><span class="status-badge success">Active</span></td>
-                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-001')">Modify</button></td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Ananya Sharma</strong>
-                  <div style="font-size: 11px; color: var(--text-muted);">EMP-002 &bull; HR</div>
-                </td>
-                <td>HR Lead Scale B</td>
-                <td>₹75,000</td>
-                <td>₹35,000</td>
-                <td><strong style="color: var(--accent-emerald);">₹1,10,000</strong></td>
-                <td>01 Apr 2024</td>
-                <td><span class="status-badge success">Active</span></td>
-                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-002')">Modify</button></td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Rahul Mehta</strong>
-                  <div style="font-size: 11px; color: var(--text-muted);">EMP-003 &bull; Finance</div>
-                </td>
-                <td>Finance Executive Scale A</td>
-                <td>₹1,10,000</td>
-                <td>₹55,000</td>
-                <td><strong style="color: var(--accent-emerald);">₹1,65,000</strong></td>
-                <td>01 Oct 2023</td>
-                <td><span class="status-badge success">Active</span></td>
-                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-003')">Modify</button></td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Neha Verma</strong>
-                  <div style="font-size: 11px; color: var(--text-muted);">EMP-004 &bull; Sales</div>
-                </td>
-                <td>Executive VP Scale S</td>
-                <td>₹1,30,000</td>
-                <td>₹70,000</td>
-                <td><strong style="color: var(--accent-emerald);">₹2,00,000</strong></td>
-                <td>01 Mar 2023</td>
-                <td><span class="status-badge success">Active</span></td>
-                <td><button class="btn-emp-action" onclick="showToast('Editing Structure for EMP-004')">Modify</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
 
       <!-- VIEW 4: PROCESS PAYROLL COCKPIT -->
@@ -2761,83 +2325,22 @@
                 <span>Process Payroll Engine</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>Ready for Execution</span>
+                  <span id="payrollPill">Loading…</span>
                 </span>
               </h1>
               <p>Automate monthly salary disbursements, generate verified tax slips, compute deductions, and trigger direct bank remittances.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" id="btnRunPayroll" onclick="executePayrollProcessing()">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                Run Automated Payroll
-              </button>
-            </div>
+            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('payroll-entry/new'); return false;" style="text-decoration: none;">New Payroll Entry ↗</a></div>
           </div>
 
-          <!-- Stepper Pipeline -->
-          <div class="stepper-container">
-            <div class="step-node completed">
-              <div class="step-bubble">✓</div>
-              <div class="step-title">1. Period Setup</div>
-            </div>
-            <div class="step-node completed">
-              <div class="step-bubble">✓</div>
-              <div class="step-title">2. Attendance Sync</div>
-            </div>
-            <div class="step-node active">
-              <div class="step-bubble">3</div>
-              <div class="step-title">3. Compute Deductions</div>
-            </div>
-            <div class="step-node">
-              <div class="step-bubble">4</div>
-              <div class="step-title">4. Generate Slips</div>
-            </div>
-            <div class="step-node">
-              <div class="step-bubble">5</div>
-              <div class="step-title">5. Bank Remittance</div>
-            </div>
-          </div>
-
-          <!-- Processing Card -->
-          <div class="workspace-card" style="border-color: var(--accent-primary); box-shadow: var(--shadow-card-hover);">
-            <div class="card-header-row">
-              <div class="card-title-group">
-                <div class="card-icon-badge indigo" style="background: rgba(99, 102, 241, 0.15); color: var(--accent-primary);">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                </div>
-                <div>
-                  <h3 class="card-title">September 2026 Disbursement Cycle</h3>
-                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Monthly Automated Payroll</div>
-                </div>
-              </div>
-              <span class="status-badge warning" id="payrollStatusBadge">Awaiting Final Run</span>
-            </div>
-
-            <div style="padding: 18px 0;">
-              <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
-                <span style="color: var(--text-secondary);">Batch Processing Verification Progress</span>
-                <span id="payrollPercentText" style="font-weight: 700; color: var(--accent-primary);">0%</span>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" id="payrollProgressBar"></div>
-              </div>
-              <p style="font-size: 12px; color: var(--text-muted); margin-top: 6px;" id="payrollSubtext">248 employees queued for biometric validation and tax withholding calculations.</p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
-              <div>
-                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Company Account</span>
-                <div style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Frappe HR Global Complete Solutions</div>
-              </div>
-              <div>
-                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Total Payout Est.</span>
-                <div style="font-weight: 700; font-size: 14px; color: var(--accent-emerald);">₹1,42,85,000</div>
-              </div>
-              <div>
-                <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted);">Scheduled Date</span>
-                <div style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">30 Sep 2026</div>
-              </div>
-            </div>
+          <!-- FIX-2b #7: real payroll entries from Frappe (was: a fake progress bar and invented payout figures) -->
+          <div class="metrics-grid" id="payrollMetrics"></div>
+          <div class="table-container">
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('payrollRows', this.value)"><span class="hd-note" id="payrollNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="payrollClear" style="display: none;" onclick="hdSetFilter('payroll', null); return false;">Clear filter</a></div>
+            <table class="modern-table">
+              <thead><tr id="payrollHead"></tr></thead>
+              <tbody id="payrollRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
+            </table>
           </div>
         </section>
       </div>
@@ -2851,102 +2354,21 @@
                 <span>Salary Slips Register</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>September 2026</span>
+                  <span id="slipPill">Loading…</span>
                 </span>
               </h1>
               <p>Audit, inspect, download and issue digital salary slips with statutory breakdowns, PF, ESI, PT, and income tax withholdings.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Bulk emailing salary slips...', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                Email All Slips
-              </button>
-            </div>
+            <div class="header-actions"></div>
           </div>
 
+          <!-- FIX-2b #7: real salary slips with payslip PDF per slip from Frappe (was: demo rows and a fake payslip pop-up) -->
+          <div class="metrics-grid" id="slipMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar">
-              <div class="table-toolbar-left">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" class="table-search-input" placeholder="Search slip ID, employee name, or department...">
-              </div>
-              <div class="header-actions" style="display: flex; gap: 8px;">
-                <button class="pill-btn active">All Slips</button>
-                <button class="pill-btn">Submitted</button>
-                <button class="pill-btn">Draft</button>
-              </div>
-            </div>
-
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('slipRows', this.value)"><span class="hd-note" id="slipNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="slipClear" style="display: none;" onclick="hdSetFilter('slip', null); return false;">Clear filter</a></div>
             <table class="modern-table">
-              <thead>
-                <tr>
-                  <th>Slip ID</th>
-                  <th>Employee</th>
-                  <th>Month</th>
-                  <th>Gross Pay</th>
-                  <th>Deductions</th>
-                  <th>Net Pay</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>SLIP-2026-09-001</strong></td>
-                  <td>
-                    <strong>Praveen Kumar</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">Senior Full Stack Architect</div>
-                  </td>
-                  <td>Sep 2026</td>
-                  <td>₹1,40,000</td>
-                  <td>₹27,600</td>
-                  <td><strong style="color: var(--accent-emerald);">₹1,12,400</strong></td>
-                  <td><span class="status-badge success">Disbursed</span></td>
-                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Praveen Kumar', 'EMP-001', 'Senior Full Stack Architect', '1,40,000', '27,600', '1,12,400')">View Slip</button></td>
-                </tr>
-                <tr>
-                  <td><strong>SLIP-2026-09-002</strong></td>
-                  <td>
-                    <strong>Ananya Sharma</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">Lead Talent Acquisition</div>
-                  </td>
-                  <td>Sep 2026</td>
-                  <td>₹1,10,000</td>
-                  <td>₹18,400</td>
-                  <td><strong style="color: var(--accent-emerald);">₹91,600</strong></td>
-                  <td><span class="status-badge success">Disbursed</span></td>
-                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Ananya Sharma', 'EMP-002', 'Lead Talent Acquisition', '1,10,000', '18,400', '91,600')">View Slip</button></td>
-                </tr>
-                <tr>
-                  <td><strong>SLIP-2026-09-003</strong></td>
-                  <td>
-                    <strong>Rahul Mehta</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">Financial Controller</div>
-                  </td>
-                  <td>Sep 2026</td>
-                  <td>₹1,65,000</td>
-                  <td>₹36,200</td>
-                  <td><strong style="color: var(--accent-emerald);">₹1,28,800</strong></td>
-                  <td><span class="status-badge success">Disbursed</span></td>
-                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Rahul Mehta', 'EMP-003', 'Financial Controller', '1,65,000', '36,200', '1,28,800')">View Slip</button></td>
-                </tr>
-                <tr>
-                  <td><strong>SLIP-2026-09-004</strong></td>
-                  <td>
-                    <strong>Neha Verma</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">VP Growth</div>
-                  </td>
-                  <td>Sep 2026</td>
-                  <td>₹2,00,000</td>
-                  <td>₹45,000</td>
-                  <td><strong style="color: var(--accent-emerald);">₹1,55,000</strong></td>
-                  <td><span class="status-badge warning">Queued</span></td>
-                  <td><button class="btn-emp-action primary" onclick="openSlipModal('Neha Verma', 'EMP-004', 'VP Growth', '2,00,000', '45,000', '1,55,000')">View Slip</button></td>
-                </tr>
-              </tbody>
+              <thead><tr id="slipHead"></tr></thead>
+              <tbody id="slipRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
             </table>
           </div>
         </section>
@@ -2961,110 +2383,21 @@
                 <span>Attendance &amp; Biometrics</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>94.8% Present Today</span>
+                  <span id="attendancePill">Loading…</span>
                 </span>
               </h1>
               <p>Real-time biometric punch logs, shift schedules, overtime calculations, and geofenced mobile clock-ins.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Punching biometric check-in...', 'success')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                Punch Clock-In
-              </button>
-            </div>
+            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('attendance/new'); return false;" style="text-decoration: none;">Mark Attendance ↗</a></div>
           </div>
 
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon-box emerald">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">234 / 248</div>
-                <div class="metric-label">Checked In Today</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box amber">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">6</div>
-                <div class="metric-label">Late Clock-Ins (&gt;9:30 AM)</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">8</div>
-                <div class="metric-label">Approved Leaves</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box purple">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">8.4 hrs</div>
-                <div class="metric-label">Average Work Hours</div>
-              </div>
-            </div>
-          </div>
-
+          <!-- FIX-2b #7: real attendance records from Frappe (was: 94.8% fake figure and demo rows) -->
+          <div class="metrics-grid" id="attendanceMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar">
-              <div class="table-toolbar-left">
-                <span style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Today's Biometric Log &bull; 25 Sep 2026</span>
-              </div>
-              <button class="pill-btn active" onclick="showToast('Exporting attendance report...', 'info')">Export CSV</button>
-            </div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('attendanceRows', this.value)"><span class="hd-note" id="attendanceNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="attendanceClear" style="display: none;" onclick="hdSetFilter('attendance', null); return false;">Clear filter</a></div>
             <table class="modern-table">
-              <thead>
-                <tr>
-                  <th>Employee</th>
-                  <th>Shift</th>
-                  <th>Clock In</th>
-                  <th>Clock Out</th>
-                  <th>Work Hours</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Praveen Kumar (EMP-001)</strong></td>
-                  <td>General (9:00 - 18:00)</td>
-                  <td>09:02 AM</td>
-                  <td>18:15 PM</td>
-                  <td>9h 13m</td>
-                  <td><span class="status-badge success">Present &bull; On Time</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Ananya Sharma (EMP-002)</strong></td>
-                  <td>General (9:00 - 18:00)</td>
-                  <td>08:58 AM</td>
-                  <td>18:05 PM</td>
-                  <td>9h 07m</td>
-                  <td><span class="status-badge success">Present &bull; On Time</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Rahul Mehta (EMP-003)</strong></td>
-                  <td>General (9:00 - 18:00)</td>
-                  <td>09:42 AM</td>
-                  <td>18:45 PM</td>
-                  <td>9h 03m</td>
-                  <td><span class="status-badge warning">Present &bull; Late In</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Neha Verma (EMP-004)</strong></td>
-                  <td>General (9:00 - 18:00)</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>0h 00m</td>
-                  <td><span class="status-badge info">On Casual Leave</span></td>
-                </tr>
-              </tbody>
+              <thead><tr id="attendanceHead"></tr></thead>
+              <tbody id="attendanceRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
             </table>
           </div>
         </section>
@@ -3079,71 +2412,48 @@
                 <span>Leave Applications &amp; Approvals</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>3 Pending Requests</span>
+                  <span id="leavePill">Loading…</span>
                 </span>
               </h1>
               <p>Review leave applications, manage employee leave balances, configure holiday lists, and audit compensatory offs.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Opening Leave Application Form...', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Apply for Leave
-              </button>
+            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('leave-application/new'); return false;" style="text-decoration: none;">New Leave Application ↗</a></div>
+          </div>
+
+          <!-- FIX-2b #7: real leave applications from Frappe (was: demo rows and pop-up approve/reject buttons) -->
+          <div class="metrics-grid" id="leaveMetrics"></div>
+          <div class="table-container">
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('leaveRows', this.value)"><span class="hd-note" id="leaveNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="leaveClear" style="display: none;" onclick="hdSetFilter('leave', null); return false;">Clear filter</a></div>
+            <table class="modern-table">
+              <thead><tr id="leaveHead"></tr></thead>
+              <tbody id="leaveRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- FIX-3 #4: generic records screen, so these cards open inside HR Desk (was: classic desk in a new tab, or nothing) -->
+      <div class="workspace-view" id="view-records">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span id="recordsTitle">Records</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span id="recordsPill">Loading…</span>
+                </span>
+              </h1>
+              <p id="recordsSubtitle"></p>
             </div>
+            <div class="header-actions" id="recordsActions"></div>
           </div>
 
           <div class="table-container">
-            <div class="table-toolbar">
-              <div class="table-toolbar-left">
-                <span style="font-weight: 600; font-size: 13.5px; color: var(--text-primary);">Approval Queue</span>
-              </div>
-              <span class="status-badge warning">3 Awaiting Action</span>
-            </div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('recordsRows', this.value)"><span class="hd-note" id="recordsNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="recordsClear" style="display: none;" onclick="hdSetFilter('records', null); return false;">Clear filter</a></div>
             <table class="modern-table">
-              <thead>
-                <tr>
-                  <th>Applicant</th>
-                  <th>Leave Type</th>
-                  <th>Dates</th>
-                  <th>Duration</th>
-                  <th>Reason</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr id="leaveRow1">
-                  <td>
-                    <strong>Vikram Rao</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">EMP-005 &bull; Engineering</div>
-                  </td>
-                  <td><span class="status-badge info">Privilege Leave</span></td>
-                  <td>28 Sep - 30 Sep 2026</td>
-                  <td>3 Days</td>
-                  <td>Family function &amp; personal travel</td>
-                  <td>
-                    <div style="display: flex; gap: 6px;">
-                      <button class="btn-emp-action primary" onclick="approveLeave('leaveRow1', 'Vikram Rao')">Approve</button>
-                      <button class="btn-emp-action" onclick="rejectLeave('leaveRow1', 'Vikram Rao')">Reject</button>
-                    </div>
-                  </td>
-                </tr>
-                <tr id="leaveRow2">
-                  <td>
-                    <strong>Divya Iyer</strong>
-                    <div style="font-size: 11px; color: var(--text-muted);">EMP-006 &bull; Operations</div>
-                  </td>
-                  <td><span class="status-badge warning">Sick Leave</span></td>
-                  <td>26 Sep 2026</td>
-                  <td>1 Day</td>
-                  <td>Medical consultation</td>
-                  <td>
-                    <div style="display: flex; gap: 6px;">
-                      <button class="btn-emp-action primary" onclick="approveLeave('leaveRow2', 'Divya Iyer')">Approve</button>
-                      <button class="btn-emp-action" onclick="rejectLeave('leaveRow2', 'Divya Iyer')">Reject</button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
+              <thead><tr id="recordsHead"></tr></thead>
+              <tbody id="recordsRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
             </table>
           </div>
         </section>
@@ -3158,81 +2468,17 @@
                 <span>Company Masters &amp; Legal Entities</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>Primary Entity: Global Complete Solutions</span>
+                  <span id="companyPill">Loading…</span>
                 </span>
               </h1>
               <p>Corporate registration credentials, statutory compliance settings, default currency, chart of accounts, and official letterheads.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Edit Company Master details...', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                Edit Entity
-              </button>
-              <button class="btn-emp-action" onclick="showToast('Add Subsidiary Company...', 'info')">+ Add Subsidiary</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon-box indigo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-3"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">GCS Ltd</div>
-                <div class="metric-label">Company Abbr</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box emerald">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">INR (₹)</div>
-                <div class="metric-label">Base Currency</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">2026-2027</div>
-                <div class="metric-label">Fiscal Year</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box purple">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">4 Branches</div>
-                <div class="metric-label">Operating Locations</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="table-container" style="padding: 24px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-              <div>
-                <span class="emp-detail-label">Registered Legal Name</span>
-                <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">Global Complete Solutions Pvt Ltd</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">CIN: U72900MH2021PTC123456 &bull; GSTIN: 27AABCG1234F1Z5</div>
-              </div>
-              <div>
-                <span class="emp-detail-label">Default Contact Email</span>
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">accounts@globalcompletesolutions.com</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">HR: hr@globalcompletesolutions.com</div>
-              </div>
-              <div>
-                <span class="emp-detail-label">Registered Headquarters</span>
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">Bandra Kurla Complex, Mumbai, Maharashtra 400051</div>
-              </div>
-              <div>
-                <span class="emp-detail-label">Default Holiday Schedule</span>
-                <div style="font-size: 14px; font-weight: 600; color: var(--accent-emerald); margin-top: 4px;">Indian National Holidays 2026 (14 Days)</div>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2a #7: real companies from Frappe (was: one invented company with made-up CIN/GSTIN/address) -->
+          <div class="metrics-grid" id="companyMetrics"></div>
+          <div class="employee-grid" id="companyCards"><div class="hd-state">Loading companies…</div></div>
         </section>
       </div>
 
@@ -3245,92 +2491,16 @@
                 <span>Departmental Hierarchy</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>5 Active Divisions</span>
+                  <span id="departmentPill">Loading…</span>
                 </span>
               </h1>
               <p>Company organizational tree, budget allocation, cost centers, and departmental leadership oversight.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('New Department Form', 'info')">+ Add Department</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
-          <div class="employee-grid">
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);">ENG</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Engineering &amp; Technology</div>
-                    <div class="emp-designation">Lead: Praveen Kumar</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Team Strength</span>
-                    <span class="emp-detail-val">112 Staff</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Cost Center</span>
-                    <span class="emp-detail-val">CC-TECH-01</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (112)</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">HR</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Human Resources</div>
-                    <div class="emp-designation">Lead: Ananya Sharma</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Team Strength</span>
-                    <span class="emp-detail-val">18 Staff</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Cost Center</span>
-                    <span class="emp-detail-val">CC-HR-02</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (18)</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">FIN</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Finance &amp; Accounts</div>
-                    <div class="emp-designation">Lead: Rahul Mehta</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Team Strength</span>
-                    <span class="emp-detail-val">24 Staff</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Cost Center</span>
-                    <span class="emp-detail-val">CC-FIN-03</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (24)</button>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2a #7: real departments from Frappe with live staff counts (was: 3 invented departments) -->
+          <div class="employee-grid" id="departmentCards"><div class="hd-state">Loading departments…</div></div>
         </section>
       </div>
 
@@ -3343,53 +2513,27 @@
                 <span>Designations &amp; Job Matrix</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>14 Standard Roles</span>
+                  <span id="designationPill">Loading…</span>
                 </span>
               </h1>
               <p>Career bands, competency frameworks, salary grades, and standard job descriptions across Frappe HR.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('New Designation Form', 'info')">+ Add Designation</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
+          <!-- FIX-2a #7: real designations from Frappe with live staff counts (was: 3 invented job titles with fake grades/vacancies) -->
           <div class="table-container">
             <table class="modern-table">
               <thead>
                 <tr>
-                  <th>Job Title</th>
-                  <th>Grade Level</th>
-                  <th>Department</th>
-                  <th>Open Positions</th>
+                  <th>Designation</th>
                   <th>Active Employees</th>
-                  <th>Action</th>
+                  <th>Departments</th>
+                  <th>Companies</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Senior Full Stack Architect</strong></td>
-                  <td><span class="status-badge info">Grade A1</span></td>
-                  <td>Engineering</td>
-                  <td><span class="status-badge warning">2 Open</span></td>
-                  <td>14</td>
-                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
-                </tr>
-                <tr>
-                  <td><strong>Talent Acquisition Lead</strong></td>
-                  <td><span class="status-badge info">Grade B1</span></td>
-                  <td>Human Resources</td>
-                  <td><span class="status-badge success">Filled</span></td>
-                  <td>4</td>
-                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
-                </tr>
-                <tr>
-                  <td><strong>Financial Controller</strong></td>
-                  <td><span class="status-badge info">Grade A2</span></td>
-                  <td>Finance</td>
-                  <td><span class="status-badge success">Filled</span></td>
-                  <td>3</td>
-                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
-                </tr>
+              <tbody id="designationRows">
+                <tr><td colspan="4"><div class="hd-state">Loading designations…</div></td></tr>
               </tbody>
             </table>
           </div>
@@ -3405,92 +2549,16 @@
                 <span>Office Branches &amp; Work Locations</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>4 Operating Hubs</span>
+                  <span id="branchPill">Loading…</span>
                 </span>
               </h1>
               <p>Corporate headquarters, tech innovation centers, regional offices, and GPS geofence radiuses for attendance validation.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Add New Work Location', 'info')">+ New Location</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
-          <div class="employee-grid">
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">MUM</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Mumbai Corporate HQ</div>
-                    <div class="emp-designation">Bandra Kurla Complex, Mumbai</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Staff Count</span>
-                    <span class="emp-detail-val">120 Employees</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Geofence</span>
-                    <span class="status-badge success">Active (150m)</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 19.0657° N, 72.8687° E')">Geofence Map</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">BLR</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Bengaluru Technology Hub</div>
-                    <div class="emp-designation">Outer Ring Road, Bellandur, Bengaluru</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Staff Count</span>
-                    <span class="emp-detail-val">95 Employees</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Geofence</span>
-                    <span class="status-badge success">Active (200m)</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 12.9279° N, 77.6271° E')">Geofence Map</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);">DEL</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Delhi Regional Office</div>
-                    <div class="emp-designation">Barakhamba Road, Connaught Place, New Delhi</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Staff Count</span>
-                    <span class="emp-detail-val">33 Employees</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Geofence</span>
-                    <span class="status-badge success">Active (100m)</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 28.6304° N, 77.2177° E')">Geofence Map</button>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2a #7: real branches from Frappe with live staff counts (was: invented offices with fake geofences) -->
+          <div class="employee-grid" id="branchCards"><div class="hd-state">Loading branches…</div></div>
         </section>
       </div>
 
@@ -3960,6 +3028,8 @@
       if (activeView) {
         activeView.classList.add('active');
       }
+      // FIX-2a #7: load real records for master screens when opened
+      hdLoadView(targetViewId);
 
       const breadcrumbCurrent = document.querySelector('.breadcrumb-current');
       if (breadcrumbCurrent) {
@@ -3977,6 +3047,9 @@
 
     function handleLinkClick(event, docName) {
       if (event && event.preventDefault) event.preventDefault();
+      // FIX-3 #4: these open inside HR Desk now (was: classic desk, nothing, or the wrong screen)
+      if (HD_RECORDS[docName]) { hdOpenRecords(docName); return; }
+      if (docName === 'Relieving & Experience Letters') { navigateSidebar(null, 'Employee Master'); return; }
       const directMap = {
         'Company': 'Company',
         'Branch': 'Work Locations',
@@ -4033,6 +3106,11 @@
     function initRouteFromHash() {
       const hash = window.location.hash.replace('#', '');
       if (!hash) return;
+      // FIX-3 #4: deep links to records screens, e.g. #records-full-and-final-statement
+      if (hash.indexOf('records-') === 0) {
+        const dt = Object.keys(HD_RECORDS).find(d => hdSlug(d) === hash.slice(8));
+        if (dt) { hdOpenRecords(dt); return; }
+      }
       for (const [title, viewId] of Object.entries(viewTitleMap)) {
         if (title.toLowerCase().replace(/[^a-z0-9]/g, '-') === hash) {
           navigateSidebar(null, title);
@@ -4041,91 +3119,9 @@
       }
     }
 
-    // Filter employee cards
-    function filterEmployeeCards(term) {
-      const q = term.toLowerCase().trim();
-      const cards = document.querySelectorAll('#employeeCardsContainer .employee-card');
-      cards.forEach(card => {
-        const name = (card.getAttribute('data-name') || '').toLowerCase();
-        const dept = (card.getAttribute('data-dept') || '').toLowerCase();
-        const id = (card.getAttribute('data-id') || '').toLowerCase();
-        const text = card.textContent.toLowerCase();
-        if (!q || name.includes(q) || dept.includes(q) || id.includes(q) || text.includes(q)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
+    // FIX-2b #7: removed demo-only employee card filters and payroll progress simulation (the screens now show real records)
 
-    function filterEmployeeDept(dept, btn) {
-      document.querySelectorAll('#view-employee-master .category-pills .pill-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-
-      const cards = document.querySelectorAll('#employeeCardsContainer .employee-card');
-      cards.forEach(card => {
-        const cardDept = card.getAttribute('data-dept') || '';
-        if (dept === 'all' || cardDept === dept) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-
-    // Payroll automated processing simulation
-    function executePayrollProcessing() {
-      const btn = document.getElementById('btnRunPayroll');
-      const bar = document.getElementById('payrollProgressBar');
-      const pct = document.getElementById('payrollPercentText');
-      const badge = document.getElementById('payrollStatusBadge');
-      const sub = document.getElementById('payrollSubtext');
-
-      if (!btn || !bar || !pct || !badge || !sub) return;
-      btn.disabled = true;
-      badge.className = 'status-badge info';
-      badge.textContent = 'Processing...';
-
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        bar.style.width = progress + '%';
-        pct.textContent = progress + '%';
-
-        if (progress === 40) {
-          sub.textContent = 'Biometric attendance logs synced. Calculating PF & ESI contributions...';
-        } else if (progress === 70) {
-          sub.textContent = 'Generating 248 validated Salary Slips with digital signatures...';
-        } else if (progress >= 100) {
-          clearInterval(interval);
-          btn.disabled = false;
-          badge.className = 'status-badge success';
-          badge.textContent = 'Completed & Disbursed';
-          sub.textContent = 'All 248 salary slips generated. Remittance file queued for corporate banking.';
-          showToast('Payroll processing completed successfully! All slips issued.', 'success');
-        }
-      }, 150);
-    }
-
-    // Salary Slip Modal
-    function openSlipModal(name, id, desig, gross, deduct, net) {
-      const nameEl = document.getElementById('modalSlipEmpName');
-      const idEl = document.getElementById('modalSlipEmpId');
-      const desigEl = document.getElementById('modalSlipEmpDesig');
-      const grossEl = document.getElementById('modalSlipGross');
-      const deductEl = document.getElementById('modalSlipDeduct');
-      const netEl = document.getElementById('modalSlipNet');
-
-      if (nameEl) nameEl.textContent = name;
-      if (idEl) idEl.textContent = id;
-      if (desigEl) desigEl.textContent = desig;
-      if (grossEl) grossEl.textContent = '₹' + gross;
-      if (deductEl) deductEl.textContent = '₹' + deduct;
-      if (netEl) netEl.textContent = '₹' + net;
-
-      const modal = document.getElementById('slipModal');
-      if (modal) modal.classList.add('open');
-    }
+    // FIX-2b #7: removed demo-only payslip pop-up (each slip now opens its real PDF) (the screens now show real records)
 
     function closeSlipModal() {
       const modal = document.getElementById('slipModal');
@@ -4138,24 +3134,7 @@
       }
     }
 
-    // Approve / Reject Leave Application
-    function approveLeave(rowId, applicant) {
-      const row = document.getElementById(rowId);
-      if (row) {
-        row.style.opacity = '0.5';
-        row.innerHTML = `<td colspan="6" style="text-align: center; color: var(--accent-emerald); font-weight: 600; padding: 12px;">✓ Leave Approved for ${applicant}</td>`;
-      }
-      showToast(`Leave application approved for ${applicant}`, 'success');
-    }
-
-    function rejectLeave(rowId, applicant) {
-      const row = document.getElementById(rowId);
-      if (row) {
-        row.style.opacity = '0.5';
-        row.innerHTML = `<td colspan="6" style="text-align: center; color: var(--accent-rose); font-weight: 600; padding: 12px;">✕ Leave Rejected for ${applicant}</td>`;
-      }
-      showToast(`Leave application rejected for ${applicant}`, 'error');
-    }
+    // FIX-2b #7: removed demo-only approve / reject buttons (they only changed the screen, not the record) (the screens now show real records)
 
     // Expose all handlers to global window scope
     window.toggleTheme = toggleTheme;
@@ -4170,10 +3149,6 @@
     window.closeCommandPalette = closeCommandPalette;
     window.handleModalBackdrop = handleModalBackdrop;
     window.handlePaletteSearch = handlePaletteSearch;
-    window.filterEmployeeCards = filterEmployeeCards;
-    window.filterEmployeeDept = filterEmployeeDept;
-    window.executePayrollProcessing = executePayrollProcessing;
-    window.openSlipModal = openSlipModal;
     window.closeSlipModal = closeSlipModal;
     window.handleSlipModalBackdrop = handleSlipModalBackdrop;
     // ==========================================================================
@@ -4185,167 +3160,13 @@
     }
 
     async function syncLiveFrappeData() {
-      try {
-        // FIX-1 #7: the logged-in user is now rendered by Frappe (was: fetched here, fell back to fake Administrator)
-        loadUnreadNotifications();
-
-        // 2. Live Employees
-        const empRes = await fetch('/api/resource/Employee?fields=["name","employee_name","department","designation","status","company","date_of_joining"]&limit_page_length=80&order_by=creation desc', { credentials: 'include' });
-        if (empRes.ok) {
-          const empJson = await empRes.json();
-          if (empJson.data && empJson.data.length > 0) {
-            renderLiveEmployees(empJson.data);
-          }
-        }
-
-        // 3. Live Salary Slips
-        const slipRes = await fetch('/api/resource/Salary Slip?fields=["name","employee","employee_name","gross_pay","total_deduction","net_pay","status","posting_date"]&limit_page_length=40&order_by=creation desc', { credentials: 'include' });
-        if (slipRes.ok) {
-          const slipJson = await slipRes.json();
-          if (slipJson.data && slipJson.data.length > 0) {
-            renderLiveSalarySlips(slipJson.data);
-          }
-        }
-
-        // 4. Live Leave Applications
-        const leaveRes = await fetch('/api/resource/Leave Application?fields=["name","employee","employee_name","leave_type","from_date","to_date","total_leave_days","status","description"]&limit_page_length=20&order_by=creation desc', { credentials: 'include' });
-        if (leaveRes.ok) {
-          const leaveJson = await leaveRes.json();
-          if (leaveJson.data && leaveJson.data.length > 0) {
-            renderLiveLeaveApplications(leaveJson.data);
-          }
-        }
-      } catch (err) {
-        console.warn('Frappe API Notice: Running with default mock data.', err);
-      }
+      // FIX-1 #7: the logged-in user is now rendered by Frappe (was: fetched here, fell back to fake Administrator)
+      loadUnreadNotifications();
+      // FIX-2b #7: each screen now loads its own real data when opened (see hdLoadView); no demo fallback
+      hdLoadView('view-hr-setup');
     }
 
-    function renderLiveEmployees(list) {
-      const container = document.getElementById('employeeCardsContainer');
-      if (!container || !list || list.length === 0) return;
-
-      const totalPill = document.querySelector('#view-employee-master .live-status-pill span:last-child');
-      if (totalPill) totalPill.textContent = list.length + '+ Live Records';
-
-      container.innerHTML = '';
-      list.forEach(emp => {
-        const id = emp.name;
-        const name = emp.employee_name || emp.name;
-        const dept = emp.department || 'General';
-        const desig = emp.designation || 'Staff';
-        const status = emp.status || 'Active';
-        const statusClass = status.toLowerCase() === 'active' ? 'success' : 'warning';
-        const joined = emp.date_of_joining || 'Active';
-        const company = emp.company || 'Circle Outsourcing';
-        const initials = name.split(' ').filter(Boolean).map(n => n[0]).slice(0, 2).join('').toUpperCase() || 'EM';
-
-        const card = document.createElement('div');
-        card.className = 'employee-card';
-        card.setAttribute('data-dept', dept);
-        card.setAttribute('data-name', name);
-        card.setAttribute('data-id', id);
-        card.innerHTML = `
-          <div>
-            <div class="emp-header">
-              <div class="emp-avatar">${initials}</div>
-              <div class="emp-name-title">
-                <div class="emp-name">
-                  <span>${name}</span>
-                  <span class="emp-id-chip">${id}</span>
-                </div>
-                <div class="emp-designation">${desig}</div>
-              </div>
-            </div>
-            <div class="emp-details">
-              <div class="emp-detail-item">
-                <span class="emp-detail-label">Department</span>
-                <span class="emp-detail-val">${dept}</span>
-              </div>
-              <div class="emp-detail-item">
-                <span class="emp-detail-label">Status</span>
-                <span class="status-badge ${statusClass}">${status}</span>
-              </div>
-              <div class="emp-detail-item">
-                <span class="emp-detail-label">Joined</span>
-                <span class="emp-detail-val">${joined}</span>
-              </div>
-              <div class="emp-detail-item">
-                <span class="emp-detail-label">Company</span>
-                <span class="emp-detail-val">${company}</span>
-              </div>
-            </div>
-          </div>
-          <div class="emp-card-actions">
-            <a class="btn-emp-action primary" href="/app/employee/${id}" target="_blank" style="text-decoration: none; text-align: center;">View in Desk ↗</a>
-            <a class="btn-emp-action" href="/api/method/frappe.utils.print_format.download_pdf?doctype=Job Offer&name=Circle Outsourcing Appointment Letter&format=Circle Outsourcing Appointment Letter" target="_blank" style="text-decoration: none; text-align: center;">Appt. Letter ↗</a>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function renderLiveSalarySlips(slips) {
-      const tbody = document.querySelector('#view-salary-slips tbody');
-      if (!tbody || !slips || slips.length === 0) return;
-
-      tbody.innerHTML = '';
-      slips.forEach(slip => {
-        const tr = document.createElement('tr');
-        const gross = slip.gross_pay || 0;
-        const deduct = slip.total_deduction || 0;
-        const net = slip.net_pay || 0;
-        const statusBadge = slip.status === 'Submitted' ? 'success' : (slip.status === 'Paid' ? 'success' : 'info');
-        const safeName = (slip.employee_name || slip.employee).replace(/'/g, "\\'");
-
-        tr.innerHTML = `
-          <td><strong>${slip.name}</strong></td>
-          <td>
-            <strong>${slip.employee_name || slip.employee}</strong>
-            <div style="font-size: 11px; color: var(--text-muted);">${slip.employee}</div>
-          </td>
-          <td>${slip.posting_date || 'Current'}</td>
-          <td>₹${formatINR(gross)}</td>
-          <td>₹${formatINR(deduct)}</td>
-          <td><strong style="color: var(--accent-emerald);">₹${formatINR(net)}</strong></td>
-          <td><span class="status-badge ${statusBadge}">${slip.status}</span></td>
-          <td style="display: flex; gap: 6px;">
-            <button class="btn-emp-action primary" onclick="openSlipModal('${safeName}', '${slip.employee}', 'Employee', '${formatINR(gross)}', '${formatINR(deduct)}', '${formatINR(net)}')">View Slip</button>
-            <a class="btn-emp-action" href="/app/salary-slip/${slip.name}" target="_blank" style="text-decoration: none;">Desk ↗</a>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderLiveLeaveApplications(leaves) {
-      const tbody = document.querySelector('#view-leave-applications tbody');
-      if (!tbody || !leaves || leaves.length === 0) return;
-
-      tbody.innerHTML = '';
-      leaves.forEach((leave, idx) => {
-        const tr = document.createElement('tr');
-        const rowId = 'liveLeaveRow_' + idx;
-        tr.id = rowId;
-        const statusClass = leave.status === 'Approved' ? 'success' : (leave.status === 'Rejected' ? 'rose' : 'info');
-
-        tr.innerHTML = `
-          <td>
-            <strong>${leave.employee_name || leave.employee}</strong>
-            <div style="font-size: 11px; color: var(--text-muted);">${leave.employee}</div>
-          </td>
-          <td><span class="status-badge ${statusClass}">${leave.leave_type || 'Leave'}</span></td>
-          <td>${leave.from_date || ''} - ${leave.to_date || ''}</td>
-          <td>${leave.total_leave_days || 1} Days</td>
-          <td>${leave.description || 'Regular leave request'}</td>
-          <td>
-            <div style="display: flex; gap: 6px;">
-              <a class="btn-emp-action primary" href="/app/leave-application/${leave.name}" target="_blank" style="text-decoration: none;">Open in Desk ↗</a>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+    // FIX-2b #7: old renderLiveEmployees / SalarySlips / LeaveApplications removed (unescaped data, fixed letter link)
 
     // FIX-1 #3 / #7: account menu, real logout, real unread notification count
     function toggleUserMenu(event) {
@@ -4379,6 +3200,593 @@
         const el = document.getElementById('notifCount');
         if (el && n > 0) { el.textContent = n + ' New'; el.style.display = ''; }
       } catch (e) {}
+    }
+
+
+    // ---- FIX-2a #7: real master data (Company, Department, Designation, Branch) ----
+    const hdLoaded = {};
+    let hdEmployeesPromise = null;
+    const hdGradients = [
+      'linear-gradient(135deg, #6366f1 0%, #38bdf8 100%)', 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+      'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)', 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+      'linear-gradient(135deg, #0284c7 0%, #6366f1 100%)', 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)'
+    ];
+    function hdEsc(v) {
+      return String(v === undefined || v === null ? '' : v)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function hdInitials(name) {
+      const words = String(name || '?').replace(/[^A-Za-z0-9 ]/g, ' ').trim().split(/\s+/).filter(Boolean);
+      return ((words[0] || '?')[0] + (words[1] ? words[1][0] : (words[0] || '')[1] || '')).toUpperCase();
+    }
+    async function hdFetchList(doctype, fields, filters) {
+      let url = '/api/resource/' + encodeURIComponent(doctype) + '?limit_page_length=0&fields=' + encodeURIComponent(JSON.stringify(fields));
+      if (filters) url += '&filters=' + encodeURIComponent(JSON.stringify(filters));
+      const r = await fetch(url, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+      if (r.status === 403) throw new Error('You do not have permission to view ' + doctype + '.');
+      if (!r.ok) throw new Error('Could not load ' + doctype + ' (error ' + r.status + ').');
+      return (await r.json()).data || [];
+    }
+    function hdActiveEmployees() {
+      if (!hdEmployeesPromise) {
+        hdEmployeesPromise = hdFetchList('Employee', ['name', 'company', 'department', 'designation', 'branch'], [['status', '=', 'Active']])
+          .catch(() => null); // counts show "-" if employees cannot be read
+      }
+      return hdEmployeesPromise;
+    }
+    function hdCount(emps, field, value) {
+      if (!emps) return '-';
+      return emps.filter(e => e[field] === value).length;
+    }
+    function hdState(el, text, isError) {
+      if (!el) return;
+      const html = '<div class="hd-state' + (isError ? ' error' : '') + '">' + hdEsc(text) + '</div>';
+      el.innerHTML = el.tagName === 'TBODY' ? '<tr><td colspan="20">' + html + '</td></tr>' : html;
+    }
+    function hdSetText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
+    function hdCard(i, title, subtitle, details) {
+      return '<div class="employee-card"><div>' +
+        '<div class="emp-header"><div class="emp-avatar" style="background: ' + hdGradients[i % hdGradients.length] + ';">' + hdEsc(hdInitials(title)) + '</div>' +
+        '<div class="emp-name-title"><div class="emp-name">' + hdEsc(title) + '</div><div class="emp-designation">' + hdEsc(subtitle) + '</div></div></div>' +
+        '<div class="emp-details">' + details.map(d =>
+          '<div class="emp-detail-item"><span class="emp-detail-label">' + hdEsc(d[0]) + '</span><span class="emp-detail-val">' + hdEsc(d[1]) + '</span></div>').join('') +
+        '</div></div></div>';
+    }
+    const hdIcons = {
+      building: '<path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path>',
+      currency: '<line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>',
+      users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>',
+      pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>'
+    };
+    function hdMetric(color, value, label, icon) {
+      const svg = hdIcons[icon] ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + hdIcons[icon] + '</svg>' : '';
+      return '<div class="metric-card"><div class="metric-icon-box ' + color + '">' + svg + '</div><div class="metric-info">' +
+        '<div class="metric-value">' + hdEsc(value) + '</div><div class="metric-label">' + hdEsc(label) + '</div></div></div>';
+    }
+
+    async function hdLoadCompanies() {
+      const box = document.getElementById('companyCards');
+      try {
+        const [companies, emps] = await Promise.all([hdFetchList('Company', ['*']), hdActiveEmployees()]);
+        hdSetText('companyPill', companies.length + (companies.length === 1 ? ' Company' : ' Companies'));
+        if (!companies.length) { hdState(box, 'No companies found.'); return; }
+        box.innerHTML = companies.map((c, i) => hdCard(i, c.company_name || c.name, c.country || '', [
+          ['Abbreviation', c.abbr || '-'],
+          ['Currency', c.default_currency || '-'],
+          ['Active Employees', hdCount(emps, 'company', c.name)],
+          ['Holiday List', c.default_holiday_list || '-'],
+          ['Email', c.email || '-'],
+          ['Tax ID', c.tax_id || '-']
+        ])).join('');
+        const currencies = [...new Set(companies.map(c => c.default_currency).filter(Boolean))].join(', ') || '-';
+        document.getElementById('companyMetrics').innerHTML =
+          hdMetric('indigo', companies.length, 'Companies', 'building') +
+          hdMetric('emerald', currencies, 'Base Currency', 'currency') +
+          hdMetric('blue', emps ? emps.length : '-', 'Active Employees', 'users') +
+          hdMetric('purple', emps ? new Set(emps.map(e => e.branch).filter(Boolean)).size : '-', 'Branches in Use', 'pin');
+        // FIX-2e #7: company cards and the employee / branch tiles open the matching screen
+        box.querySelectorAll('.employee-card').forEach((el, i) => hdClickable(el,
+          () => hdShowBy('Employee Master', 'employee', 'company', companies[i].name, 'Company', 'Companies'), 'Show employees of this company'));
+        const tiles = document.querySelectorAll('#companyMetrics .metric-card');
+        hdClickable(tiles[2], () => hdShowFiltered('Employee Master', 'employee', { card: 'Active', label: 'Active', test: r => r.status === 'Active' }), 'Open Employee Master: active employees');
+        hdClickable(tiles[3], () => navigateSidebar(null, 'Work Locations'), 'Open Work Locations');
+      } catch (e) { hdSetText('companyPill', 'Unavailable'); hdState(box, e.message, true); }
+    }
+
+    async function hdLoadDepartments() {
+      const box = document.getElementById('departmentCards');
+      try {
+        const [depts, emps] = await Promise.all([hdFetchList('Department', ['*'], [['is_group', '=', 0]]), hdActiveEmployees()]);
+        hdSetText('departmentPill', depts.length + (depts.length === 1 ? ' Department' : ' Departments'));
+        if (!depts.length) { hdState(box, 'No departments found.'); return; }
+        depts.sort((a, b) => String(a.department_name || a.name).localeCompare(String(b.department_name || b.name)));
+        box.innerHTML = depts.map((d, i) => hdCard(i, d.department_name || d.name, d.company || '', [
+          ['Active Employees', hdCount(emps, 'department', d.name)],
+          ['Parent', d.parent_department || '-']
+        ])).join('');
+        // FIX-2e #7: a department card shows that department's employees
+        box.querySelectorAll('.employee-card').forEach((el, i) => hdClickable(el,
+          () => hdShowBy('Employee Master', 'employee', 'department', depts[i].name, 'Department', 'Departments'), 'Show employees of this department'));
+      } catch (e) { hdSetText('departmentPill', 'Unavailable'); hdState(box, e.message, true); }
+    }
+
+    async function hdLoadDesignations() {
+      const body = document.getElementById('designationRows');
+      try {
+        const [desigs, emps] = await Promise.all([hdFetchList('Designation', ['*']), hdActiveEmployees()]);
+        hdSetText('designationPill', desigs.length + (desigs.length === 1 ? ' Designation' : ' Designations'));
+        if (!desigs.length) { hdState(body, 'No designations found.'); return; }
+        desigs.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        body.innerHTML = desigs.map(d => {
+          const mine = emps ? emps.filter(e => e.designation === d.name) : null;
+          const depts = mine ? [...new Set(mine.map(e => e.department).filter(Boolean))].length : '-';
+          const comps = mine ? [...new Set(mine.map(e => e.company).filter(Boolean))].join(', ') || '-' : '-';
+          return '<tr><td><strong>' + hdEsc(d.designation_name || d.name) + '</strong></td><td>' + hdEsc(mine ? mine.length : '-') +
+            '</td><td>' + hdEsc(depts) + '</td><td>' + hdEsc(comps) + '</td></tr>';
+        }).join('');
+        // FIX-2e #7: a designation row shows the employees with that designation
+        body.querySelectorAll('tr').forEach((tr, i) => hdClickable(tr,
+          () => hdShowBy('Employee Master', 'employee', 'designation', desigs[i].name, 'Designation'), 'Show employees with this designation'));
+      } catch (e) { hdSetText('designationPill', 'Unavailable'); hdState(body, e.message, true); }
+    }
+
+    async function hdLoadBranches() {
+      const box = document.getElementById('branchCards');
+      try {
+        const [branches, emps] = await Promise.all([hdFetchList('Branch', ['*']), hdActiveEmployees()]);
+        hdSetText('branchPill', branches.length + (branches.length === 1 ? ' Branch' : ' Branches'));
+        if (!branches.length) { hdState(box, 'No branches found.'); return; }
+        branches.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        box.innerHTML = branches.map((b, i) => {
+          const mine = emps ? emps.filter(e => e.branch === b.name) : null;
+          const comps = mine ? [...new Set(mine.map(e => e.company).filter(Boolean))].join(', ') || '-' : '-';
+          return hdCard(i, b.branch || b.name, '', [['Active Employees', mine ? mine.length : '-'], ['Companies', comps]]);
+        }).join('');
+        // FIX-2e #7: a branch card shows the employees at that branch
+        box.querySelectorAll('.employee-card').forEach((el, i) => hdClickable(el,
+          () => hdShowBy('Employee Master', 'employee', 'branch', branches[i].name, 'Branch'), 'Show employees at this branch'));
+      } catch (e) { hdSetText('branchPill', 'Unavailable'); hdState(box, e.message, true); }
+    }
+
+    // ---- FIX-2b / FIX-3 / FIX-6: generic live lists (real data, escaped, no demo fallback) ----
+    function hdSlug(doctype) { return String(doctype).toLowerCase().replace(/ /g, '-'); }
+    function hdOpenDesk(path) { window.open(window.hrDesk.deskUrl + '/' + path, '_blank'); }
+    function hdDeskBtn(doctype, name, label, primary) {
+      const path = hdSlug(doctype) + '/' + encodeURIComponent(name);
+      return '<a class="btn-emp-action' + (primary ? ' primary' : '') + '" href="#" data-desk="' + hdEsc(path) +
+        '" onclick="hdOpenDesk(this.dataset.desk); return false;">' + hdEsc(label || 'Open') + ' ↗</a>';
+    }
+    // FIX-6 #6: letters/payslips use the record's own name and the team's print formats (was: one fixed document for everyone)
+    function hdPdfBtn(doctype, name, format, label) {
+      const url = '/api/method/frappe.utils.print_format.download_pdf?doctype=' + encodeURIComponent(doctype) +
+        '&name=' + encodeURIComponent(name) + '&format=' + encodeURIComponent(format) + '&no_letterhead=0';
+      return '<a class="btn-emp-action" href="' + hdEsc(url) + '" target="_blank" rel="noopener">' + hdEsc(label) + ' ↗</a>';
+    }
+    function hdPlural(n, word) { return n + ' ' + word + (Number(n) === 1 ? '' : 's'); }
+    function hdDate(v) {
+      if (!v) return '-';
+      const d = new Date(String(v).replace(' ', 'T'));
+      if (isNaN(d)) return hdEsc(v);
+      const s = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      return hdEsc(String(v).length > 10 ? s + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : s);
+    }
+    function hdMoney(v) {
+      if (v === undefined || v === null || v === '') return '-';
+      return '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    }
+    function hdBadge(value) {
+      if (value === undefined || value === null || value === '') return '-';
+      const v = String(value);
+      const cls = /^(approved|submitted|paid|present|active|completed|claimed|yes)$/i.test(v) ? 'success'
+        : /^(rejected|cancelled|absent|left|failed|no)$/i.test(v) ? 'danger'
+        : /^(draft|open|pending|on leave|half day|work from home|unpaid|queued)$/i.test(v) ? 'warning' : 'info';
+      return '<span class="status-badge ' + cls + '">' + hdEsc(v) + '</span>';
+    }
+    function hdDocStatus(d) { return ['Draft', 'Submitted', 'Cancelled'][d] || '-'; }
+    function hdPerson(r) {
+      return '<strong>' + hdEsc(r.employee_name || r.employee || r.name) + '</strong><div class="hd-sub">' + hdEsc(r.employee || r.name) + '</div>';
+    }
+    async function hdFetch(doctype, fields, opts) {
+      opts = opts || {};
+      const build = (f) => {
+        let url = '/api/resource/' + encodeURIComponent(doctype) + '?fields=' + encodeURIComponent(JSON.stringify(f)) +
+          '&limit_page_length=' + (opts.limit === undefined ? 500 : opts.limit);
+        if (opts.filters) url += '&filters=' + encodeURIComponent(JSON.stringify(opts.filters));
+        if (opts.order_by) url += '&order_by=' + encodeURIComponent(opts.order_by);
+        return url;
+      };
+      let r = await fetch(build(fields), { credentials: 'include', headers: { 'Accept': 'application/json' } });
+      if (!r.ok && r.status !== 403 && fields[0] !== '*') {
+        // a field may not exist on this site: retry with all fields
+        r = await fetch(build(['*']), { credentials: 'include', headers: { 'Accept': 'application/json' } });
+      }
+      if (r.status === 403) throw new Error('You do not have permission to view ' + doctype + '.');
+      if (!r.ok) throw new Error('Could not load ' + doctype + ' (error ' + r.status + ').');
+      return (await r.json()).data || [];
+    }
+    async function hdGetCount(doctype, filters) {
+      let url = '/api/method/frappe.client.get_count?doctype=' + encodeURIComponent(doctype);
+      if (filters) url += '&filters=' + encodeURIComponent(JSON.stringify(filters));
+      const r = await fetch(url, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+      if (!r.ok) return null;
+      return (await r.json()).message;
+    }
+    // FIX-2e #7: every summary card filters its list; Companies / Departments / Structures open a chooser
+    // (was FIX-2d: only status cards filtered). Search and card filters work together.
+    const HD_VIEW = {};     // per list: { rows, cards, filter, card }
+    const HD_PENDING = {};  // filter to apply when a list finishes loading (links from other screens)
+    function hdFilterRows(tbodyId, q) {
+      const body = document.getElementById(tbodyId);
+      if (!body) return;
+      body.dataset.term = String(q || '').toLowerCase().trim();
+      hdApplyFilters(tbodyId.replace(/Rows$/, ''));
+    }
+    function hdApplyFilters(prefix) {
+      const body = document.getElementById(prefix + 'Rows');
+      if (!body) return;
+      const st = HD_VIEW[prefix] || {};
+      const term = body.dataset.term || '';
+      const f = st.filter;
+      const trs = body.querySelectorAll('tr[data-row]');
+      let shown = 0;
+      trs.forEach(tr => {
+        const r = st.rows ? st.rows[Number(tr.dataset.i)] : null;
+        const ok = (!term || tr.textContent.toLowerCase().indexOf(term) !== -1) && (!f || (r && f.test(r)));
+        tr.style.display = ok ? '' : 'none';
+        if (ok) shown++;
+      });
+      const note = document.getElementById(prefix + 'Note');
+      if (note) {
+        if (!note.dataset.base) note.dataset.base = note.textContent;
+        note.textContent = term || f ? 'Showing ' + shown + ' of ' + trs.length + (f ? ' · ' + f.label : '') : note.dataset.base;
+      }
+      const clear = document.getElementById(prefix + 'Clear');
+      if (clear) clear.style.display = f ? '' : 'none';
+    }
+    function hdSetFilter(prefix, filter) {
+      const st = HD_VIEW[prefix] = HD_VIEW[prefix] || {};
+      st.filter = filter || null;
+      const idx = filter && st.cards ? st.cards.findIndex(m => m[2] === filter.card) : -1;
+      const box = document.getElementById(prefix + 'Metrics');
+      if (box) box.querySelectorAll('.metric-card').forEach((c, i) => {
+        c.classList.toggle('active', i === idx);
+        if (c.classList.contains('hd-filter')) c.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
+      });
+      hdApplyFilters(prefix);
+    }
+    function hdCardClick(prefix, i, ev) {
+      const st = HD_VIEW[prefix];
+      if (!st || !st.cards) return;
+      const m = st.cards[i], spec = m[4];
+      const open = document.getElementById('hdMenu');
+      const sameMenu = open && open.dataset.owner === prefix + ':' + i;
+      hdCloseMenu();
+      if (spec === 'all') {
+        hdSetFilter(prefix, null);
+      } else if (typeof spec === 'function') {
+        hdSetFilter(prefix, st.filter && st.filter.card === m[2] ? null : { card: m[2], label: m[2], test: spec });
+      } else if (spec && spec.pick && !sameMenu) {
+        hdOpenChooser(prefix, i, ev.currentTarget);
+      }
+    }
+    function hdOpenChooser(prefix, i, card) {
+      const st = HD_VIEW[prefix], spec = st.cards[i][4];
+      const counts = {};
+      st.rows.forEach(r => { const v = r[spec.pick] || '(not set)'; counts[v] = (counts[v] || 0) + 1; });
+      st.choices = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
+      st.chooser = i;
+      const item = (j, text, n) => '<button type="button" role="menuitem" onclick="hdPick(\'' + prefix + '\', ' + j + ')"><span>' +
+        hdEsc(text) + '</span><span class="hd-menu-count">' + hdEsc(n) + '</span></button>';
+      const menu = document.createElement('div');
+      menu.className = 'hd-menu'; menu.id = 'hdMenu'; menu.setAttribute('role', 'menu'); menu.dataset.owner = prefix + ':' + i;
+      menu.innerHTML = '<div class="hd-menu-title">Show ' + hdEsc(spec.name) + '</div>' + item(-1, 'All', st.rows.length) +
+        st.choices.map((v, j) => item(j, v, counts[v])).join('');
+      document.body.appendChild(menu);
+      const rc = card.getBoundingClientRect();
+      menu.style.top = (rc.bottom + window.scrollY + 6) + 'px';
+      menu.style.left = Math.max(8, Math.min(rc.left + window.scrollX, window.scrollX + window.innerWidth - menu.offsetWidth - 8)) + 'px';
+      menu.style.minWidth = Math.min(rc.width, 360) + 'px';
+      menu.addEventListener('keydown', e => { if (e.key === 'Escape') { hdCloseMenu(); card.focus(); } });
+      const first = menu.querySelector('button'); if (first) first.focus();
+      setTimeout(() => document.addEventListener('click', hdMenuOutside), 0);
+    }
+    function hdMenuOutside(e) { const m = document.getElementById('hdMenu'); if (m && !m.contains(e.target)) hdCloseMenu(); }
+    function hdCloseMenu() {
+      const m = document.getElementById('hdMenu'); if (m) m.remove();
+      document.removeEventListener('click', hdMenuOutside);
+    }
+    function hdPick(prefix, j) {
+      const st = HD_VIEW[prefix], m = st.cards[st.chooser], spec = m[4];
+      hdCloseMenu();
+      if (j < 0) { hdSetFilter(prefix, null); return; }
+      const v = st.choices[j];
+      hdSetFilter(prefix, { card: m[2], label: spec.name + ': ' + v, test: r => (r[spec.pick] || '(not set)') === v });
+    }
+    // open another screen with a filter already applied (HR Setup tiles, Company / Department / Designation / Branch cards)
+    function hdShowFiltered(title, prefix, filter) {
+      navigateSidebar(null, title);
+      const st = HD_VIEW[prefix];
+      const search = document.querySelector('#' + prefix + 'Rows') && document.querySelector('#' + prefix + 'Rows').closest('.table-container').querySelector('.hd-search');
+      if (search && search.value) { search.value = ''; hdFilterRows(prefix + 'Rows', ''); }
+      if (st && st.rows) hdSetFilter(prefix, filter); else HD_PENDING[prefix] = filter;
+    }
+    function hdShowBy(title, prefix, field, value, name, card) {
+      hdShowFiltered(title, prefix, { card: card, label: name + ': ' + value, test: r => r[field] === value });
+    }
+    // make an already-rendered card clickable (keyboard too)
+    function hdClickable(el, fn, title) {
+      el.classList.add('hd-filter');
+      el.setAttribute('role', 'button'); el.setAttribute('tabindex', '0');
+      if (title) el.setAttribute('title', title);
+      el.addEventListener('click', fn);
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); } });
+    }
+
+    function hdLatest(rows, field) {
+      const top = rows.reduce((m, r) => (r[field] && r[field] > m ? r[field] : m), '');
+      return { value: top, rows: rows.filter(r => r[field] === top) };
+    }
+    function hdRenderList(cfg, rows) {
+      const p = cfg.prefix;
+      document.getElementById(p + 'Head').innerHTML = cfg.columns.map(c => '<th>' + hdEsc(c[0]) + '</th>').join('') + (cfg.actions ? '<th>Actions</th>' : '');
+      const body = document.getElementById(p + 'Rows');
+      if (!rows.length) { hdState(body, cfg.empty || 'No records found.'); }
+      else {
+        body.innerHTML = rows.map((r, i) => '<tr data-row="1" data-i="' + i + '">' + cfg.columns.map(c => '<td>' + c[1](r) + '</td>').join('') +
+          (cfg.actions ? '<td><div class="hd-actions">' + cfg.actions(r) + '</div></td>' : '') + '</tr>').join('');
+      }
+      if (cfg.metrics) {
+        const box = document.getElementById(p + 'Metrics');
+        if (box) {
+          // FIX-2e #7: a 5th value makes the card clickable: a test function filters, { pick } opens a chooser
+          const cards = cfg.metrics(rows);
+          HD_VIEW[p] = { rows: rows, cards: cards, filter: null };
+          box.innerHTML = cards.map((m, i) => {
+            const html = hdMetric(m[0], m[1], m[2], m[3]);
+            if (!m[4]) return html;
+            const pick = !!m[4].pick;
+            return html.replace('<div class="metric-card">', '<div class="metric-card hd-filter' + (pick ? ' hd-pick' : '') +
+              '" role="button" tabindex="0"' + (pick ? ' aria-haspopup="menu"' : ' aria-pressed="false"') +
+              ' title="' + hdEsc(pick ? 'Choose ' + m[4].name : m[4] === 'all' ? 'Show all' : 'Show only: ' + m[2] + ' (click again to show all)') + '"' +
+              ' onclick="hdCardClick(\'' + p + '\', ' + i + ', event)"' +
+              ' onkeydown="if (event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); hdCardClick(\'' + p + '\', ' + i + ', event); }">');
+          }).join('');
+        }
+      } else {
+        HD_VIEW[p] = { rows: rows, cards: [], filter: null };
+      }
+      const note = document.getElementById(p + 'Note'); if (note) delete note.dataset.base;
+      body.dataset.term = '';
+      const clear = document.getElementById(p + 'Clear'); if (clear) clear.style.display = 'none';
+    }
+    async function hdLoadList(cfg) {
+      const body = document.getElementById(cfg.prefix + 'Rows');
+      try {
+        const [rows, total] = await Promise.all([
+          hdFetch(cfg.doctype, cfg.fields || ['*'], { filters: cfg.filters, order_by: cfg.order_by, limit: cfg.limit }),
+          hdGetCount(cfg.doctype, cfg.filters)
+        ]);
+        hdRenderList(cfg, rows);
+        hdSetText(cfg.prefix + 'Pill', cfg.pill ? cfg.pill(rows, total) : hdPlural(total === null ? rows.length : total, 'record'));
+        const shown = rows.length;
+        hdSetText(cfg.prefix + 'Note', total !== null && total > shown ? 'Showing latest ' + shown + ' of ' + total + ' records' : hdPlural(shown, 'record'));
+        // FIX-2e #7: apply a filter requested by another screen (e.g. an HR Setup tile)
+        if (HD_PENDING[cfg.prefix]) { const f = HD_PENDING[cfg.prefix]; delete HD_PENDING[cfg.prefix]; hdSetFilter(cfg.prefix, f); }
+      } catch (e) {
+        hdSetText(cfg.prefix + 'Pill', 'Unavailable');
+        hdState(body, e.message, true);
+      }
+    }
+
+    const HD_LISTS = {
+      employee: {
+        prefix: 'employee', doctype: 'Employee', limit: 0, order_by: 'employee_name asc',
+        fields: ['name', 'employee_name', 'department', 'designation', 'branch', 'status', 'company', 'date_of_joining', 'relieving_date'],
+        pill: (rows) => rows.filter(r => r.status === 'Active').length + ' Active · ' + rows.length + ' Total',
+        metrics: (rows) => [
+          ['emerald', rows.filter(r => r.status === 'Active').length, 'Active', 'users', r => r.status === 'Active'],
+          ['amber', rows.filter(r => r.status === 'Left').length, 'Left', 'users', r => r.status === 'Left'],
+          ['indigo', new Set(rows.map(r => r.company).filter(Boolean)).size, 'Companies', 'building', { pick: 'company', name: 'Company' }],
+          ['blue', new Set(rows.map(r => r.department).filter(Boolean)).size, 'Departments', 'building', { pick: 'department', name: 'Department' }]],
+        columns: [
+          ['Employee', hdPerson],
+          ['Designation', r => hdEsc(r.designation || '-')],
+          ['Department', r => hdEsc(r.department || '-') + '<div class="hd-sub">' + hdEsc(r.company || '') + '</div>'],
+          ['Status', r => hdBadge(r.status)],
+          ['Joined', r => hdDate(r.date_of_joining)]],
+        actions: r => hdDeskBtn('Employee', r.name, 'Open', true) +
+          hdPdfBtn('Employee', r.name, 'Exact Corporate Experience Certificate', 'Experience Letter') +
+          (r.status === 'Left' || r.relieving_date ? hdPdfBtn('Employee', r.name, 'Exact Corporate Relieving Letter', 'Relieving Letter') : '')
+      },
+      ssa: {
+        // FIX-2d #7: load all assignments so the summary cards count every one (was: latest 500 of 601)
+        prefix: 'ssa', doctype: 'Salary Structure Assignment', limit: 0, order_by: 'from_date desc', filters: [['docstatus', '!=', 2]],
+        fields: ['name', 'employee', 'employee_name', 'salary_structure', 'from_date', 'base', 'company', 'docstatus'],
+        pill: (rows, total) => hdPlural(total === null ? rows.length : total, 'Assignment'),
+        metrics: (rows) => [
+          ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users', r => r.docstatus === 1],
+          ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users', r => r.docstatus === 0],
+          // FIX-2e #7: was "Employees Covered" (always the same as the total); now a company chooser
+          ['blue', new Set(rows.map(r => r.company).filter(Boolean)).size, 'Companies', 'building', { pick: 'company', name: 'Company' }],
+          ['indigo', new Set(rows.map(r => r.salary_structure).filter(Boolean)).size, 'Salary Structures', 'building', { pick: 'salary_structure', name: 'Salary Structure' }]],
+        columns: [
+          ['Employee', hdPerson],
+          ['Salary Structure', r => hdEsc(r.salary_structure || '-')],
+          ['From', r => hdDate(r.from_date)],
+          ['Base', r => hdMoney(r.base)],
+          ['Company', r => hdEsc(r.company || '-')],
+          ['Status', r => hdBadge(hdDocStatus(r.docstatus))]],
+        actions: r => hdDeskBtn('Salary Structure Assignment', r.name, 'Open', true) +
+          (r.docstatus === 1 ? hdPdfBtn('Salary Structure Assignment', r.name, 'Corporate Salary Increment Letter', 'Increment Letter') : '')
+      },
+      payroll: {
+        prefix: 'payroll', doctype: 'Payroll Entry', order_by: 'posting_date desc', filters: [['docstatus', '!=', 2]],
+        fields: ['name', 'company', 'posting_date', 'start_date', 'end_date', 'payroll_frequency', 'status', 'docstatus'],
+        pill: (rows) => rows.length ? 'Latest: ' + hdDate(rows[0].start_date) + ' – ' + hdDate(rows[0].end_date) : 'No payroll entries',
+        metrics: (rows) => [
+          ['indigo', rows.length, 'Payroll Entries', 'building', 'all'],
+          ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users', r => r.docstatus === 1],
+          ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users', r => r.docstatus === 0],
+          ['blue', new Set(rows.map(r => r.company).filter(Boolean)).size, 'Companies', 'building', { pick: 'company', name: 'Company' }]],
+        columns: [
+          ['Entry', r => '<strong>' + hdEsc(r.name) + '</strong>'],
+          ['Company', r => hdEsc(r.company || '-')],
+          ['Period', r => hdDate(r.start_date) + ' – ' + hdDate(r.end_date)],
+          ['Posting Date', r => hdDate(r.posting_date)],
+          ['Frequency', r => hdEsc(r.payroll_frequency || '-')],
+          ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]],
+        actions: r => hdDeskBtn('Payroll Entry', r.name, 'Open', true)
+      },
+      slip: {
+        // FIX-2d #7: room for a full month of slips for every employee (was: 500)
+        prefix: 'slip', doctype: 'Salary Slip', limit: 2000, order_by: 'start_date desc', filters: [['docstatus', '!=', 2]],
+        fields: ['name', 'employee', 'employee_name', 'start_date', 'end_date', 'gross_pay', 'total_deduction', 'net_pay', 'status', 'company', 'docstatus'],
+        pill: (rows) => rows.length ? 'Latest period: ' + hdDate(hdLatest(rows, 'start_date').value) : 'No salary slips',
+        metrics: (rows) => {
+          const top = hdLatest(rows, 'start_date'), l = top.rows;
+          const sum = (f) => l.reduce((t, r) => t + (Number(r[f]) || 0), 0);
+          const latest = r => r.start_date === top.value;
+          return [['indigo', l.length, 'Slips (latest period)', 'users', latest],
+                  ['emerald', hdMoney(sum('gross_pay')), 'Gross (latest period)', 'currency', latest],
+                  ['blue', hdMoney(sum('net_pay')), 'Net (latest period)', 'currency', latest],
+                  ['amber', l.filter(r => r.docstatus === 0).length, 'Draft (latest period)', 'users', r => latest(r) && r.docstatus === 0]];
+        },
+        columns: [
+          ['Slip', r => '<strong>' + hdEsc(r.name) + '</strong>'],
+          ['Employee', hdPerson],
+          ['Period', r => hdDate(r.start_date) + ' – ' + hdDate(r.end_date)],
+          ['Gross', r => hdMoney(r.gross_pay)],
+          ['Deductions', r => hdMoney(r.total_deduction)],
+          ['Net', r => '<strong style="color: var(--accent-emerald);">' + hdMoney(r.net_pay) + '</strong>'],
+          ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]],
+        actions: r => hdPdfBtn('Salary Slip', r.name, 'Salary Slip Standard', 'Payslip PDF') + hdDeskBtn('Salary Slip', r.name, 'Open')
+      },
+      attendance: {
+        // FIX-2d #7: room for a full day of attendance for every employee (was: 500)
+        prefix: 'attendance', doctype: 'Attendance', limit: 2000, order_by: 'attendance_date desc', filters: [['docstatus', '!=', 2]],
+        fields: ['name', 'employee', 'employee_name', 'attendance_date', 'status', 'in_time', 'out_time', 'working_hours', 'shift', 'docstatus'],
+        pill: (rows) => {
+          const l = hdLatest(rows, 'attendance_date');
+          return l.value ? hdDate(l.value) + ': ' + l.rows.filter(r => r.status === 'Present' || r.status === 'Work From Home').length + ' present' : 'No attendance';
+        },
+        metrics: (rows) => {
+          const top = hdLatest(rows, 'attendance_date'), l = top.rows;
+          const c = (st) => l.filter(r => r.status === st).length;
+          const on = (...sts) => r => r.attendance_date === top.value && sts.indexOf(r.status) !== -1;
+          return [['emerald', c('Present') + c('Work From Home'), 'Present (latest day)', 'users', on('Present', 'Work From Home')],
+                  ['rose', c('Absent'), 'Absent (latest day)', 'users', on('Absent')],
+                  ['amber', c('On Leave'), 'On Leave (latest day)', 'users', on('On Leave')],
+                  ['blue', c('Half Day'), 'Half Day (latest day)', 'users', on('Half Day')]];
+        },
+        columns: [
+          ['Employee', hdPerson],
+          ['Date', r => hdDate(r.attendance_date)],
+          ['Status', r => hdBadge(r.status)],
+          ['In', r => r.in_time ? hdDate(r.in_time) : '-'],
+          ['Out', r => r.out_time ? hdDate(r.out_time) : '-'],
+          ['Hours', r => r.working_hours ? hdEsc(Number(r.working_hours).toFixed(2)) : '-'],
+          ['Shift', r => hdEsc(r.shift || '-')]],
+        actions: r => hdDeskBtn('Attendance', r.name, 'Open')
+      },
+      leave: {
+        prefix: 'leave', doctype: 'Leave Application', order_by: 'from_date desc', filters: [['docstatus', '!=', 2]],
+        fields: ['name', 'employee', 'employee_name', 'leave_type', 'from_date', 'to_date', 'total_leave_days', 'status', 'description', 'docstatus'],
+        pill: (rows) => rows.filter(r => r.status === 'Open').length + ' Pending',
+        metrics: (rows) => [
+          ['amber', rows.filter(r => r.status === 'Open').length, 'Pending', 'users', r => r.status === 'Open'],
+          ['emerald', rows.filter(r => r.status === 'Approved').length, 'Approved', 'users', r => r.status === 'Approved'],
+          ['rose', rows.filter(r => r.status === 'Rejected').length, 'Rejected', 'users', r => r.status === 'Rejected'],
+          ['blue', rows.filter(r => r.status === 'Approved').reduce((t, r) => t + (Number(r.total_leave_days) || 0), 0), 'Approved Days', 'users', r => r.status === 'Approved']],
+        columns: [
+          ['Employee', hdPerson],
+          ['Leave Type', r => hdEsc(r.leave_type || '-')],
+          ['Dates', r => hdDate(r.from_date) + ' – ' + hdDate(r.to_date)],
+          ['Days', r => hdEsc(r.total_leave_days || '-')],
+          ['Status', r => hdBadge(r.status)],
+          ['Reason', r => hdEsc(r.description || '-')]],
+        actions: r => hdDeskBtn('Leave Application', r.name, r.status === 'Open' ? 'Review' : 'Open', r.status === 'Open')
+      }
+    };
+
+    // FIX-3 #4: cards that now open inside HR Desk as live lists
+    const HD_RECORDS = {
+      'Full and Final Statement': { sub: 'Final settlements for employees who are leaving.', cols: [['Employee', hdPerson], ['Date', r => hdDate(r.transaction_date)], ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]] },
+      'Employee Separation': { sub: 'Exit process for employees who are leaving.', cols: [['Employee', hdPerson], ['Department', r => hdEsc(r.department || '-')], ['Resignation Date', r => hdDate(r.resignation_letter_date)], ['Status', r => hdBadge(r.boarding_status || hdDocStatus(r.docstatus))]] },
+      'Expense Claim': { sub: 'Employee expense claims and their approval status.', cols: [['Employee', hdPerson], ['Date', r => hdDate(r.posting_date)], ['Claimed', r => hdMoney(r.total_claimed_amount)], ['Approval', r => hdBadge(r.approval_status)], ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]] },
+      'Employee Advance': { sub: 'Advances paid to employees.', cols: [['Employee', hdPerson], ['Date', r => hdDate(r.posting_date)], ['Amount', r => hdMoney(r.advance_amount)], ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]] },
+      'Travel Request': { sub: 'Business travel requests.', cols: [['Employee', hdPerson], ['Type', r => hdEsc(r.travel_type || '-')], ['Purpose', r => hdEsc(r.purpose_of_travel || '-')], ['Status', r => hdBadge(hdDocStatus(r.docstatus))]] },
+      'Attendance Request': { sub: 'Requests to correct or mark attendance.', cols: [['Employee', hdPerson], ['From', r => hdDate(r.from_date)], ['To', r => hdDate(r.to_date)], ['Reason', r => hdEsc(r.reason || '-')], ['Status', r => hdBadge(hdDocStatus(r.docstatus))]] },
+      'Compensatory Leave Request': { sub: 'Leave requested for extra days worked.', cols: [['Employee', hdPerson], ['Worked From', r => hdDate(r.work_from_date)], ['Worked To', r => hdDate(r.work_end_date)], ['Leave Type', r => hdEsc(r.leave_type || '-')], ['Status', r => hdBadge(hdDocStatus(r.docstatus))]] },
+      'Employee Checkin': { sub: 'Check-in and check-out logs.', cols: [['Employee', hdPerson], ['Time', r => hdDate(r.time)], ['Log Type', r => hdEsc(r.log_type || '-')], ['Device', r => hdEsc(r.device_id || '-')]] },
+      'Employee Grade': { sub: 'Employee grades and their default salary structures.', cols: [['Grade', r => '<strong>' + hdEsc(r.name) + '</strong>'], ['Default Salary Structure', r => hdEsc(r.default_salary_structure || '-')]] },
+      'Employee Group': { sub: 'Groups of employees.', cols: [['Group', r => '<strong>' + hdEsc(r.employee_group_name || r.name) + '</strong>']] },
+      'Daily Work Summary Group': { sub: 'Daily work summary email groups.', cols: [['Group', r => '<strong>' + hdEsc(r.name) + '</strong>'], ['Enabled', r => hdBadge(r.enabled ? 'Yes' : 'No')], ['Send Emails At', r => hdEsc(r.send_emails_at || '-')]] },
+      'Compliance Rule': { sub: 'Company compliance rules.', cols: [['Rule', r => '<strong>' + hdEsc(r.name) + '</strong>'], ['Last Updated', r => hdDate(r.modified)]] }
+    };
+    async function hdOpenRecords(doctype) {
+      const def = HD_RECORDS[doctype];
+      document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.workspace-view').forEach(v => v.classList.remove('active'));
+      document.getElementById('view-records').classList.add('active');
+      const bc = document.querySelector('.breadcrumb-current'); if (bc) bc.textContent = doctype;
+      history.replaceState(null, '', '#records-' + hdSlug(doctype));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      hdSetText('recordsTitle', doctype);
+      hdSetText('recordsSubtitle', def.sub);
+      hdSetText('recordsPill', 'Loading…');
+      hdSetText('recordsNote', '');
+      const search = document.querySelector('#view-records .hd-search'); if (search) search.value = '';
+      document.getElementById('recordsActions').innerHTML =
+        '<a class="btn-emp-action primary" href="#" data-desk="' + hdEsc(hdSlug(doctype) + '/new') + '" onclick="hdOpenDesk(this.dataset.desk); return false;">New ' + hdEsc(doctype) + ' ↗</a>';
+      hdState(document.getElementById('recordsRows'), 'Loading…');
+      hdSetText('recordsHead', '');
+      await hdLoadList({ prefix: 'records', doctype: doctype, order_by: 'modified desc', columns: def.cols,
+        actions: r => hdDeskBtn(doctype, r.name, 'Open', true),
+        pill: (rows, total) => hdPlural(total === null ? rows.length : total, 'Record') });
+    }
+
+    async function hdLoadSetupCounts() {
+      const box = document.getElementById('setupMetrics');
+      if (!box) return;
+      const [emps, comps, leaves, slips] = await Promise.all([
+        hdGetCount('Employee', [['status', '=', 'Active']]),
+        hdGetCount('Company'),
+        hdGetCount('Leave Application', [['status', '=', 'Open'], ['docstatus', '!=', 2]]),
+        hdGetCount('Salary Slip', [['docstatus', '=', 0]])
+      ]);
+      const v = (x) => (x === null || x === undefined ? '-' : x);
+      box.innerHTML = hdMetric('emerald', v(emps), 'Active Employees', 'users') +
+        hdMetric('indigo', v(comps), 'Companies', 'building') +
+        hdMetric('amber', v(leaves), 'Pending Leave Requests', 'users') +
+        hdMetric('blue', v(slips), 'Draft Salary Slips', 'currency');
+      // FIX-2e #7: each tile opens its screen, already filtered (was: display only)
+      const go = [
+        () => hdShowFiltered('Employee Master', 'employee', { card: 'Active', label: 'Active', test: r => r.status === 'Active' }),
+        () => navigateSidebar(null, 'Company'),
+        () => hdShowFiltered('Leave Applications', 'leave', { card: 'Pending', label: 'Pending', test: r => r.status === 'Open' }),
+        () => hdShowFiltered('Salary Slips', 'slip', { label: 'Draft (all periods)', test: r => r.docstatus === 0 })
+      ];
+      const tips = ['Open Employee Master: active employees', 'Open Company', 'Open Leave Applications: pending', 'Open Salary Slips: draft'];
+      box.querySelectorAll('.metric-card').forEach((c, i) => hdClickable(c, go[i], tips[i]));
+    }
+
+    function hdLoadView(viewId) {
+      const loaders = {
+        'view-company': hdLoadCompanies,
+        'view-departments': hdLoadDepartments,
+        'view-designations': hdLoadDesignations,
+        'view-work-locations': hdLoadBranches,
+        'view-hr-setup': hdLoadSetupCounts,
+        'view-employee-master': () => hdLoadList(HD_LISTS.employee),
+        'view-salary-structure': () => hdLoadList(HD_LISTS.ssa),
+        'view-process-payroll': () => hdLoadList(HD_LISTS.payroll),
+        'view-salary-slips': () => hdLoadList(HD_LISTS.slip),
+        'view-attendance': () => hdLoadList(HD_LISTS.attendance),
+        'view-leave-applications': () => hdLoadList(HD_LISTS.leave)
+      };
+      if (!loaders[viewId] || hdLoaded[viewId]) return;
+      hdLoaded[viewId] = true;
+      loaders[viewId]();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
