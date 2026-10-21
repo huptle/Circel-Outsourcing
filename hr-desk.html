@@ -1657,6 +1657,10 @@
     .user-menu a:hover { background: var(--sidebar-item-hover); }
     .user-menu a.danger { color: var(--accent-rose); }
     .user-menu-sep { height: 1px; background: var(--border-subtle); margin: 4px 0; }
+
+    /* FIX-2a #7: loading / empty / error states for live screens */
+    .hd-state { grid-column: 1 / -1; padding: 28px; text-align: center; color: var(--text-muted); font-size: 13px; }
+    .hd-state.error { color: var(--accent-rose); }
   </style>
 </head>
 <body>
@@ -3158,81 +3162,17 @@
                 <span>Company Masters &amp; Legal Entities</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>Primary Entity: Global Complete Solutions</span>
+                  <span id="companyPill">Loading…</span>
                 </span>
               </h1>
               <p>Corporate registration credentials, statutory compliance settings, default currency, chart of accounts, and official letterheads.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Edit Company Master details...', 'info')">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                Edit Entity
-              </button>
-              <button class="btn-emp-action" onclick="showToast('Add Subsidiary Company...', 'info')">+ Add Subsidiary</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
-          <div class="metrics-grid">
-            <div class="metric-card">
-              <div class="metric-icon-box indigo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-3"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">GCS Ltd</div>
-                <div class="metric-label">Company Abbr</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box emerald">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">INR (₹)</div>
-                <div class="metric-label">Base Currency</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box blue">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">2026-2027</div>
-                <div class="metric-label">Fiscal Year</div>
-              </div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-icon-box purple">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-              </div>
-              <div class="metric-info">
-                <div class="metric-value">4 Branches</div>
-                <div class="metric-label">Operating Locations</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="table-container" style="padding: 24px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-              <div>
-                <span class="emp-detail-label">Registered Legal Name</span>
-                <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">Global Complete Solutions Pvt Ltd</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">CIN: U72900MH2021PTC123456 &bull; GSTIN: 27AABCG1234F1Z5</div>
-              </div>
-              <div>
-                <span class="emp-detail-label">Default Contact Email</span>
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">accounts@globalcompletesolutions.com</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">HR: hr@globalcompletesolutions.com</div>
-              </div>
-              <div>
-                <span class="emp-detail-label">Registered Headquarters</span>
-                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">Bandra Kurla Complex, Mumbai, Maharashtra 400051</div>
-              </div>
-              <div>
-                <span class="emp-detail-label">Default Holiday Schedule</span>
-                <div style="font-size: 14px; font-weight: 600; color: var(--accent-emerald); margin-top: 4px;">Indian National Holidays 2026 (14 Days)</div>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2a #7: real companies from Frappe (was: one invented company with made-up CIN/GSTIN/address) -->
+          <div class="metrics-grid" id="companyMetrics"></div>
+          <div class="employee-grid" id="companyCards"><div class="hd-state">Loading companies…</div></div>
         </section>
       </div>
 
@@ -3245,92 +3185,16 @@
                 <span>Departmental Hierarchy</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>5 Active Divisions</span>
+                  <span id="departmentPill">Loading…</span>
                 </span>
               </h1>
               <p>Company organizational tree, budget allocation, cost centers, and departmental leadership oversight.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('New Department Form', 'info')">+ Add Department</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
-          <div class="employee-grid">
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);">ENG</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Engineering &amp; Technology</div>
-                    <div class="emp-designation">Lead: Praveen Kumar</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Team Strength</span>
-                    <span class="emp-detail-val">112 Staff</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Cost Center</span>
-                    <span class="emp-detail-val">CC-TECH-01</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (112)</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);">HR</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Human Resources</div>
-                    <div class="emp-designation">Lead: Ananya Sharma</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Team Strength</span>
-                    <span class="emp-detail-val">18 Staff</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Cost Center</span>
-                    <span class="emp-detail-val">CC-HR-02</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (18)</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">FIN</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Finance &amp; Accounts</div>
-                    <div class="emp-designation">Lead: Rahul Mehta</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Team Strength</span>
-                    <span class="emp-detail-val">24 Staff</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Cost Center</span>
-                    <span class="emp-detail-val">CC-FIN-03</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="navigateSidebar(event, 'Employee Master')">View Members (24)</button>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2a #7: real departments from Frappe with live staff counts (was: 3 invented departments) -->
+          <div class="employee-grid" id="departmentCards"><div class="hd-state">Loading departments…</div></div>
         </section>
       </div>
 
@@ -3343,53 +3207,27 @@
                 <span>Designations &amp; Job Matrix</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>14 Standard Roles</span>
+                  <span id="designationPill">Loading…</span>
                 </span>
               </h1>
               <p>Career bands, competency frameworks, salary grades, and standard job descriptions across Frappe HR.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('New Designation Form', 'info')">+ Add Designation</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
+          <!-- FIX-2a #7: real designations from Frappe with live staff counts (was: 3 invented job titles with fake grades/vacancies) -->
           <div class="table-container">
             <table class="modern-table">
               <thead>
                 <tr>
-                  <th>Job Title</th>
-                  <th>Grade Level</th>
-                  <th>Department</th>
-                  <th>Open Positions</th>
+                  <th>Designation</th>
                   <th>Active Employees</th>
-                  <th>Action</th>
+                  <th>Departments</th>
+                  <th>Companies</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Senior Full Stack Architect</strong></td>
-                  <td><span class="status-badge info">Grade A1</span></td>
-                  <td>Engineering</td>
-                  <td><span class="status-badge warning">2 Open</span></td>
-                  <td>14</td>
-                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
-                </tr>
-                <tr>
-                  <td><strong>Talent Acquisition Lead</strong></td>
-                  <td><span class="status-badge info">Grade B1</span></td>
-                  <td>Human Resources</td>
-                  <td><span class="status-badge success">Filled</span></td>
-                  <td>4</td>
-                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
-                </tr>
-                <tr>
-                  <td><strong>Financial Controller</strong></td>
-                  <td><span class="status-badge info">Grade A2</span></td>
-                  <td>Finance</td>
-                  <td><span class="status-badge success">Filled</span></td>
-                  <td>3</td>
-                  <td><button class="btn-emp-action" onclick="showToast('Job Description & Competencies')">Details</button></td>
-                </tr>
+              <tbody id="designationRows">
+                <tr><td colspan="4"><div class="hd-state">Loading designations…</div></td></tr>
               </tbody>
             </table>
           </div>
@@ -3405,92 +3243,16 @@
                 <span>Office Branches &amp; Work Locations</span>
                 <span class="live-status-pill">
                   <span class="pulse-dot"></span>
-                  <span>4 Operating Hubs</span>
+                  <span id="branchPill">Loading…</span>
                 </span>
               </h1>
               <p>Corporate headquarters, tech innovation centers, regional offices, and GPS geofence radiuses for attendance validation.</p>
             </div>
-            <div class="header-actions">
-              <button class="btn-emp-action primary" onclick="showToast('Add New Work Location', 'info')">+ New Location</button>
-            </div>
+            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
           </div>
 
-          <div class="employee-grid">
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">MUM</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Mumbai Corporate HQ</div>
-                    <div class="emp-designation">Bandra Kurla Complex, Mumbai</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Staff Count</span>
-                    <span class="emp-detail-val">120 Employees</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Geofence</span>
-                    <span class="status-badge success">Active (150m)</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 19.0657° N, 72.8687° E')">Geofence Map</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">BLR</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Bengaluru Technology Hub</div>
-                    <div class="emp-designation">Outer Ring Road, Bellandur, Bengaluru</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Staff Count</span>
-                    <span class="emp-detail-val">95 Employees</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Geofence</span>
-                    <span class="status-badge success">Active (200m)</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 12.9279° N, 77.6271° E')">Geofence Map</button>
-              </div>
-            </div>
-
-            <div class="employee-card">
-              <div>
-                <div class="emp-header">
-                  <div class="emp-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);">DEL</div>
-                  <div class="emp-name-title">
-                    <div class="emp-name">Delhi Regional Office</div>
-                    <div class="emp-designation">Barakhamba Road, Connaught Place, New Delhi</div>
-                  </div>
-                </div>
-                <div class="emp-details">
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Staff Count</span>
-                    <span class="emp-detail-val">33 Employees</span>
-                  </div>
-                  <div class="emp-detail-item">
-                    <span class="emp-detail-label">Geofence</span>
-                    <span class="status-badge success">Active (100m)</span>
-                  </div>
-                </div>
-              </div>
-              <div class="emp-card-actions">
-                <button class="btn-emp-action primary" onclick="showToast('Location Coordinates: 28.6304° N, 77.2177° E')">Geofence Map</button>
-              </div>
-            </div>
-          </div>
+          <!-- FIX-2a #7: real branches from Frappe with live staff counts (was: invented offices with fake geofences) -->
+          <div class="employee-grid" id="branchCards"><div class="hd-state">Loading branches…</div></div>
         </section>
       </div>
 
@@ -3960,6 +3722,8 @@
       if (activeView) {
         activeView.classList.add('active');
       }
+      // FIX-2a #7: load real records for master screens when opened
+      hdLoadView(targetViewId);
 
       const breadcrumbCurrent = document.querySelector('.breadcrumb-current');
       if (breadcrumbCurrent) {
@@ -4379,6 +4143,149 @@
         const el = document.getElementById('notifCount');
         if (el && n > 0) { el.textContent = n + ' New'; el.style.display = ''; }
       } catch (e) {}
+    }
+
+
+    // ---- FIX-2a #7: real master data (Company, Department, Designation, Branch) ----
+    const hdLoaded = {};
+    let hdEmployeesPromise = null;
+    const hdGradients = [
+      'linear-gradient(135deg, #6366f1 0%, #38bdf8 100%)', 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)',
+      'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)', 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+      'linear-gradient(135deg, #0284c7 0%, #6366f1 100%)', 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)'
+    ];
+    function hdEsc(v) {
+      return String(v === undefined || v === null ? '' : v)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function hdInitials(name) {
+      const words = String(name || '?').replace(/[^A-Za-z0-9 ]/g, ' ').trim().split(/\s+/).filter(Boolean);
+      return ((words[0] || '?')[0] + (words[1] ? words[1][0] : (words[0] || '')[1] || '')).toUpperCase();
+    }
+    async function hdFetchList(doctype, fields, filters) {
+      let url = '/api/resource/' + encodeURIComponent(doctype) + '?limit_page_length=0&fields=' + encodeURIComponent(JSON.stringify(fields));
+      if (filters) url += '&filters=' + encodeURIComponent(JSON.stringify(filters));
+      const r = await fetch(url, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+      if (r.status === 403) throw new Error('You do not have permission to view ' + doctype + '.');
+      if (!r.ok) throw new Error('Could not load ' + doctype + ' (error ' + r.status + ').');
+      return (await r.json()).data || [];
+    }
+    function hdActiveEmployees() {
+      if (!hdEmployeesPromise) {
+        hdEmployeesPromise = hdFetchList('Employee', ['name', 'company', 'department', 'designation', 'branch'], [['status', '=', 'Active']])
+          .catch(() => null); // counts show "-" if employees cannot be read
+      }
+      return hdEmployeesPromise;
+    }
+    function hdCount(emps, field, value) {
+      if (!emps) return '-';
+      return emps.filter(e => e[field] === value).length;
+    }
+    function hdState(el, text, isError) {
+      if (!el) return;
+      const html = '<div class="hd-state' + (isError ? ' error' : '') + '">' + hdEsc(text) + '</div>';
+      el.innerHTML = el.tagName === 'TBODY' ? '<tr><td colspan="4">' + html + '</td></tr>' : html;
+    }
+    function hdSetText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
+    function hdCard(i, title, subtitle, details) {
+      return '<div class="employee-card"><div>' +
+        '<div class="emp-header"><div class="emp-avatar" style="background: ' + hdGradients[i % hdGradients.length] + ';">' + hdEsc(hdInitials(title)) + '</div>' +
+        '<div class="emp-name-title"><div class="emp-name">' + hdEsc(title) + '</div><div class="emp-designation">' + hdEsc(subtitle) + '</div></div></div>' +
+        '<div class="emp-details">' + details.map(d =>
+          '<div class="emp-detail-item"><span class="emp-detail-label">' + hdEsc(d[0]) + '</span><span class="emp-detail-val">' + hdEsc(d[1]) + '</span></div>').join('') +
+        '</div></div></div>';
+    }
+    const hdIcons = {
+      building: '<path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path>',
+      currency: '<line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>',
+      users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>',
+      pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>'
+    };
+    function hdMetric(color, value, label, icon) {
+      const svg = hdIcons[icon] ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + hdIcons[icon] + '</svg>' : '';
+      return '<div class="metric-card"><div class="metric-icon-box ' + color + '">' + svg + '</div><div class="metric-info">' +
+        '<div class="metric-value">' + hdEsc(value) + '</div><div class="metric-label">' + hdEsc(label) + '</div></div></div>';
+    }
+
+    async function hdLoadCompanies() {
+      const box = document.getElementById('companyCards');
+      try {
+        const [companies, emps] = await Promise.all([hdFetchList('Company', ['*']), hdActiveEmployees()]);
+        hdSetText('companyPill', companies.length + (companies.length === 1 ? ' Company' : ' Companies'));
+        if (!companies.length) { hdState(box, 'No companies found.'); return; }
+        box.innerHTML = companies.map((c, i) => hdCard(i, c.company_name || c.name, c.country || '', [
+          ['Abbreviation', c.abbr || '-'],
+          ['Currency', c.default_currency || '-'],
+          ['Active Employees', hdCount(emps, 'company', c.name)],
+          ['Holiday List', c.default_holiday_list || '-'],
+          ['Email', c.email || '-'],
+          ['Tax ID', c.tax_id || '-']
+        ])).join('');
+        const currencies = [...new Set(companies.map(c => c.default_currency).filter(Boolean))].join(', ') || '-';
+        document.getElementById('companyMetrics').innerHTML =
+          hdMetric('indigo', companies.length, 'Companies', 'building') +
+          hdMetric('emerald', currencies, 'Base Currency', 'currency') +
+          hdMetric('blue', emps ? emps.length : '-', 'Active Employees', 'users') +
+          hdMetric('purple', emps ? new Set(emps.map(e => e.branch).filter(Boolean)).size : '-', 'Branches in Use', 'pin');
+      } catch (e) { hdSetText('companyPill', 'Unavailable'); hdState(box, e.message, true); }
+    }
+
+    async function hdLoadDepartments() {
+      const box = document.getElementById('departmentCards');
+      try {
+        const [depts, emps] = await Promise.all([hdFetchList('Department', ['*'], [['is_group', '=', 0]]), hdActiveEmployees()]);
+        hdSetText('departmentPill', depts.length + (depts.length === 1 ? ' Department' : ' Departments'));
+        if (!depts.length) { hdState(box, 'No departments found.'); return; }
+        depts.sort((a, b) => String(a.department_name || a.name).localeCompare(String(b.department_name || b.name)));
+        box.innerHTML = depts.map((d, i) => hdCard(i, d.department_name || d.name, d.company || '', [
+          ['Active Employees', hdCount(emps, 'department', d.name)],
+          ['Parent', d.parent_department || '-']
+        ])).join('');
+      } catch (e) { hdSetText('departmentPill', 'Unavailable'); hdState(box, e.message, true); }
+    }
+
+    async function hdLoadDesignations() {
+      const body = document.getElementById('designationRows');
+      try {
+        const [desigs, emps] = await Promise.all([hdFetchList('Designation', ['*']), hdActiveEmployees()]);
+        hdSetText('designationPill', desigs.length + (desigs.length === 1 ? ' Designation' : ' Designations'));
+        if (!desigs.length) { hdState(body, 'No designations found.'); return; }
+        desigs.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        body.innerHTML = desigs.map(d => {
+          const mine = emps ? emps.filter(e => e.designation === d.name) : null;
+          const depts = mine ? [...new Set(mine.map(e => e.department).filter(Boolean))].length : '-';
+          const comps = mine ? [...new Set(mine.map(e => e.company).filter(Boolean))].join(', ') || '-' : '-';
+          return '<tr><td><strong>' + hdEsc(d.designation_name || d.name) + '</strong></td><td>' + hdEsc(mine ? mine.length : '-') +
+            '</td><td>' + hdEsc(depts) + '</td><td>' + hdEsc(comps) + '</td></tr>';
+        }).join('');
+      } catch (e) { hdSetText('designationPill', 'Unavailable'); hdState(body, e.message, true); }
+    }
+
+    async function hdLoadBranches() {
+      const box = document.getElementById('branchCards');
+      try {
+        const [branches, emps] = await Promise.all([hdFetchList('Branch', ['*']), hdActiveEmployees()]);
+        hdSetText('branchPill', branches.length + (branches.length === 1 ? ' Branch' : ' Branches'));
+        if (!branches.length) { hdState(box, 'No branches found.'); return; }
+        branches.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        box.innerHTML = branches.map((b, i) => {
+          const mine = emps ? emps.filter(e => e.branch === b.name) : null;
+          const comps = mine ? [...new Set(mine.map(e => e.company).filter(Boolean))].join(', ') || '-' : '-';
+          return hdCard(i, b.branch || b.name, '', [['Active Employees', mine ? mine.length : '-'], ['Companies', comps]]);
+        }).join('');
+      } catch (e) { hdSetText('branchPill', 'Unavailable'); hdState(box, e.message, true); }
+    }
+
+    function hdLoadView(viewId) {
+      const loaders = {
+        'view-company': hdLoadCompanies,
+        'view-departments': hdLoadDepartments,
+        'view-designations': hdLoadDesignations,
+        'view-work-locations': hdLoadBranches
+      };
+      if (!loaders[viewId] || hdLoaded[viewId]) return;
+      hdLoaded[viewId] = true;
+      loaders[viewId]();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
