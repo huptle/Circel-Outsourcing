@@ -1,7 +1,0 @@
-{
-  "name": "HR Setup - Frappe HR Desk",
-  "description": "Frappe HR Desk HR Setup, Employee Directory, Payroll Processing, and Attendance tracking.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
-

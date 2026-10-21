@@ -18,7 +18,9 @@ def has_hr_desk_access() -> bool:
 def get_context(context):
     # FIX-1 #8: login required (was: public static page)
     if frappe.session.user == "Guest":
-        frappe.local.flags.redirect_location = "/login?redirect-to=/hr-desk"
+        # FIX-0: return to the page that was requested (/hr-desk or /hr-desk-dev)
+        page = "/hr-desk-dev" if frappe.local.request.path.startswith("/hr-desk-dev") else "/hr-desk"
+        frappe.local.flags.redirect_location = "/login?redirect-to=" + page
         raise frappe.Redirect
 
     if not has_hr_desk_access():
