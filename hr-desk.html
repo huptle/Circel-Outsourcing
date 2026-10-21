@@ -1668,6 +1668,11 @@
     .hd-actions { display: flex; gap: 6px; flex-wrap: wrap; }
     .hd-actions a { text-decoration: none; white-space: nowrap; }
     .metric-icon-box.amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    /* FIX-2d #7: summary cards that filter the list */
+    .metric-card.hd-filter { cursor: pointer; }
+    .metric-card.hd-filter:hover { border-color: var(--accent-primary); }
+    .metric-card.hd-filter:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+    .metric-card.hd-filter.active { border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-sm); }
     .metric-icon-box.rose { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
   </style>
 </head>
@@ -3381,11 +3386,40 @@
       if (!r.ok) return null;
       return (await r.json()).message;
     }
+    // FIX-2d #7: search and summary-card filters work together (was: search only)
     function hdFilterRows(tbodyId, q) {
-      const term = String(q || '').toLowerCase().trim();
-      document.querySelectorAll('#' + tbodyId + ' tr[data-row]').forEach(tr => {
-        tr.style.display = !term || tr.textContent.toLowerCase().indexOf(term) !== -1 ? '' : 'none';
+      const body = document.getElementById(tbodyId);
+      if (!body) return;
+      body.dataset.term = String(q || '').toLowerCase().trim();
+      hdApplyFilters(tbodyId.replace(/Rows$/, ''));
+    }
+    function hdApplyFilters(prefix) {
+      const body = document.getElementById(prefix + 'Rows');
+      if (!body) return;
+      const term = body.dataset.term || '';
+      const box = document.getElementById(prefix + 'Metrics');
+      const key = box ? box.dataset.filter || '' : '';
+      const rows = body.querySelectorAll('tr[data-row]');
+      let shown = 0;
+      rows.forEach(tr => {
+        const ok = (!term || tr.textContent.toLowerCase().indexOf(term) !== -1) && (!key || tr.dataset.key === key);
+        tr.style.display = ok ? '' : 'none';
+        if (ok) shown++;
       });
+      const note = document.getElementById(prefix + 'Note');
+      if (note) {
+        if (!note.dataset.base) note.dataset.base = note.textContent;
+        note.textContent = term || key ? 'Showing ' + shown + ' of ' + rows.length + (key ? ' · filter: ' + (box.querySelector('.metric-card.active .metric-label') || {}).textContent : '') : note.dataset.base;
+      }
+    }
+    // FIX-2d #7: clicking a summary card (e.g. Active / Left) filters the list; clicking it again shows all
+    function hdToggleFilter(prefix, card) {
+      const box = document.getElementById(prefix + 'Metrics');
+      const on = !card.classList.contains('active');
+      box.querySelectorAll('.metric-card.hd-filter').forEach(c => { c.classList.remove('active'); c.setAttribute('aria-pressed', 'false'); });
+      if (on) { card.classList.add('active'); card.setAttribute('aria-pressed', 'true'); }
+      box.dataset.filter = on ? card.dataset.key : '';
+      hdApplyFilters(prefix);
     }
     function hdLatest(rows, field) {
       const top = rows.reduce((m, r) => (r[field] && r[field] > m ? r[field] : m), '');
@@ -3397,13 +3431,22 @@
       const body = document.getElementById(p + 'Rows');
       if (!rows.length) { hdState(body, cfg.empty || 'No records found.'); }
       else {
-        body.innerHTML = rows.map(r => '<tr data-row="1">' + cfg.columns.map(c => '<td>' + c[1](r) + '</td>').join('') +
+        body.innerHTML = rows.map(r => '<tr data-row="1"' + (cfg.rowKey ? ' data-key="' + hdEsc(cfg.rowKey(r)) + '"' : '') + '>' + cfg.columns.map(c => '<td>' + c[1](r) + '</td>').join('') +
           (cfg.actions ? '<td><div class="hd-actions">' + cfg.actions(r) + '</div></td>' : '') + '</tr>').join('');
       }
       if (cfg.metrics) {
         const box = document.getElementById(p + 'Metrics');
-        if (box) box.innerHTML = cfg.metrics(rows).map(m => hdMetric(m[0], m[1], m[2], m[3])).join('');
+        if (box) {
+          // FIX-2d #7: a 5th value makes the card a filter button
+          box.dataset.filter = '';
+          box.innerHTML = cfg.metrics(rows).map(m => m[4] === undefined ? hdMetric(m[0], m[1], m[2], m[3]) :
+            hdMetric(m[0], m[1], m[2], m[3]).replace('<div class="metric-card">',
+              '<div class="metric-card hd-filter" role="button" tabindex="0" aria-pressed="false" title="Show only: ' + hdEsc(m[2]) + ' (click again to show all)" data-key="' + hdEsc(m[4]) +
+              '" onclick="hdToggleFilter(\'' + p + '\', this)" onkeydown="if (event.key === \'Enter\' || event.key === \' \') { event.preventDefault(); hdToggleFilter(\'' + p + '\', this); }">')).join('');
+        }
       }
+      const note = document.getElementById(p + 'Note'); if (note) delete note.dataset.base;
+      body.dataset.term = '';
     }
     async function hdLoadList(cfg) {
       const body = document.getElementById(cfg.prefix + 'Rows');
@@ -3424,12 +3467,12 @@
 
     const HD_LISTS = {
       employee: {
-        prefix: 'employee', doctype: 'Employee', limit: 0, order_by: 'employee_name asc',
+        prefix: 'employee', doctype: 'Employee', limit: 0, order_by: 'employee_name asc', rowKey: r => r.status,
         fields: ['name', 'employee_name', 'department', 'designation', 'status', 'company', 'date_of_joining', 'relieving_date'],
         pill: (rows) => rows.filter(r => r.status === 'Active').length + ' Active · ' + rows.length + ' Total',
         metrics: (rows) => [
-          ['emerald', rows.filter(r => r.status === 'Active').length, 'Active', 'users'],
-          ['amber', rows.filter(r => r.status === 'Left').length, 'Left', 'users'],
+          ['emerald', rows.filter(r => r.status === 'Active').length, 'Active', 'users', 'Active'],
+          ['amber', rows.filter(r => r.status === 'Left').length, 'Left', 'users', 'Left'],
           ['indigo', new Set(rows.map(r => r.company).filter(Boolean)).size, 'Companies', 'building'],
           ['blue', new Set(rows.map(r => r.department).filter(Boolean)).size, 'Departments', 'building']],
         columns: [
@@ -3443,12 +3486,13 @@
           (r.status === 'Left' || r.relieving_date ? hdPdfBtn('Employee', r.name, 'Exact Corporate Relieving Letter', 'Relieving Letter') : '')
       },
       ssa: {
-        prefix: 'ssa', doctype: 'Salary Structure Assignment', order_by: 'from_date desc', filters: [['docstatus', '!=', 2]],
+        // FIX-2d #7: load all assignments so the summary cards count every one (was: latest 500 of 601)
+        prefix: 'ssa', doctype: 'Salary Structure Assignment', limit: 0, order_by: 'from_date desc', filters: [['docstatus', '!=', 2]], rowKey: r => hdDocStatus(r.docstatus),
         fields: ['name', 'employee', 'employee_name', 'salary_structure', 'from_date', 'base', 'company', 'docstatus'],
         pill: (rows, total) => hdPlural(total === null ? rows.length : total, 'Assignment'),
         metrics: (rows) => [
-          ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users'],
-          ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users'],
+          ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users', 'Submitted'],
+          ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users', 'Draft'],
           ['blue', new Set(rows.map(r => r.employee)).size, 'Employees Covered', 'users'],
           ['indigo', new Set(rows.map(r => r.salary_structure).filter(Boolean)).size, 'Salary Structures', 'building']],
         columns: [
@@ -3462,13 +3506,13 @@
           (r.docstatus === 1 ? hdPdfBtn('Salary Structure Assignment', r.name, 'Corporate Salary Increment Letter', 'Increment Letter') : '')
       },
       payroll: {
-        prefix: 'payroll', doctype: 'Payroll Entry', order_by: 'posting_date desc', filters: [['docstatus', '!=', 2]],
+        prefix: 'payroll', doctype: 'Payroll Entry', order_by: 'posting_date desc', filters: [['docstatus', '!=', 2]], rowKey: r => hdDocStatus(r.docstatus),
         fields: ['name', 'company', 'posting_date', 'start_date', 'end_date', 'payroll_frequency', 'status', 'docstatus'],
         pill: (rows) => rows.length ? 'Latest: ' + hdDate(rows[0].start_date) + ' – ' + hdDate(rows[0].end_date) : 'No payroll entries',
         metrics: (rows) => [
           ['indigo', rows.length, 'Payroll Entries', 'building'],
-          ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users'],
-          ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users'],
+          ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users', 'Submitted'],
+          ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users', 'Draft'],
           ['blue', new Set(rows.map(r => r.company).filter(Boolean)).size, 'Companies', 'building']],
         columns: [
           ['Entry', r => '<strong>' + hdEsc(r.name) + '</strong>'],
@@ -3480,7 +3524,8 @@
         actions: r => hdDeskBtn('Payroll Entry', r.name, 'Open', true)
       },
       slip: {
-        prefix: 'slip', doctype: 'Salary Slip', order_by: 'start_date desc', filters: [['docstatus', '!=', 2]],
+        // FIX-2d #7: room for a full month of slips for every employee (was: 500)
+        prefix: 'slip', doctype: 'Salary Slip', limit: 2000, order_by: 'start_date desc', filters: [['docstatus', '!=', 2]],
         fields: ['name', 'employee', 'employee_name', 'start_date', 'end_date', 'gross_pay', 'total_deduction', 'net_pay', 'status', 'company', 'docstatus'],
         pill: (rows) => rows.length ? 'Latest period: ' + hdDate(hdLatest(rows, 'start_date').value) : 'No salary slips',
         metrics: (rows) => {
@@ -3502,7 +3547,8 @@
         actions: r => hdPdfBtn('Salary Slip', r.name, 'Salary Slip Standard', 'Payslip PDF') + hdDeskBtn('Salary Slip', r.name, 'Open')
       },
       attendance: {
-        prefix: 'attendance', doctype: 'Attendance', order_by: 'attendance_date desc', filters: [['docstatus', '!=', 2]],
+        // FIX-2d #7: room for a full day of attendance for every employee (was: 500)
+        prefix: 'attendance', doctype: 'Attendance', limit: 2000, order_by: 'attendance_date desc', filters: [['docstatus', '!=', 2]],
         fields: ['name', 'employee', 'employee_name', 'attendance_date', 'status', 'in_time', 'out_time', 'working_hours', 'shift', 'docstatus'],
         pill: (rows) => {
           const l = hdLatest(rows, 'attendance_date');
@@ -3527,13 +3573,13 @@
         actions: r => hdDeskBtn('Attendance', r.name, 'Open')
       },
       leave: {
-        prefix: 'leave', doctype: 'Leave Application', order_by: 'from_date desc', filters: [['docstatus', '!=', 2]],
+        prefix: 'leave', doctype: 'Leave Application', order_by: 'from_date desc', filters: [['docstatus', '!=', 2]], rowKey: r => r.status,
         fields: ['name', 'employee', 'employee_name', 'leave_type', 'from_date', 'to_date', 'total_leave_days', 'status', 'description', 'docstatus'],
         pill: (rows) => rows.filter(r => r.status === 'Open').length + ' Pending',
         metrics: (rows) => [
-          ['amber', rows.filter(r => r.status === 'Open').length, 'Pending', 'users'],
-          ['emerald', rows.filter(r => r.status === 'Approved').length, 'Approved', 'users'],
-          ['rose', rows.filter(r => r.status === 'Rejected').length, 'Rejected', 'users'],
+          ['amber', rows.filter(r => r.status === 'Open').length, 'Pending', 'users', 'Open'],
+          ['emerald', rows.filter(r => r.status === 'Approved').length, 'Approved', 'users', 'Approved'],
+          ['rose', rows.filter(r => r.status === 'Rejected').length, 'Rejected', 'users', 'Rejected'],
           ['blue', rows.filter(r => r.status === 'Approved').reduce((t, r) => t + (Number(r.total_leave_days) || 0), 0), 'Approved Days', 'users']],
         columns: [
           ['Employee', hdPerson],
