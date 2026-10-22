@@ -76,6 +76,13 @@ jobs:
             sleep 10
             docker ps --filter name=erpnext-demo-backend-1 --filter name=erpnext-demo-frontend-1 --format '{{.Names}}: {{.Status}}'
             echo \"Site check (200 = OK): \$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/api/method/ping)\"
+            # FIX-7d: diagnostics while the backend does not start (read-only: shows status and the backend's last log lines)
+            echo '==> Containers'
+            docker ps -a --filter name=erpnext-demo --format '{{.Names}}: {{.Status}}'
+            echo '==> Backend start command'
+            docker inspect erpnext-demo-backend-1 --format '{{json .Config.Cmd}} {{json .Config.Entrypoint}} restarts={{.RestartCount}} exit={{.State.ExitCode}}'
+            echo '==> Backend log (last 60 lines)'
+            docker logs --tail 60 erpnext-demo-backend-1 2>&1
           "
 
           echo "=========================================================="
