@@ -3909,7 +3909,7 @@
           ['Deductions', r => hdMoney(r.total_deduction)],
           ['Net', r => '<strong style="color: var(--accent-emerald);">' + hdMoney(r.net_pay) + '</strong>'],
           ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]],
-        actions: r => hdPdfBtn('Salary Slip', r.name, 'Salary Slip Standard', 'Payslip PDF') + hdDeskBtn('Salary Slip', r.name, 'Open')
+        actions: r => hdPdfBtn('Salary Slip', r.name, 'Salary Slip Standard', 'Payslip') + hdDeskBtn('Salary Slip', r.name, 'Open')
       },
       attendance: {
         // FIX-2d #7: room for a full day of attendance for every employee (was: 500)
@@ -4393,6 +4393,8 @@
         if (!sec) newSec();
         sec.cols[sec.cols.length - 1].push(df);
       });
+      // FIX-7b: fields placed before the first tab (e.g. custom fields) join the first real tab, instead of a near-empty "Details" tab
+      if (tabs.length > 1 && !tabs[0].df) { tabs[1].sections = tabs[0].sections.concat(tabs[1].sections); tabs.shift(); }
       const out = [];
       tabs.forEach(t => {
         if (t.df && (t.df.hidden || !hdEval(t.df.depends_on, doc, f.doc))) return;
@@ -5399,7 +5401,7 @@
       'Employee Information': { group: 'Employees', sub: 'Key details of every employee.', builder: true, filters: [] },
       'Employee Birthday': { group: 'Employees', sub: 'Employees with a birthday in a month.', filters: [
         { f: 'month', l: 'Month', t: 'Select', o: HD_MONTHS, d: () => HD_MONTHS[new Date().getMonth()] },
-        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, always: 1 }] },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 }] },  // FIX-7b: the report needs a company
       'Employee KYC Exception Report': { group: 'Employees', sub: 'Employees with missing KYC details.', filters: [] },
       'Daily Work Summary Replies': { group: 'Employees', sub: 'Replies to daily work summary emails.', filters: [
         { f: 'group', l: 'Group', t: 'Link', o: 'Daily Work Summary Group', reqd: 1 },

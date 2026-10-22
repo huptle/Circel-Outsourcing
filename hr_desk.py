@@ -15,6 +15,7 @@ def has_hr_desk_access() -> bool:
     return bool(HR_DESK_ROLES & set(frappe.get_roles()))
 
 
+# FIX-7b: Frappe reads this file only when the backend starts; the deploy workflows restart the backend when it changes.
 def get_default_company() -> str:
     """User default company, else the site default. The setup-wizard company often stays as the site
     default with no employees; then the company with the most active employees is used."""

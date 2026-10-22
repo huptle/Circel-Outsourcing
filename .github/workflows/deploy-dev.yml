@@ -59,11 +59,15 @@ jobs:
           echo "==> 2. Applying dev release and clearing cache..."
           $SSH_CMD "
             cp /opt/erpnext-demo/deploy_staging_dev/hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk-dev.html
+            # FIX-7b: Python page code is only re-read when the backend restarts, so restart it when hr_desk.py changed
+            PY_CHANGED=0
+            cmp -s /opt/erpnext-demo/deploy_staging_dev/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk_dev.py || PY_CHANGED=1
             cp /opt/erpnext-demo/deploy_staging_dev/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk_dev.py
             chmod 644 /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk-dev.html /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk_dev.py
             docker exec erpnext-demo-frontend-1 rm -rf /home/frappe/frappe-bench/assets/hr-desk-dev || true
             docker exec erpnext-demo-backend-1 bench --site frontend clear-cache
             docker exec erpnext-demo-backend-1 bench --site frontend clear-website-cache
+            if [ \"\$PY_CHANGED\" = 1 ]; then echo 'hr_desk.py changed: restarting backend (about 20 seconds)'; docker restart erpnext-demo-backend-1; fi
           "
 
           echo "=========================================================="
