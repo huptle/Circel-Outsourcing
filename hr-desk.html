@@ -1673,6 +1673,126 @@
     .metric-card.hd-filter:hover { border-color: var(--accent-primary); }
     .metric-card.hd-filter:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
     .metric-card.hd-filter.active { border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-sm); }
+    /* FIX-7: in-page forms, dialogs, notifications, reports, mark attendance */
+    body.hd-noscroll { overflow: hidden; }
+    .hd-form-overlay { position: fixed; inset: 0; z-index: 900; display: none; justify-content: flex-end; background: rgba(2, 6, 23, 0.55); backdrop-filter: blur(2px); }
+    .hd-form-overlay.open { display: flex; }
+    .hd-form-panel { width: min(1080px, 100%); height: 100%; display: flex; flex-direction: column; background: var(--bg-page); border-left: 1px solid var(--border-card); box-shadow: var(--shadow-lg); }
+    .hd-form-panel.busy { cursor: progress; }
+    #hdFormInner { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+    .hd-form-loading { padding: 40px; color: var(--text-muted); }
+    .hd-form-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 24px 10px; border-bottom: 1px solid var(--border-subtle); }
+    .hd-form-crumbs { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+    .hd-form-title { font-size: 20px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .hd-form-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .hd-form-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 24px; border-bottom: 1px solid var(--border-subtle); }
+    .hd-form-actions .btn-emp-action, .hd-confirm .btn-emp-action, .header-actions button.btn-emp-action, .hd-mark-go .btn-emp-action, .hd-grid .btn-emp-action { flex: 0 0 auto; width: auto; padding: 7px 14px; }
+    .btn-emp-action.danger { color: var(--accent-rose); border-color: rgba(244, 63, 94, 0.4); }
+    .btn-emp-action.danger:hover { background: rgba(244, 63, 94, 0.12); }
+    .btn-emp-action:disabled { opacity: 0.55; cursor: progress; }
+    .hd-busy { font-size: 12px; color: var(--text-muted); }
+    .hd-form-error { margin: 10px 24px 0; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.45); background: rgba(244, 63, 94, 0.1); color: var(--accent-rose); font-size: 13px; line-height: 1.5; }
+    .hd-form-tabs { display: flex; gap: 4px; padding: 8px 24px 0; border-bottom: 1px solid var(--border-subtle); overflow-x: auto; }
+    .hd-tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--text-secondary); padding: 8px 12px; font: inherit; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .hd-tab.active { color: var(--accent-primary); border-bottom-color: var(--accent-primary); font-weight: 600; }
+    .hd-form-body { flex: 1; overflow-y: auto; padding: 8px 24px 40px; }
+    .hd-sec { padding: 14px 0; border-bottom: 1px solid var(--border-subtle); }
+    .hd-sec:last-child { border-bottom: 0; }
+    .hd-sec-title { font-size: 13px; font-weight: 600; letter-spacing: 0.3px; color: var(--text-secondary); margin: 0 0 10px; text-transform: uppercase; }
+    .hd-cols { display: grid; grid-template-columns: repeat(var(--hd-cols, 1), minmax(0, 1fr)); gap: 4px 24px; }
+    .hd-field { margin-bottom: 12px; min-width: 0; }
+    .hd-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+    .hd-req { color: var(--accent-rose); margin-left: 2px; }
+    .hd-help { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .hd-heading { font-size: 14px; margin: 8px 0; color: var(--text-primary); }
+    .hd-input { width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-card); background: var(--bg-surface); color: var(--text-primary); font: inherit; font-size: 13px; }
+    .hd-input:focus, .hd-rte:focus { outline: 2px solid var(--accent-primary); outline-offset: 0; border-color: transparent; }
+    select.hd-input { cursor: pointer; }
+    textarea.hd-input { resize: vertical; min-height: 64px; }
+    .hd-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .hd-rte { min-height: 90px; max-height: 360px; overflow-y: auto; line-height: 1.55; }
+    .hd-ro { padding: 7px 0; font-size: 13px; color: var(--text-primary); word-break: break-word; }
+    .hd-rich { line-height: 1.55; }
+    .hd-rich img { max-width: 100%; }
+    .hd-muted { color: var(--text-muted); }
+    .hd-check { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-primary); cursor: pointer; }
+    .hd-check input { width: 16px; height: 16px; accent-color: var(--accent-primary); }
+    .hd-field-check { padding-top: 22px; }
+    .hd-link { position: relative; display: flex; align-items: center; gap: 4px; }
+    .hd-link .hd-input { flex: 1; }
+    .hd-link-open { border: 1px solid var(--border-card); background: var(--bg-surface); color: var(--text-secondary); border-radius: var(--radius-sm); padding: 6px 9px; cursor: pointer; }
+    .hd-suggest { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50; max-height: 280px; overflow-y: auto; padding: 4px; border-radius: var(--radius-sm); border: 1px solid var(--border-card); background: var(--bg-surface); box-shadow: var(--shadow-md); }
+    .hd-suggest.open { display: block; }
+    .hd-suggest-item { display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding: 7px 9px; border: 0; border-radius: 4px; background: transparent; color: var(--text-primary); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+    .hd-suggest-item small { color: var(--text-muted); font-size: 11px; }
+    .hd-suggest-item:hover, .hd-suggest-item:focus { background: rgba(99, 102, 241, 0.15); outline: none; }
+    .hd-suggest-new { color: var(--accent-primary); font-weight: 600; border-top: 1px solid var(--border-subtle); border-radius: 0; }
+    .hd-suggest-empty { padding: 8px 10px; font-size: 12px; color: var(--text-muted); }
+    .hd-linkval { color: var(--accent-primary); text-decoration: none; }
+    .hd-linkval:hover { text-decoration: underline; }
+    .hd-attach { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+    .hd-attach a { color: var(--accent-primary); }
+    .hd-mini { border: 1px solid var(--border-card); background: var(--bg-surface); color: var(--text-secondary); border-radius: 6px; padding: 4px 9px; font: inherit; font-size: 12px; cursor: pointer; }
+    .hd-mini:hover { color: var(--text-primary); border-color: var(--accent-primary); }
+    .hd-mini.danger { color: var(--accent-rose); }
+    .hd-grid { overflow-x: auto; }
+    .hd-grid-table td { vertical-align: top; padding: 6px 8px; }
+    .hd-grid-cell .hd-input { min-width: 110px; padding: 6px 8px; }
+    .hd-grid-row-actions { white-space: nowrap; }
+    .hd-grid-row-actions .hd-mini { margin-right: 4px; }
+    .hd-grid-more td { background: var(--bg-surface-elevated); }
+    .hd-grid .btn-emp-action { width: auto; margin-top: 8px; padding: 6px 12px; }
+    .hd-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+    .hd-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; background: var(--badge-bg); color: var(--badge-text); font-size: 12px; }
+    .hd-chip-x { border: 0; background: none; color: inherit; cursor: pointer; padding: 0 2px; }
+    .hd-field-wide { grid-column: 1 / -1; }
+    .hd-confirm { position: fixed; inset: 0; z-index: 1100; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(2, 6, 23, 0.6); }
+    .hd-confirm-box { width: min(460px, 100%); padding: 22px; border-radius: var(--radius-lg); background: var(--bg-surface); border: 1px solid var(--border-card); box-shadow: var(--shadow-lg); }
+    .hd-confirm-box h3 { margin: 0 0 8px; font-size: 17px; color: var(--text-primary); }
+    .hd-confirm-box p { margin: 0 0 18px; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+    .hd-confirm-box .hd-input { margin-bottom: 10px; }
+    .hd-confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+    .hd-info-box { width: min(680px, 100%); }
+    .hd-info-text { max-height: 50vh; overflow: auto; white-space: pre-wrap; font-size: 12px; line-height: 1.5; color: var(--text-primary); background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-sm); }
+    .hd-notif { position: absolute; z-index: 1000; width: min(380px, calc(100vw - 16px)); max-height: 70vh; display: flex; flex-direction: column; border-radius: var(--radius-md); border: 1px solid var(--border-card); background: var(--bg-surface); box-shadow: var(--shadow-lg); }
+    .hd-notif-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 14px; }
+    .hd-notif-list { overflow-y: auto; padding: 4px; }
+    .hd-notif-item { display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 9px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+    .hd-notif-item.unread { color: var(--text-primary); background: rgba(99, 102, 241, 0.08); }
+    .hd-notif-item.unread .hd-notif-subject::before { content: '● '; color: var(--accent-primary); }
+    .hd-notif-item:hover, .hd-notif-item:focus { background: rgba(99, 102, 241, 0.16); outline: none; }
+    .hd-toolbar-actions { margin-left: auto; display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .table-toolbar { gap: 8px; flex-wrap: wrap; }
+    .hd-pad { padding: 16px 18px; margin-bottom: 16px; }
+    .hd-filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px 16px; align-items: end; }
+    .hd-filter-run .btn-emp-action { width: 100%; padding: 9px 14px; }
+    .hd-report-group { margin-bottom: 22px; }
+    .hd-report-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .hd-report-card { display: flex; flex-direction: column; gap: 6px; padding: 16px; text-align: left; border-radius: var(--radius-md); border: 1px solid var(--border-card); background: var(--bg-card); color: var(--text-primary); font: inherit; font-size: 14px; cursor: pointer; transition: border-color var(--transition-fast); }
+    .hd-report-card:hover, .hd-report-card:focus { border-color: var(--accent-primary); outline: none; }
+    .hd-report-msg { margin-bottom: 16px; padding: 12px 14px; border-radius: var(--radius-sm); background: var(--bg-card); border: 1px solid var(--border-card); font-size: 13px; color: var(--text-secondary); }
+    .hd-scroll-x { overflow-x: auto; }
+    .hd-num { text-align: right; font-variant-numeric: tabular-nums; }
+    tr.hd-bold td { font-weight: 700; }
+    .hd-mark-bar { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); }
+    .hd-mark-bar select.hd-input { width: auto; margin-left: 6px; }
+    .hd-pick-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px 14px; max-height: 420px; overflow-y: auto; }
+    .hd-pick-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; font-size: 13px; color: var(--text-primary); cursor: pointer; }
+    .hd-pick-row:hover { background: var(--sidebar-item-hover); }
+    .hd-pick-row input { accent-color: var(--accent-primary); }
+    .hd-mark-go { display: flex; align-items: center; gap: 12px; margin: 4px 0 18px; }
+    .hd-mark-go .btn-emp-action { width: auto; padding: 9px 18px; }
+    details.table-container summary { cursor: pointer; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; }
+    .hd-card-edit { position: absolute; top: 12px; right: 12px; width: auto; padding: 4px 10px; font-size: 12px; }
+    .employee-card { position: relative; }
+    .hd-actions .btn-emp-action { width: auto; }
+    @media (max-width: 760px) {
+      .hd-cols { grid-template-columns: 1fr; }
+      .hd-form-head, .hd-form-actions, .hd-form-body, .hd-form-tabs { padding-left: 16px; padding-right: 16px; }
+      .hd-form-error { margin: 10px 16px 0; }
+      .hd-field-check { padding-top: 0; }
+    }
+
     .hd-pick .metric-label::after { content: ' ▾'; }
     .employee-card.hd-filter, tr.hd-filter { cursor: pointer; }
     .employee-card.hd-filter:hover { border-color: var(--accent-primary); }
@@ -1728,7 +1848,8 @@
 
     <!-- Notification pill -->
     <!-- FIX-1 #7: notifications open the real list; badge shows the real unread count (was: fixed "3 New") -->
-    <div class="sidebar-notifications" onclick="window.location.href = window.hrDesk.deskUrl + '/notification-log'">
+    <!-- FIX-10 #7: notifications open inside HR Desk (was: classic desk list) -->
+    <div class="sidebar-notifications" role="button" tabindex="0" onclick="hdToggleNotifications(this)" onkeydown="if (event.key === 'Enter') hdToggleNotifications(this)">
       <div style="display: flex; align-items: center; gap: 8px;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -1816,6 +1937,17 @@
           </svg>
         </span>
         <span class="menu-text">Leave Applications</span>
+      </a>
+
+      <!-- FIX-8 #6: Job Offers with offer and appointment letters; FIX-9 #4: reports inside HR Desk -->
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Job Offers')">
+        <span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span>
+        <span class="menu-text">Job Offers</span>
+      </a>
+
+      <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Reports')">
+        <span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+        <span class="menu-text">Reports</span>
       </a>
 
       <a href="#" class="menu-item" onclick="navigateSidebar(event, 'Departments')">
@@ -1907,11 +2039,7 @@
       </div>
 
       <div class="nav-actions">
-        <!-- Back to Frappe Desk -->
-        <a href="/app/hr-setup" class="btn-emp-action" style="padding: 6px 12px; font-size: 12px; text-decoration: none; display: flex; align-items: center; gap: 6px; border-radius: 6px; font-weight: 500;" title="Return to Frappe ERPNext Desk">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          <span>Back to Desk</span>
-        </a>
+        <!-- FIX-10 #4: "Back to Desk" (old HR Setup workspace) removed; the classic desk stays one click away in the account menu -->
 
         <!-- Theme Toggle -->
         <button class="action-icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme (Dark/Light)">
@@ -2272,13 +2400,13 @@
               </h1>
               <p>Search, manage, and inspect verified employee records, organizational departments, and active onboarding workflows.</p>
             </div>
-            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('employee/new'); return false;" style="text-decoration: none;">New Employee ↗</a><a class="btn-emp-action" href="#" onclick="hdOpenDesk('employee'); return false;" style="text-decoration: none;">Excel Sync (Employee list) ↗</a></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Employee')">New Employee</button><button type="button" class="btn-emp-action" onclick="hdOpenImport('Employee')">Import from Excel</button></div>
           </div>
 
           <!-- FIX-2b #7: real employees, all records, searchable from Frappe (was: 248 invented records, fake metrics and demo people) -->
           <div class="metrics-grid" id="employeeMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('employeeRows', this.value)"><span class="hd-note" id="employeeNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="employeeClear" style="display: none;" onclick="hdSetFilter('employee', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('employeeRows', this.value)"><span class="hd-note" id="employeeNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="employeeClear" style="display: none;" onclick="hdSetFilter('employee', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('employee')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('employee')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="employeeHead"></tr></thead>
               <tbody id="employeeRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
@@ -2301,13 +2429,13 @@
               </h1>
               <p>Map remuneration packages, CTC components, tax allowances, and effective lifecycle dates across employee grade bands.</p>
             </div>
-            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('salary-structure-assignment/new'); return false;" style="text-decoration: none;">Assign Structure ↗</a></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Salary Structure Assignment')">Assign Structure</button></div>
           </div>
 
           <!-- FIX-2b #7: real salary structure assignments from Frappe (was: fake CTC, bands and demo employees) -->
           <div class="metrics-grid" id="ssaMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('ssaRows', this.value)"><span class="hd-note" id="ssaNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="ssaClear" style="display: none;" onclick="hdSetFilter('ssa', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('ssaRows', this.value)"><span class="hd-note" id="ssaNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="ssaClear" style="display: none;" onclick="hdSetFilter('ssa', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('ssa')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('ssa')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="ssaHead"></tr></thead>
               <tbody id="ssaRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
@@ -2330,13 +2458,13 @@
               </h1>
               <p>Automate monthly salary disbursements, generate verified tax slips, compute deductions, and trigger direct bank remittances.</p>
             </div>
-            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('payroll-entry/new'); return false;" style="text-decoration: none;">New Payroll Entry ↗</a></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Payroll Entry')">New Payroll Entry</button></div>
           </div>
 
           <!-- FIX-2b #7: real payroll entries from Frappe (was: a fake progress bar and invented payout figures) -->
           <div class="metrics-grid" id="payrollMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('payrollRows', this.value)"><span class="hd-note" id="payrollNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="payrollClear" style="display: none;" onclick="hdSetFilter('payroll', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('payrollRows', this.value)"><span class="hd-note" id="payrollNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="payrollClear" style="display: none;" onclick="hdSetFilter('payroll', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('payroll')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('payroll')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="payrollHead"></tr></thead>
               <tbody id="payrollRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
@@ -2365,7 +2493,7 @@
           <!-- FIX-2b #7: real salary slips with payslip PDF per slip from Frappe (was: demo rows and a fake payslip pop-up) -->
           <div class="metrics-grid" id="slipMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('slipRows', this.value)"><span class="hd-note" id="slipNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="slipClear" style="display: none;" onclick="hdSetFilter('slip', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('slipRows', this.value)"><span class="hd-note" id="slipNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="slipClear" style="display: none;" onclick="hdSetFilter('slip', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('slip')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('slip')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="slipHead"></tr></thead>
               <tbody id="slipRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
@@ -2388,13 +2516,13 @@
               </h1>
               <p>Real-time biometric punch logs, shift schedules, overtime calculations, and geofenced mobile clock-ins.</p>
             </div>
-            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('attendance/new'); return false;" style="text-decoration: none;">Mark Attendance ↗</a></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenMarkAttendance()">Mark Attendance (whole day)</button><button type="button" class="btn-emp-action" onclick="hdOpenForm('Attendance')">Single Attendance</button></div>
           </div>
 
           <!-- FIX-2b #7: real attendance records from Frappe (was: 94.8% fake figure and demo rows) -->
           <div class="metrics-grid" id="attendanceMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('attendanceRows', this.value)"><span class="hd-note" id="attendanceNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="attendanceClear" style="display: none;" onclick="hdSetFilter('attendance', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('attendanceRows', this.value)"><span class="hd-note" id="attendanceNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="attendanceClear" style="display: none;" onclick="hdSetFilter('attendance', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('attendance')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('attendance')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="attendanceHead"></tr></thead>
               <tbody id="attendanceRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
@@ -2417,13 +2545,13 @@
               </h1>
               <p>Review leave applications, manage employee leave balances, configure holiday lists, and audit compensatory offs.</p>
             </div>
-            <div class="header-actions"><!-- FIX-5 #5 (partial): opens the real Frappe form instead of a pop-up --><a class="btn-emp-action primary" href="#" onclick="hdOpenDesk('leave-application/new'); return false;" style="text-decoration: none;">New Leave Application ↗</a></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Leave Application')">New Leave Application</button></div>
           </div>
 
           <!-- FIX-2b #7: real leave applications from Frappe (was: demo rows and pop-up approve/reject buttons) -->
           <div class="metrics-grid" id="leaveMetrics"></div>
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('leaveRows', this.value)"><span class="hd-note" id="leaveNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="leaveClear" style="display: none;" onclick="hdSetFilter('leave', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('leaveRows', this.value)"><span class="hd-note" id="leaveNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="leaveClear" style="display: none;" onclick="hdSetFilter('leave', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('leave')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('leave')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="leaveHead"></tr></thead>
               <tbody id="leaveRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
@@ -2450,12 +2578,120 @@
           </div>
 
           <div class="table-container">
-            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('recordsRows', this.value)"><span class="hd-note" id="recordsNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="recordsClear" style="display: none;" onclick="hdSetFilter('records', null); return false;">Clear filter</a></div>
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" oninput="hdFilterRows('recordsRows', this.value)"><span class="hd-note" id="recordsNote"></span><!-- FIX-2e #7 --><a href="#" class="hd-clear" id="recordsClear" style="display: none;" onclick="hdSetFilter('records', null); return false;">Clear filter</a><!-- FIX-2f / FIX-10 --><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('records')">Export CSV</button><button type="button" class="hd-mini" onclick="hdImportFor('records')">Import</button></span></div>
             <table class="modern-table">
               <thead><tr id="recordsHead"></tr></thead>
               <tbody id="recordsRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
             </table>
           </div>
+        </section>
+      </div>
+
+      <!-- FIX-8 #6: Job Offers with offer / appointment letters (was: not in HR Desk) -->
+      <div class="workspace-view" id="view-job-offers">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Job Offers</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span id="offerPill">Loading…</span>
+                </span>
+              </h1>
+              <p>Offers to candidates, with offer and appointment letters.</p>
+            </div>
+            <div class="header-actions"><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Job Offer')">New Job Offer</button><button type="button" class="btn-emp-action" onclick="hdOpenForm('Job Applicant')">New Job Applicant</button></div>
+          </div>
+
+          <div class="metrics-grid" id="offerMetrics"></div>
+          <div class="table-container">
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search…" aria-label="Search" oninput="hdFilterRows('offerRows', this.value)"><span class="hd-note" id="offerNote"></span><a href="#" class="hd-clear" id="offerClear" style="display: none;" onclick="hdSetFilter('offer', null); return false;">Clear filter</a><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRefreshView()">Refresh</button><button type="button" class="hd-mini" onclick="hdExportCsv('offer')">Export CSV</button></span></div>
+            <table class="modern-table">
+              <thead><tr id="offerHead"></tr></thead>
+              <tbody id="offerRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- FIX-9 #4: reports inside HR Desk (was: classic desk) -->
+      <div class="workspace-view" id="view-reports">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Reports</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span id="reportsPill">Loading…</span>
+                </span>
+              </h1>
+              <p>HR, attendance, leave and recruitment reports.</p>
+            </div>
+            <div class="header-actions"></div>
+          </div>
+
+          <div id="reportCards"></div>
+        </section>
+      </div>
+
+      <div class="workspace-view" id="view-report">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span id="reportTitle">Report</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span id="reportPill">Loading…</span>
+                </span>
+              </h1>
+              <p id="reportSubtitle"></p>
+            </div>
+            <div class="header-actions" id="reportActions"><button type="button" class="btn-emp-action" onclick="navigateSidebar(null, 'Reports')">All reports</button></div>
+          </div>
+
+          <div class="table-container hd-pad"><div class="hd-filters" id="reportFilters"></div></div>
+          <div id="reportSummary"></div>
+          <div class="table-container">
+            <div class="table-toolbar"><input class="hd-search" type="search" placeholder="Search results…" aria-label="Search results" oninput="hdFilterRows('reportRows', this.value)"><span class="hd-note" id="reportNote"></span><span class="hd-toolbar-actions"><button type="button" class="hd-mini" onclick="hdRunReport()">Run again</button><button type="button" class="hd-mini" onclick="hdExportCsv('report')">Export CSV</button></span></div>
+            <div class="hd-scroll-x"><table class="modern-table">
+              <thead><tr id="reportHead"></tr></thead>
+              <tbody id="reportRows"><tr><td colspan="20"><div class="hd-state">Loading…</div></td></tr></tbody>
+            </table></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- FIX-7 #5: mark attendance for a whole day (was: one blank form in the classic desk) -->
+      <div class="workspace-view" id="view-mark-attendance">
+        <section class="page-header">
+          <div class="header-row">
+            <div class="title-area">
+              <h1>
+                <span>Mark Attendance</span>
+                <span class="live-status-pill">
+                  <span class="pulse-dot"></span>
+                  <span id="markPill">Loading…</span>
+                </span>
+              </h1>
+              <p>Mark attendance for many employees for one day.</p>
+            </div>
+            <div class="header-actions"><button type="button" class="btn-emp-action" onclick="navigateSidebar(null, 'Attendance')">Back to Attendance</button></div>
+          </div>
+
+          <div class="table-container hd-pad">
+            <div class="hd-filters">
+              <div class="hd-filter-field"><label class="hd-label" for="markDate">Date<span class="hd-req">*</span></label><input type="date" id="markDate" class="hd-input"></div>
+              <div class="hd-filter-field"><label class="hd-label" for="markCompany">Company</label><div class="hd-link"><input type="text" id="markCompany" class="hd-input hd-slink" autocomplete="off" data-link="Company" placeholder="Any company"><div class="hd-suggest" role="listbox"></div></div></div>
+              <div class="hd-filter-field"><label class="hd-label" for="markDepartment">Department</label><div class="hd-link"><input type="text" id="markDepartment" class="hd-input hd-slink" autocomplete="off" data-link="Department" placeholder="Any department"><div class="hd-suggest" role="listbox"></div></div></div>
+              <div class="hd-filter-field"><label class="hd-label" for="markBranch">Branch</label><div class="hd-link"><input type="text" id="markBranch" class="hd-input hd-slink" autocomplete="off" data-link="Branch" placeholder="Any branch"><div class="hd-suggest" role="listbox"></div></div></div>
+              <div class="hd-filter-field"><label class="hd-label" for="markDesignation">Designation</label><div class="hd-link"><input type="text" id="markDesignation" class="hd-input hd-slink" autocomplete="off" data-link="Designation" placeholder="Any designation"><div class="hd-suggest" role="listbox"></div></div></div>
+              <div class="hd-filter-field hd-filter-run"><button type="button" class="btn-emp-action primary" onclick="hdMarkLoad()">Get Employees</button></div>
+            </div>
+          </div>
+          <div id="markResult"><div class="hd-state">Choose the day and press Get Employees.</div></div>
         </section>
       </div>
 
@@ -2473,7 +2709,7 @@
               </h1>
               <p>Corporate registration credentials, statutory compliance settings, default currency, chart of accounts, and official letterheads.</p>
             </div>
-            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Company')">New Company</button><button type="button" class="btn-emp-action" onclick="hdRefreshView()">Refresh</button></div>
           </div>
 
           <!-- FIX-2a #7: real companies from Frappe (was: one invented company with made-up CIN/GSTIN/address) -->
@@ -2496,7 +2732,7 @@
               </h1>
               <p>Company organizational tree, budget allocation, cost centers, and departmental leadership oversight.</p>
             </div>
-            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Department')">New Department</button><button type="button" class="btn-emp-action" onclick="hdRefreshView()">Refresh</button></div>
           </div>
 
           <!-- FIX-2a #7: real departments from Frappe with live staff counts (was: 3 invented departments) -->
@@ -2518,7 +2754,7 @@
               </h1>
               <p>Career bands, competency frameworks, salary grades, and standard job descriptions across Frappe HR.</p>
             </div>
-            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Designation')">New Designation</button><button type="button" class="btn-emp-action" onclick="hdRefreshView()">Refresh</button></div>
           </div>
 
           <!-- FIX-2a #7: real designations from Frappe with live staff counts (was: 3 invented job titles with fake grades/vacancies) -->
@@ -2530,10 +2766,11 @@
                   <th>Active Employees</th>
                   <th>Departments</th>
                   <th>Companies</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="designationRows">
-                <tr><td colspan="4"><div class="hd-state">Loading designations…</div></td></tr>
+                <tr><td colspan="5"><div class="hd-state">Loading designations…</div></td></tr>
               </tbody>
             </table>
           </div>
@@ -2554,7 +2791,7 @@
               </h1>
               <p>Corporate headquarters, tech innovation centers, regional offices, and GPS geofence radiuses for attendance validation.</p>
             </div>
-            <div class="header-actions"><!-- FIX-2a #7: removed pop-up-only buttons; real actions come in Fix 4 (#5) --></div>
+            <div class="header-actions"><!-- FIX-7 #5: opens the form inside HR Desk (was: classic desk in a new tab) --><button type="button" class="btn-emp-action primary" onclick="hdOpenForm('Branch')">New Branch</button><button type="button" class="btn-emp-action" onclick="hdRefreshView()">Refresh</button></div>
           </div>
 
           <!-- FIX-2a #7: real branches from Frappe with live staff counts (was: invented offices with fake geofences) -->
@@ -2845,14 +3082,17 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.5">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
-        <span>${msg}</span>
+        <span></span>
       `;
+      // FIX-7: messages can come from the server, so they are shown as text, never as HTML
+      toast.querySelector('span').textContent = msg;
+      toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
       container.appendChild(toast);
       setTimeout(() => {
         if (toast.parentNode === container) {
           container.removeChild(toast);
         }
-      }, 3000);
+      }, type === 'error' ? 6000 : 3000);
     }
 
     // Command Palette Modal Logic
@@ -2892,7 +3132,7 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">No documents matching "' + query + '"</div>';
+        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">No documents matching "' + hdEsc(query) + '"</div>';
         return;
       }
 
@@ -3003,7 +3243,12 @@
       'Department': 'view-departments',
       'Designation': 'view-designations',
       'Employee': 'view-employee-master',
-      'Salary Structure': 'view-salary-structure'
+      'Salary Structure': 'view-salary-structure',
+      // FIX-7 / FIX-8 / FIX-9: new screens
+      'Job Offers': 'view-job-offers',
+      'Reports': 'view-reports',
+      'Report': 'view-report',
+      'Mark Attendance': 'view-mark-attendance'
     };
 
     function navigateSidebar(event, title) {
@@ -3050,6 +3295,7 @@
       // FIX-3 #4: these open inside HR Desk now (was: classic desk, nothing, or the wrong screen)
       if (HD_RECORDS[docName]) { hdOpenRecords(docName); return; }
       if (docName === 'Relieving & Experience Letters') { navigateSidebar(null, 'Employee Master'); return; }
+      if (docName === 'Offer Letter' || docName === 'Appointment Letter') { navigateSidebar(null, 'Job Offers'); return; }
       const directMap = {
         'Company': 'Company',
         'Branch': 'Work Locations',
@@ -3066,38 +3312,15 @@
         'Leave Application': 'Leave Applications'
       };
 
-      const directDeskLinks = {
-        'Full and Final Statement': '/app/full-and-final-statement',
-        'Employee Separation': '/app/employee-separation',
-        'Employee Exits': '/app/query-report/Employee%20Exits',
-        'Employee Exits Report': '/app/query-report/Employee%20Exits',
-        'HR Settings': '/app/hr-settings',
-        'Payroll Settings': '/app/payroll-settings',
-        'Expense Claim': '/app/expense-claim',
-        'Employee Advance': '/app/employee-advance',
-        'Travel Request': '/app/travel-request',
-        'Monthly Attendance Sheet': '/app/query-report/Monthly%20Attendance%20Sheet',
-        'Recruitment Analytics': '/app/query-report/Recruitment%20Analytics',
-        'Employee Analytics': '/app/query-report/Employee%20Analytics',
-        'Employee Leave Balance': '/app/query-report/Employee%20Leave%20Balance',
-        'Employee Leave Balance Summary': '/app/query-report/Employee%20Leave%20Balance%20Summary',
-        'Employee Advance Summary': '/app/query-report/Employee%20Advance%20Summary',
-        'Employee Information': '/app/query-report/Employee%20Information',
-        'Employee Birthday': '/app/query-report/Employee%20Birthday',
-        'Employees Working on a Holiday': '/app/query-report/Employees%20Working%20on%20a%20Holiday',
-        'Daily Work Summary Group': '/app/daily-work-summary-group',
-        'Daily Work Summary Replies': '/app/query-report/Daily%20Work%20Summary%20Replies',
-        'Compliance Rule': '/app/compliance-rule',
-        'Offer Letter Formula Settings': '/app/offer-letter-formula-settings',
-        'Employee KYC Exception Report': '/app/query-report/Employee%20KYC%20Exception%20Report',
-        'Relieving & Experience Letters': '/app/employee'
-      };
+      // FIX-7 / FIX-9 / FIX-10: settings, reports and job offers open inside HR Desk (was: 23 links to the classic desk)
+      const settings = ['HR Settings', 'Payroll Settings', 'Offer Letter Formula Settings'];
+      if (settings.includes(docName)) { hdOpenForm(docName, docName); return; }
+      if (HD_REPORTS[docName] || HD_REPORT_ALIASES[docName]) { hdOpenReport(docName); return; }
+      if (docName === 'Job Offer' || docName === 'Job Offers') { navigateSidebar(null, 'Job Offers'); return; }
+      if (docName === 'Mark Attendance') { hdOpenMarkAttendance(); return; }
 
       if (directMap[docName]) {
         navigateSidebar(null, directMap[docName]);
-      } else if (directDeskLinks[docName]) {
-        showToast('Opening ' + docName + ' in Frappe Desk...', 'info');
-        window.open(directDeskLinks[docName], '_blank');
       } else {
         showToast('Opening ' + docName + '...', 'info');
       }
@@ -3106,6 +3329,11 @@
     function initRouteFromHash() {
       const hash = window.location.hash.replace('#', '');
       if (!hash) return;
+      // FIX-9 #4: deep links to reports, e.g. #report-monthly-attendance-sheet
+      if (hash.indexOf('report-') === 0) {
+        const rn = Object.keys(HD_REPORTS).find(r => hdSlug(r) === hash.slice(7));
+        if (rn) { hdOpenReport(rn); return; }
+      }
       // FIX-3 #4: deep links to records screens, e.g. #records-full-and-final-statement
       if (hash.indexOf('records-') === 0) {
         const dt = Object.keys(HD_RECORDS).find(d => hdSlug(d) === hash.slice(8));
@@ -3178,9 +3406,7 @@
       const menu = document.getElementById('userMenu');
       if (menu && menu.classList.contains('open') && !menu.contains(e.target)) menu.classList.remove('open');
     });
-    function openMySettings() {
-      window.location.href = window.hrDesk.deskUrl + '/user/' + encodeURIComponent(window.hrDesk.user);
-    }
+    // FIX-10 #3: openMySettings now opens My Profile inside HR Desk (see below)
     async function hrDeskLogout() {
       try {
         await fetch('/api/method/logout', {
@@ -3198,7 +3424,8 @@
         if (!r.ok) return;
         const n = (await r.json()).message || 0;
         const el = document.getElementById('notifCount');
-        if (el && n > 0) { el.textContent = n + ' New'; el.style.display = ''; }
+        // FIX-2f #7: the badge also hides again when everything is read
+        if (el) { el.textContent = n + ' New'; el.style.display = n > 0 ? '' : 'none'; }
       } catch (e) {}
     }
 
@@ -3264,6 +3491,18 @@
         '<div class="metric-value">' + hdEsc(value) + '</div><div class="metric-label">' + hdEsc(label) + '</div></div></div>';
     }
 
+    // FIX-7 #5: every master card has an Edit button (the card itself still shows its employees)
+    function hdEditButtons(box, doctype, records) {
+      box.querySelectorAll('.employee-card').forEach((el, i) => {
+        if (!records[i]) return;
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'btn-emp-action hd-card-edit'; b.textContent = 'Edit';
+        b.setAttribute('aria-label', 'Edit ' + doctype + ' ' + records[i].name);
+        b.addEventListener('click', e => { e.stopPropagation(); hdOpenForm(doctype, records[i].name); });
+        b.addEventListener('keydown', e => e.stopPropagation());
+        el.appendChild(b);
+      });
+    }
     async function hdLoadCompanies() {
       const box = document.getElementById('companyCards');
       try {
@@ -3287,6 +3526,7 @@
         // FIX-2e #7: company cards and the employee / branch tiles open the matching screen
         box.querySelectorAll('.employee-card').forEach((el, i) => hdClickable(el,
           () => hdShowBy('Employee Master', 'employee', 'company', companies[i].name, 'Company', 'Companies'), 'Show employees of this company'));
+        hdEditButtons(box, 'Company', companies);
         const tiles = document.querySelectorAll('#companyMetrics .metric-card');
         hdClickable(tiles[2], () => hdShowFiltered('Employee Master', 'employee', { card: 'Active', label: 'Active', test: r => r.status === 'Active' }), 'Open Employee Master: active employees');
         hdClickable(tiles[3], () => navigateSidebar(null, 'Work Locations'), 'Open Work Locations');
@@ -3307,6 +3547,7 @@
         // FIX-2e #7: a department card shows that department's employees
         box.querySelectorAll('.employee-card').forEach((el, i) => hdClickable(el,
           () => hdShowBy('Employee Master', 'employee', 'department', depts[i].name, 'Department', 'Departments'), 'Show employees of this department'));
+        hdEditButtons(box, 'Department', depts);
       } catch (e) { hdSetText('departmentPill', 'Unavailable'); hdState(box, e.message, true); }
     }
 
@@ -3322,7 +3563,8 @@
           const depts = mine ? [...new Set(mine.map(e => e.department).filter(Boolean))].length : '-';
           const comps = mine ? [...new Set(mine.map(e => e.company).filter(Boolean))].join(', ') || '-' : '-';
           return '<tr><td><strong>' + hdEsc(d.designation_name || d.name) + '</strong></td><td>' + hdEsc(mine ? mine.length : '-') +
-            '</td><td>' + hdEsc(depts) + '</td><td>' + hdEsc(comps) + '</td></tr>';
+            '</td><td>' + hdEsc(depts) + '</td><td>' + hdEsc(comps) + '</td><td>' +
+            '<button type="button" class="btn-emp-action" data-dt="Designation" data-dn="' + hdEsc(d.name) + '" onclick="event.stopPropagation(); hdOpenForm(this.dataset.dt, this.dataset.dn)">Edit</button></td></tr>';
         }).join('');
         // FIX-2e #7: a designation row shows the employees with that designation
         body.querySelectorAll('tr').forEach((tr, i) => hdClickable(tr,
@@ -3345,22 +3587,22 @@
         // FIX-2e #7: a branch card shows the employees at that branch
         box.querySelectorAll('.employee-card').forEach((el, i) => hdClickable(el,
           () => hdShowBy('Employee Master', 'employee', 'branch', branches[i].name, 'Branch'), 'Show employees at this branch'));
+        hdEditButtons(box, 'Branch', branches);
       } catch (e) { hdSetText('branchPill', 'Unavailable'); hdState(box, e.message, true); }
     }
 
     // ---- FIX-2b / FIX-3 / FIX-6: generic live lists (real data, escaped, no demo fallback) ----
     function hdSlug(doctype) { return String(doctype).toLowerCase().replace(/ /g, '-'); }
-    function hdOpenDesk(path) { window.open(window.hrDesk.deskUrl + '/' + path, '_blank'); }
+    // FIX-7 #5: row buttons open the record inside HR Desk (was: classic desk in a new tab)
     function hdDeskBtn(doctype, name, label, primary) {
-      const path = hdSlug(doctype) + '/' + encodeURIComponent(name);
-      return '<a class="btn-emp-action' + (primary ? ' primary' : '') + '" href="#" data-desk="' + hdEsc(path) +
-        '" onclick="hdOpenDesk(this.dataset.desk); return false;">' + hdEsc(label || 'Open') + ' ↗</a>';
+      return '<button type="button" class="btn-emp-action' + (primary ? ' primary' : '') + '" data-dt="' + hdEsc(doctype) + '" data-dn="' + hdEsc(name) +
+        '" onclick="hdOpenForm(this.dataset.dt, this.dataset.dn)">' + hdEsc(label || 'Open') + '</button>';
     }
     // FIX-6 #6: letters/payslips use the record's own name and the team's print formats (was: one fixed document for everyone)
     function hdPdfBtn(doctype, name, format, label) {
       const url = '/api/method/frappe.utils.print_format.download_pdf?doctype=' + encodeURIComponent(doctype) +
         '&name=' + encodeURIComponent(name) + '&format=' + encodeURIComponent(format) + '&no_letterhead=0';
-      return '<a class="btn-emp-action" href="' + hdEsc(url) + '" target="_blank" rel="noopener">' + hdEsc(label) + ' ↗</a>';
+      return '<a class="btn-emp-action" href="' + hdEsc(url) + '" target="_blank" rel="noopener">' + hdEsc(label) + ' (PDF)</a>';
     }
     function hdPlural(n, word) { return n + ' ' + word + (Number(n) === 1 ? '' : 's'); }
     function hdDate(v) {
@@ -3435,6 +3677,8 @@
         tr.style.display = ok ? '' : 'none';
         if (ok) shown++;
       });
+      const old = body.querySelector('tr.hd-nomatch'); if (old) old.remove();
+      if (trs.length && !shown) body.insertAdjacentHTML('beforeend', '<tr class="hd-nomatch"><td colspan="20"><div class="hd-state">No records match this filter.</div></td></tr>');
       const note = document.getElementById(prefix + 'Note');
       if (note) {
         if (!note.dataset.base) note.dataset.base = note.textContent;
@@ -3540,7 +3784,7 @@
         if (box) {
           // FIX-2e #7: a 5th value makes the card clickable: a test function filters, { pick } opens a chooser
           const cards = cfg.metrics(rows);
-          HD_VIEW[p] = { rows: rows, cards: cards, filter: null };
+          HD_VIEW[p] = { rows: rows, cards: cards, filter: null, exportCols: cfg.exportCols || cfg.fields, title: cfg.doctype };
           box.innerHTML = cards.map((m, i) => {
             const html = hdMetric(m[0], m[1], m[2], m[3]);
             if (!m[4]) return html;
@@ -3553,14 +3797,17 @@
           }).join('');
         }
       } else {
-        HD_VIEW[p] = { rows: rows, cards: [], filter: null };
+        HD_VIEW[p] = { rows: rows, cards: [], filter: null, exportCols: cfg.exportCols || (cfg.fields && cfg.fields[0] !== '*' ? cfg.fields : null), title: cfg.doctype };
       }
       const note = document.getElementById(p + 'Note'); if (note) delete note.dataset.base;
-      body.dataset.term = '';
+      // FIX-2f #7: a refreshed list keeps what was typed in its search box
+      const search = body.closest('.table-container') && body.closest('.table-container').querySelector('.hd-search');
+      body.dataset.term = search ? String(search.value || '').toLowerCase().trim() : '';
       const clear = document.getElementById(p + 'Clear'); if (clear) clear.style.display = 'none';
     }
     async function hdLoadList(cfg) {
       const body = document.getElementById(cfg.prefix + 'Rows');
+      const keep = HD_VIEW[cfg.prefix] && HD_VIEW[cfg.prefix].filter;   // FIX-2f: filter survives a refresh
       try {
         const [rows, total] = await Promise.all([
           hdFetch(cfg.doctype, cfg.fields || ['*'], { filters: cfg.filters, order_by: cfg.order_by, limit: cfg.limit }),
@@ -3572,6 +3819,8 @@
         hdSetText(cfg.prefix + 'Note', total !== null && total > shown ? 'Showing latest ' + shown + ' of ' + total + ' records' : hdPlural(shown, 'record'));
         // FIX-2e #7: apply a filter requested by another screen (e.g. an HR Setup tile)
         if (HD_PENDING[cfg.prefix]) { const f = HD_PENDING[cfg.prefix]; delete HD_PENDING[cfg.prefix]; hdSetFilter(cfg.prefix, f); }
+        else if (keep) hdSetFilter(cfg.prefix, keep);
+        else if (body.dataset.term) hdApplyFilters(cfg.prefix);
       } catch (e) {
         hdSetText(cfg.prefix + 'Pill', 'Unavailable');
         hdState(body, e.message, true);
@@ -3595,6 +3844,7 @@
           ['Status', r => hdBadge(r.status)],
           ['Joined', r => hdDate(r.date_of_joining)]],
         actions: r => hdDeskBtn('Employee', r.name, 'Open', true) +
+          hdPdfBtn('Employee', r.name, 'Exact Corporate Appointment Letter - Employee', 'Appointment Letter') +
           hdPdfBtn('Employee', r.name, 'Exact Corporate Experience Certificate', 'Experience Letter') +
           (r.status === 'Left' || r.relieving_date ? hdPdfBtn('Employee', r.name, 'Exact Corporate Relieving Letter', 'Relieving Letter') : '')
       },
@@ -3640,7 +3890,7 @@
       slip: {
         // FIX-2d #7: room for a full month of slips for every employee (was: 500)
         prefix: 'slip', doctype: 'Salary Slip', limit: 2000, order_by: 'start_date desc', filters: [['docstatus', '!=', 2]],
-        fields: ['name', 'employee', 'employee_name', 'start_date', 'end_date', 'gross_pay', 'total_deduction', 'net_pay', 'status', 'company', 'docstatus'],
+        fields: ['name', 'employee', 'employee_name', 'start_date', 'end_date', 'gross_pay', 'total_deduction', 'net_pay', 'status', 'company', 'docstatus', 'payroll_entry'],
         pill: (rows) => rows.length ? 'Latest period: ' + hdDate(hdLatest(rows, 'start_date').value) : 'No salary slips',
         metrics: (rows) => {
           const top = hdLatest(rows, 'start_date'), l = top.rows;
@@ -3704,8 +3954,33 @@
           ['Days', r => hdEsc(r.total_leave_days || '-')],
           ['Status', r => hdBadge(r.status)],
           ['Reason', r => hdEsc(r.description || '-')]],
-        actions: r => hdDeskBtn('Leave Application', r.name, r.status === 'Open' ? 'Review' : 'Open', r.status === 'Open')
+        // FIX-7 #5: approve / reject right here (was: "Review ↗" opened the classic desk)
+        actions: r => (r.status === 'Open' && r.docstatus === 0 ?
+          '<button type="button" class="btn-emp-action primary" data-dn="' + hdEsc(r.name) + '" onclick="hdLeaveDecide(this.dataset.dn, \'Approved\')">Approve</button>' +
+          '<button type="button" class="btn-emp-action danger" data-dn="' + hdEsc(r.name) + '" onclick="hdLeaveDecide(this.dataset.dn, \'Rejected\')">Reject</button>' : '') +
+          hdDeskBtn('Leave Application', r.name, 'Open', false)
       }
+    };
+
+    // FIX-8 #6: job offers with offer / appointment letters
+    HD_LISTS.offer = {
+      prefix: 'offer', doctype: 'Job Offer', order_by: 'offer_date desc', filters: [['docstatus', '!=', 2]],
+      fields: ['name', 'job_applicant', 'applicant_name', 'designation', 'company', 'offer_date', 'status', 'docstatus'],
+      pill: (rows, total) => hdPlural(total === null ? rows.length : total, 'Offer'),
+      metrics: (rows) => [
+        ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users', r => r.docstatus === 0],
+        ['blue', rows.filter(r => r.status === 'Awaiting Response').length, 'Awaiting Response', 'users', r => r.status === 'Awaiting Response'],
+        ['emerald', rows.filter(r => r.status === 'Accepted').length, 'Accepted', 'users', r => r.status === 'Accepted'],
+        ['rose', rows.filter(r => r.status === 'Rejected').length, 'Rejected', 'users', r => r.status === 'Rejected']],
+      columns: [
+        ['Candidate', r => '<strong>' + hdEsc(r.applicant_name || r.job_applicant) + '</strong><div class="hd-sub">' + hdEsc(r.name) + '</div>'],
+        ['Designation', r => hdEsc(r.designation || '-')],
+        ['Company', r => hdEsc(r.company || '-')],
+        ['Offer Date', r => hdDate(r.offer_date)],
+        ['Status', r => hdBadge(r.status || hdDocStatus(r.docstatus))]],
+      actions: r => hdDeskBtn('Job Offer', r.name, 'Open', true) +
+        hdPdfBtn('Job Offer', r.name, 'Exact Corporate Offer Letter', 'Offer Letter') +
+        hdPdfBtn('Job Offer', r.name, 'Exact Corporate Appointment Letter', 'Appointment Letter')
     };
 
     // FIX-3 #4: cards that now open inside HR Desk as live lists
@@ -3723,8 +3998,11 @@
       'Daily Work Summary Group': { sub: 'Daily work summary email groups.', cols: [['Group', r => '<strong>' + hdEsc(r.name) + '</strong>'], ['Enabled', r => hdBadge(r.enabled ? 'Yes' : 'No')], ['Send Emails At', r => hdEsc(r.send_emails_at || '-')]] },
       'Compliance Rule': { sub: 'Company compliance rules.', cols: [['Rule', r => '<strong>' + hdEsc(r.name) + '</strong>'], ['Last Updated', r => hdDate(r.modified)]] }
     };
-    async function hdOpenRecords(doctype) {
+    let HD_RECORDS_CURRENT = null;
+    async function hdOpenRecords(doctype, refresh) {
       const def = HD_RECORDS[doctype];
+      if (!refresh && HD_RECORDS_CURRENT !== doctype) delete HD_VIEW.records;
+      HD_RECORDS_CURRENT = doctype;
       document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.workspace-view').forEach(v => v.classList.remove('active'));
       document.getElementById('view-records').classList.add('active');
@@ -3735,10 +4013,11 @@
       hdSetText('recordsSubtitle', def.sub);
       hdSetText('recordsPill', 'Loading…');
       hdSetText('recordsNote', '');
-      const search = document.querySelector('#view-records .hd-search'); if (search) search.value = '';
+      const search = document.querySelector('#view-records .hd-search'); if (search && !refresh) search.value = '';
+      // FIX-7 #5: new record opens inside HR Desk (was: classic desk)
       document.getElementById('recordsActions').innerHTML =
-        '<a class="btn-emp-action primary" href="#" data-desk="' + hdEsc(hdSlug(doctype) + '/new') + '" onclick="hdOpenDesk(this.dataset.desk); return false;">New ' + hdEsc(doctype) + ' ↗</a>';
-      hdState(document.getElementById('recordsRows'), 'Loading…');
+        '<button type="button" class="btn-emp-action primary" data-dt="' + hdEsc(doctype) + '" onclick="hdOpenForm(this.dataset.dt)">New ' + hdEsc(doctype) + '</button>';
+      if (!refresh) hdState(document.getElementById('recordsRows'), 'Loading…');
       hdSetText('recordsHead', '');
       await hdLoadList({ prefix: 'records', doctype: doctype, order_by: 'modified desc', columns: def.cols,
         actions: r => hdDeskBtn(doctype, r.name, 'Open', true),
@@ -3770,6 +4049,1547 @@
       box.querySelectorAll('.metric-card').forEach((c, i) => hdClickable(c, go[i], tips[i]));
     }
 
+
+    // =====================================================================================
+    // FIX-7 #5: in-page forms. Any Frappe document can be opened, created, edited, submitted,
+    // cancelled, amended, deleted and printed inside HR Desk (was: "Open ↗" / "New ↗" opened the
+    // classic desk). The form is built from Frappe's own DocType definition and saved through
+    // Frappe's own form API (frappe.desk.form.save), so every server rule and permission still applies.
+    // =====================================================================================
+    const HD_META = {};
+    const HD_FORMS = [];   // open forms; a form can open another one (e.g. "create a new Job Applicant" from a link)
+    const HD_LAYOUT_TYPES = ['Section Break', 'Column Break', 'Tab Break'];
+    const HD_SKIP_TYPES = ['Button', 'HTML', 'Fold', 'Image', 'Signature', 'Geolocation'];
+    const HD_TABLE_TYPES = ['Table', 'Table MultiSelect'];
+    const HD_NUM_TYPES = ['Int', 'Float', 'Currency', 'Percent', 'Duration'];
+    const HD_LONG_TYPES = ['Small Text', 'Text', 'Long Text', 'Code', 'JSON', 'Markdown Editor', 'HTML Editor'];
+    let hdUid = 0;
+
+    function hdToday() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function hdNow() {
+      const d = new Date();
+      return hdToday() + ' ' + [d.getHours(), d.getMinutes(), d.getSeconds()].map(x => String(x).padStart(2, '0')).join(':');
+    }
+    // plain text from (possibly) HTML, without running anything in it
+    function hdText(html) {
+      if (html === undefined || html === null) return '';
+      return new DOMParser().parseFromString(String(html), 'text/html').body.textContent || '';
+    }
+    // HTML from the database (Text Editor fields, report messages) with scripts, event handlers and unsafe links removed
+    function hdSafeHtml(html) {
+      const d = new DOMParser().parseFromString(String(html || ''), 'text/html');
+      d.body.querySelectorAll('script,style,iframe,frame,object,embed,link,meta,base,form,input,button,textarea,select,svg,math').forEach(n => n.remove());
+      d.body.querySelectorAll('*').forEach(n => [...n.attributes].forEach(a => {
+        const name = a.name.toLowerCase(), val = a.value.replace(/[\s\u0000-\u001f]/g, '').toLowerCase();
+        const badUrl = /^(javascript|vbscript|data):/.test(val) && !(name === 'src' && /^data:image\//.test(val));
+        if (name.startsWith('on') || name === 'srcdoc' || name === 'formaction' ||
+            (['href', 'src', 'xlink:href', 'action', 'background', 'poster'].includes(name) && badUrl) ||
+            (name === 'style' && /expression|url\(|javascript/.test(val))) n.removeAttribute(a.name);
+      }));
+      return d.body.innerHTML;
+    }
+    function hdSafeUrl(u) {
+      const s = String(u || '').trim();
+      return /^\/(?!\/)/.test(s) || /^https?:\/\//i.test(s) ? s : '#';
+    }
+    function hdTitleCase(s) { return String(s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+    function hdErrText(j) {
+      const out = [];
+      try {
+        JSON.parse((j && j._server_messages) || '[]').forEach(m => {
+          let o = m; try { o = JSON.parse(m); } catch (e) {}
+          const t = hdText(typeof o === 'object' && o ? o.message : o).trim();
+          if (t) out.push(t);
+        });
+      } catch (e) {}
+      if (!out.length && j && j.exception) out.push(hdText(String(j.exception).split('\n').filter(Boolean).pop() || '').replace(/^[\w.]+:\s*/, ''));
+      if (!out.length && j && j.exc_type) out.push(String(j.exc_type).replace(/([a-z])([A-Z])/g, '$1 $2'));
+      return [...new Set(out)].join('\n');
+    }
+    // call a whitelisted Frappe method; throws an Error with Frappe's own message on failure
+    async function hdApi(method, args, httpMethod) {
+      const enc = {};
+      Object.keys(args || {}).forEach(k => {
+        const v = args[k];
+        if (v === undefined || v === null) return;
+        enc[k] = typeof v === 'object' ? JSON.stringify(v) : String(v);
+      });
+      const opts = { credentials: 'include', headers: { 'Accept': 'application/json', 'X-Frappe-CSRF-Token': window.csrf_token } };
+      let url = '/api/method/' + method;
+      if (httpMethod === 'GET') {
+        const q = new URLSearchParams(enc).toString();
+        if (q) url += '?' + q;
+      } else {
+        opts.method = 'POST';
+        opts.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+        opts.body = new URLSearchParams(enc).toString();
+      }
+      let r;
+      try { r = await fetch(url, opts); } catch (e) { throw new Error('Cannot reach the server. Please check your connection.'); }
+      let j = {};
+      try { j = await r.json(); } catch (e) {}
+      if (!r.ok || j.exc) {
+        const err = new Error(hdErrText(j) || (r.status === 403 ? 'You do not have permission for this action.' : 'The request failed (error ' + r.status + ').'));
+        err.status = r.status; err.excType = j.exc_type;
+        throw err;
+      }
+      // informational messages from the server (not the green "Saved" alerts, we show our own)
+      try {
+        JSON.parse(j._server_messages || '[]').forEach(m => {
+          let o = m; try { o = JSON.parse(m); } catch (e) {}
+          if (o && typeof o === 'object' && o.alert) return;
+          const t = hdText(typeof o === 'object' && o ? o.message : o).trim();
+          if (t) showToast(t, 'info');
+        });
+      } catch (e) {}
+      return j;
+    }
+
+    async function hdMeta(doctype) {
+      if (HD_META[doctype]) return HD_META[doctype];
+      const j = await hdApi('frappe.desk.form.load.getdoctype', { doctype: doctype }, 'GET');
+      const docs = j.docs || [];
+      const m = { meta: docs.find(d => d.name === doctype) || docs[0], children: {} };
+      if (!m.meta) throw new Error('Could not load the form for ' + doctype + '.');
+      docs.forEach(d => { if (d.name !== m.meta.name) m.children[d.name] = d; });
+      // remember which section / tab each field sits in, so hidden sections hide their fields
+      [m.meta, ...Object.values(m.children)].forEach(md => {
+        md.__parentDeps = {};
+        let tabDep = '', secDep = '', tabHidden = 0, secHidden = 0;
+        (md.fields || []).forEach(df => {
+          if (df.fieldtype === 'Tab Break') { tabDep = df.depends_on || ''; tabHidden = df.hidden; secDep = ''; secHidden = 0; return; }
+          if (df.fieldtype === 'Section Break') { secDep = df.depends_on || ''; secHidden = df.hidden; return; }
+          md.__parentDeps[df.fieldname] = { deps: [tabDep, secDep].filter(Boolean), hidden: tabHidden || secHidden };
+        });
+      });
+      HD_META[doctype] = m;
+      return m;
+    }
+    async function hdLoadDoc(doctype, name) {
+      const j = await hdApi('frappe.desk.form.load.getdoc', { doctype: doctype, name: name }, 'GET');
+      if (!j.docs || !j.docs[0]) throw new Error(doctype + ' ' + name + ' was not found.');
+      return { doc: j.docs[0], perms: (j.docinfo && j.docinfo.permissions) || null };
+    }
+    function hdDefaultValue(df) {
+      let d = df.default;
+      if (df.fieldtype === 'Check') return d ? (parseInt(d, 10) || 0) : 0;
+      if (d === undefined || d === null || d === '') {
+        if (df.fieldtype === 'Link' && df.options === 'Company' && window.hrDesk.defaultCompany) return window.hrDesk.defaultCompany;
+        if (df.fieldtype === 'Select' && df.options) {
+          const first = String(df.options).split('\n')[0];
+          if (first) return first;
+        }
+        return undefined;
+      }
+      const s = String(d), low = s.toLowerCase();
+      if (low === 'today') return df.fieldtype === 'Datetime' ? hdNow() : hdToday();
+      if (low === 'now') return df.fieldtype === 'Date' ? hdToday() : (df.fieldtype === 'Time' ? hdNow().slice(11) : hdNow());
+      if (s === '__user' || low === 'user') return window.hrDesk.user;
+      if (s.startsWith(':') || s.startsWith('eval:')) return undefined;
+      if (df.fieldtype === 'Int') return parseInt(s, 10) || 0;
+      if (['Float', 'Currency', 'Percent'].includes(df.fieldtype)) return parseFloat(s) || 0;
+      return s;
+    }
+    function hdNewDoc(md, defaults) {
+      const doc = { doctype: md.meta.name, name: 'new-' + hdSlug(md.meta.name) + '-' + Date.now().toString(36), __islocal: 1, __unsaved: 1, docstatus: 0 };
+      md.meta.fields.forEach(df => {
+        if (HD_LAYOUT_TYPES.includes(df.fieldtype)) return;
+        if (HD_TABLE_TYPES.includes(df.fieldtype)) { doc[df.fieldname] = []; return; }
+        const v = hdDefaultValue(df);
+        if (v !== undefined) doc[df.fieldname] = v;
+      });
+      Object.keys(defaults || {}).forEach(k => { doc[k] = defaults[k]; });
+      return doc;
+    }
+    function hdNewRow(f, df) {
+      const cm = f.md.children[df.options];
+      const rows = f.doc[df.fieldname] = f.doc[df.fieldname] || [];
+      const row = { doctype: df.options, name: 'new-' + hdSlug(df.options) + '-' + Date.now().toString(36) + rows.length, __islocal: 1,
+        parent: f.doc.name, parentfield: df.fieldname, parenttype: f.doctype, idx: rows.length + 1, docstatus: 0 };
+      (cm ? cm.fields : []).forEach(cdf => {
+        if (HD_LAYOUT_TYPES.includes(cdf.fieldtype)) return;
+        const v = hdDefaultValue(cdf);
+        if (v !== undefined) row[cdf.fieldname] = v;
+      });
+      rows.push(row);
+      return row;
+    }
+
+    // depends_on / mandatory_depends_on / read_only_depends_on, evaluated the way the classic desk does
+    const HD_FRAPPE_SHIM = {
+      session: { get user() { return window.hrDesk.user; } },
+      user: { has_role: r => (window.hrDesk.roles || []).includes(r) || window.hrDesk.user === 'Administrator' },
+      user_roles: [],
+      datetime: { get_today: hdToday, nowdate: hdToday, now_date: hdToday, now_datetime: hdNow, str_to_obj: s => new Date(s) },
+      boot: { sysdefaults: {} }, defaults: { get_default: () => '' }
+    };
+    function hdEval(expr, doc, parent, fallback) {
+      if (expr === undefined || expr === null || expr === '') return fallback === undefined ? true : fallback;
+      const s = String(expr).trim();
+      try {
+        if (s.startsWith('eval:')) return !!(new Function('doc', 'parent', 'frappe', 'cint', 'flt', 'in_list', 'cur_frm', 'cstr', 'is_null',
+          'return (' + s.slice(5).trim().replace(/;+$/, '') + ');'))(
+          doc, parent || doc, HD_FRAPPE_SHIM, v => parseInt(v, 10) || 0, v => parseFloat(v) || 0, (list, item) => (list || []).includes(item),
+          { doc: parent || doc }, v => (v === undefined || v === null ? '' : String(v)), v => v === undefined || v === null || v === '');
+        const v = doc[s];
+        return Array.isArray(v) ? v.length > 0 : !!v;
+      } catch (e) { return fallback === undefined ? true : fallback; }
+    }
+    function hdShown(f, md, df, doc) {
+      if (df.hidden || HD_SKIP_TYPES.includes(df.fieldtype)) return false;
+      if (f.opts.only && md === f.md.meta && !f.opts.only.includes(df.fieldname)) return false;
+      const p = md.__parentDeps && md.__parentDeps[df.fieldname];
+      if (p && (p.hidden || p.deps.some(dep => !hdEval(dep, doc, f.doc)))) return false;
+      return hdEval(df.depends_on, doc, f.doc);
+    }
+    function hdReadOnly(f, df, doc, inTable) {
+      if (f.readOnly) return true;
+      if (df.read_only || df.fieldtype === 'Read Only') return true;
+      if (f.doc.docstatus === 2) return true;
+      if (f.doc.docstatus === 1 && !df.allow_on_submit && !(inTable && inTable.allow_on_submit)) return true;
+      if (f.perms && !f.perms.write && !(f.doc.docstatus === 1 && f.perms.submit && df.allow_on_submit)) return true;
+      return hdEval(df.read_only_depends_on, doc, f.doc, false);
+    }
+    function hdRequired(f, df, doc) { return !!df.reqd || hdEval(df.mandatory_depends_on, doc, f.doc, false); }
+
+    // ---- display values ----
+    function hdShowValue(df, v, doc) {
+      if (v === undefined || v === null || v === '') return '<span class="hd-muted">-</span>';
+      switch (df.fieldtype) {
+        case 'Check': return Number(v) ? 'Yes' : 'No';
+        case 'Currency': return hdEsc(hdMoney(v));
+        case 'Float': case 'Percent': return hdEsc(Number(v).toLocaleString('en-IN', { maximumFractionDigits: 3 })) + (df.fieldtype === 'Percent' ? '%' : '');
+        case 'Date': case 'Datetime': return hdDate(v);
+        case 'Text Editor': case 'HTML Editor': return '<div class="hd-rich">' + hdSafeHtml(v) + '</div>';
+        case 'Attach': case 'Attach Image':
+          return '<a href="' + hdEsc(hdSafeUrl(v)) + '" target="_blank" rel="noopener">' + hdEsc(String(v).split('/').pop()) + ' ↗</a>';
+        case 'Link':
+          return '<a href="#" class="hd-linkval" data-act="open-link" data-dt="' + hdEsc(df.options) + '" data-dn="' + hdEsc(v) + '">' + hdEsc(v) + '</a>';
+        case 'Dynamic Link':
+          return doc && doc[df.options] ? '<a href="#" class="hd-linkval" data-act="open-link" data-dt="' + hdEsc(doc[df.options]) + '" data-dn="' + hdEsc(v) + '">' + hdEsc(v) + '</a>' : hdEsc(v);
+        case 'Password': return '••••••';
+        case 'Rating': return hdEsc(Math.round(Number(v) * 5)) + ' / 5';
+        default: return hdEsc(v).replace(/\n/g, '<br>');
+      }
+    }
+
+    // ---- form shell ----
+    function hdFormShell() {
+      let o = document.getElementById('hdForm');
+      if (o) return o;
+      o = document.createElement('div');
+      o.id = 'hdForm'; o.className = 'hd-form-overlay';
+      o.innerHTML = '<div class="hd-form-panel" role="dialog" aria-modal="true" aria-labelledby="hdFormTitle"><div id="hdFormInner"></div></div>';
+      document.body.appendChild(o);
+      o.addEventListener('mousedown', e => { if (e.target === o) hdCloseForm(); });
+      const inner = o.querySelector('.hd-form-panel');
+      inner.addEventListener('click', hdFormClick);
+      inner.addEventListener('input', hdFormInput);
+      inner.addEventListener('change', hdFormChange);
+      inner.addEventListener('keydown', hdFormKeys);
+      inner.addEventListener('focusout', e => {
+        if (e.target.classList && e.target.classList.contains('hd-link-input')) setTimeout(() => {
+          const box = e.target.parentNode && e.target.parentNode.querySelector('.hd-suggest');
+          if (box && !box.contains(document.activeElement)) box.classList.remove('open');
+        }, 150);
+      });
+      return o;
+    }
+    function hdTopForm() { return HD_FORMS[HD_FORMS.length - 1]; }
+    async function hdOpenForm(doctype, name, opts) {
+      opts = opts || {};
+      const o = hdFormShell();
+      o.classList.add('open');
+      document.body.classList.add('hd-noscroll');
+      if (!HD_FORMS.length) document.getElementById('hdFormInner').innerHTML = '<div class="hd-form-loading">Loading…</div>';
+      try {
+        const md = await hdMeta(doctype);
+        const single = !!md.meta.issingle;
+        let doc, perms = null;
+        if (single || name) { const r = await hdLoadDoc(doctype, single ? doctype : name); doc = r.doc; perms = r.perms; }
+        else doc = hdNewDoc(md, opts.defaults);
+        const f = { doctype: md.meta.name, md: md, doc: doc, perms: perms, opts: opts, uid: ++hdUid, tab: 0, expanded: {}, error: '',
+                    dirty: !!doc.__islocal, readOnly: !!opts.readOnly };
+        HD_FORMS.push(f);
+        if (doc.__islocal) await hdRunHooks(f, '__new');
+        hdRenderForm();
+        return f;
+      } catch (e) {
+        if (!HD_FORMS.length) hdCloseOverlay();
+        showToast(e.message, 'error');
+        return null;
+      }
+    }
+    function hdCloseOverlay() {
+      const o = document.getElementById('hdForm');
+      if (o) o.classList.remove('open');
+      document.body.classList.remove('hd-noscroll');
+    }
+    async function hdCloseForm(force) {
+      const f = hdTopForm();
+      if (!f) { hdCloseOverlay(); return; }
+      if (!force && f.dirty && !(await hdConfirm('Discard changes?', 'You have changes that are not saved.', 'Discard', true))) return;
+      HD_FORMS.pop();
+      if (HD_FORMS.length) hdRenderForm(); else hdCloseOverlay();
+    }
+    function hdCloseAllForms() { HD_FORMS.length = 0; hdCloseOverlay(); }
+
+    function hdDocTitle(f) {
+      if (f.opts.title) return f.opts.title;
+      if (f.md.meta.issingle) return f.doctype;
+      if (f.doc.__islocal) return 'New ' + f.doctype;
+      const tf = f.md.meta.title_field;
+      const t = tf && f.doc[tf];
+      return t && t !== f.doc.name ? t : f.doc.name;
+    }
+    function hdDocBadge(f) {
+      const d = f.doc;
+      if (d.__islocal) return '<span class="status-badge warning">Not saved</span>';
+      let s = '';
+      if (f.md.meta.is_submittable) s += hdBadge(hdDocStatus(d.docstatus));
+      if (d.status && d.status !== hdDocStatus(d.docstatus)) s += ' ' + hdBadge(d.status);
+      if (f.dirty) s += ' <span class="status-badge warning">Not saved</span>';
+      return s;
+    }
+
+    function hdRenderForm(keepScroll) {
+      const f = hdTopForm();
+      if (!f) return;
+      const inner = document.getElementById('hdFormInner');
+      const body = inner.querySelector('.hd-form-body');
+      const scroll = keepScroll && body ? body.scrollTop : 0;
+      const crumbs = HD_FORMS.slice(0, -1).map(p => hdEsc(hdDocTitle(p))).join(' › ');
+      const tabs = hdLayout(f, f.md.meta, f.doc);
+      if (f.tab >= tabs.length) f.tab = 0;
+      inner.innerHTML =
+        '<div class="hd-form-head">' +
+          '<div class="hd-form-titles">' + (crumbs ? '<div class="hd-form-crumbs">' + crumbs + ' ›</div>' : '') +
+            '<div class="hd-form-title"><span id="hdFormTitle">' + hdEsc(hdDocTitle(f)) + '</span> ' + hdDocBadge(f) + '</div>' +
+            '<div class="hd-form-sub">' + hdEsc(f.doctype) + (f.doc.__islocal || f.md.meta.issingle ? '' : ' · ' + hdEsc(f.doc.name)) + '</div></div>' +
+          '<button type="button" class="action-icon-btn" data-act="close" title="Close (Esc)" aria-label="Close">✕</button>' +
+        '</div>' +
+        '<div class="hd-form-actions">' + hdActionButtons(f) + '</div>' +
+        (f.error ? '<div class="hd-form-error" role="alert">' + hdEsc(f.error).replace(/\n/g, '<br>') + '</div>' : '') +
+        (tabs.length > 1 ? '<div class="hd-form-tabs" role="tablist">' + tabs.map((t, i) =>
+          '<button type="button" role="tab" aria-selected="' + (i === f.tab) + '" class="hd-tab' + (i === f.tab ? ' active' : '') + '" data-act="tab" data-i="' + i + '">' + hdEsc(t.label) + '</button>').join('') + '</div>' : '') +
+        '<div class="hd-form-body">' + (tabs[f.tab] ? tabs[f.tab].html : '<div class="hd-muted">Nothing to show.</div>') + '</div>';
+      const nb = inner.querySelector('.hd-form-body');
+      if (nb) nb.scrollTop = scroll;
+    }
+
+    // layout: tabs > sections > columns > fields
+    function hdLayout(f, md, doc) {
+      const tabs = [];
+      let tab = null, sec = null;
+      const newTab = (df) => { tab = { label: (df && df.label) || 'Details', df: df || null, sections: [] }; tabs.push(tab); sec = null; };
+      const newSec = (df) => { if (!tab) newTab(); sec = { df: df || null, cols: [[]] }; tab.sections.push(sec); };
+      md.fields.forEach(df => {
+        if (df.fieldtype === 'Tab Break') { newTab(df); return; }
+        if (df.fieldtype === 'Section Break') { newSec(df); return; }
+        if (df.fieldtype === 'Column Break') { if (!sec) newSec(); sec.cols.push([]); return; }
+        if (!sec) newSec();
+        sec.cols[sec.cols.length - 1].push(df);
+      });
+      const out = [];
+      tabs.forEach(t => {
+        if (t.df && (t.df.hidden || !hdEval(t.df.depends_on, doc, f.doc))) return;
+        let html = '';
+        t.sections.forEach(s => {
+          if (s.df && (s.df.hidden || !hdEval(s.df.depends_on, doc, f.doc))) return;
+          const cols = s.cols.map(c => c.filter(df => hdShown(f, md, df, doc)).map(df => hdFieldHtml(f, md, df, doc)).join('')).filter(Boolean);
+          if (!cols.length) return;
+          html += '<section class="hd-sec">' + (s.df && s.df.label ? '<h3 class="hd-sec-title">' + hdEsc(s.df.label) + '</h3>' : '') +
+            '<div class="hd-cols" style="--hd-cols:' + cols.length + '">' + cols.map(c => '<div class="hd-col">' + c + '</div>').join('') + '</div></section>';
+        });
+        if (html) out.push({ label: t.label, html: html });
+      });
+      return out;
+    }
+
+    function hdFieldHtml(f, md, df, doc, row, compact) {
+      // row: { tf: table fieldname, ri: row index, tableDf } when the field belongs to a child-table row
+      // compact: only the control (grid cells)
+      const t = df.fieldtype;
+      const ro = hdReadOnly(f, df, doc, row && row.tableDf);
+      const v = doc[df.fieldname];
+      const id = 'hdf' + f.uid + '_' + (row ? row.tf + '_' + row.ri + '_' : '') + df.fieldname;
+      const data = ' data-fn="' + hdEsc(df.fieldname) + '"' + (row ? ' data-tf="' + hdEsc(row.tf) + '" data-ri="' + row.ri + '"' : '');
+      const label = hdEsc(df.label || hdTitleCase(df.fieldname));
+      const req = hdRequired(f, df, doc) ? '<span class="hd-req" title="Required">*</span>' : '';
+      const help = df.description && !ro ? '<div class="hd-help">' + hdEsc(hdText(df.description)) + '</div>' : '';
+      if (t === 'Heading') return '<h4 class="hd-heading">' + label + '</h4>';
+      if (HD_TABLE_TYPES.includes(t)) {
+        return '<div class="hd-field hd-field-wide"><div class="hd-label">' + label + req + '</div>' +
+          (t === 'Table' ? hdGridHtml(f, df, ro) : hdMultiHtml(f, df, ro)) + help + '</div>';
+      }
+      if (t === 'Check' && compact) {
+        return '<input type="checkbox" id="' + id + '" class="hd-input" aria-label="' + label + '"' + data + (Number(v) ? ' checked' : '') + (ro ? ' disabled' : '') + '>';
+      }
+      if (t === 'Check') {
+        return '<div class="hd-field hd-field-check"><label class="hd-check"><input type="checkbox" id="' + id + '" class="hd-input"' + data +
+          (Number(v) ? ' checked' : '') + (ro ? ' disabled' : '') + '> <span>' + label + '</span></label>' + help + '</div>';
+      }
+      let ctrl;
+      if (ro) {
+        ctrl = '<div class="hd-ro" id="' + id + '">' + hdShowValue(df, v, doc) + '</div>';
+      } else if (t === 'Link' || t === 'Dynamic Link') {
+        const target = t === 'Link' ? df.options : (doc[df.options] || '');
+        ctrl = '<div class="hd-link"><input type="text" id="' + id + '" class="hd-input hd-link-input" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false"' + data +
+          ' data-link="' + hdEsc(target) + '" value="' + hdEsc(v || '') + '"' + (target ? '' : ' disabled placeholder="Choose the type first"') + '>' +
+          (v && target ? '<button type="button" class="hd-link-open" data-act="open-link" data-dt="' + hdEsc(target) + '" data-dn="' + hdEsc(v) + '" title="Open ' + hdEsc(target) + '">↗</button>' : '') +
+          '<div class="hd-suggest" role="listbox"></div></div>';
+      } else if (t === 'Select') {
+        const opts = String(df.options || '').split('\n');
+        ctrl = '<select id="' + id + '" class="hd-input"' + data + '>' + opts.map(o =>
+          '<option value="' + hdEsc(o) + '"' + (String(v || '') === o ? ' selected' : '') + '>' + hdEsc(o || '—') + '</option>').join('') + '</select>';
+      } else if (t === 'Date') {
+        ctrl = '<input type="date" id="' + id + '" class="hd-input"' + data + ' value="' + hdEsc(String(v || '').slice(0, 10)) + '">';
+      } else if (t === 'Datetime') {
+        ctrl = '<input type="datetime-local" step="1" id="' + id + '" class="hd-input"' + data + ' value="' + hdEsc(String(v || '').replace(' ', 'T').slice(0, 19)) + '">';
+      } else if (t === 'Time') {
+        ctrl = '<input type="time" step="1" id="' + id + '" class="hd-input"' + data + ' value="' + hdEsc(String(v || '').slice(0, 8)) + '">';
+      } else if (HD_NUM_TYPES.includes(t)) {
+        ctrl = '<input type="number" step="' + (t === 'Int' || t === 'Duration' ? '1' : 'any') + '" id="' + id + '" class="hd-input"' + data + ' value="' + hdEsc(v === undefined || v === null ? '' : v) + '">' +
+          (t === 'Duration' ? '<div class="hd-help">In seconds</div>' : '');
+      } else if (t === 'Text Editor') {
+        ctrl = '<div id="' + id + '" class="hd-input hd-rte" contenteditable="true" role="textbox" aria-multiline="true"' + data + '>' + hdSafeHtml(v || '') + '</div>';
+      } else if (HD_LONG_TYPES.includes(t)) {
+        ctrl = '<textarea id="' + id + '" class="hd-input' + (['Code', 'JSON', 'HTML Editor'].includes(t) ? ' hd-mono' : '') + '" rows="' + (t === 'Small Text' ? 3 : 5) + '"' + data + '>' + hdEsc(v || '') + '</textarea>';
+      } else if (t === 'Attach' || t === 'Attach Image') {
+        ctrl = '<div class="hd-attach">' + (v ? '<a href="' + hdEsc(hdSafeUrl(v)) + '" target="_blank" rel="noopener">' + hdEsc(String(v).split('/').pop()) + ' ↗</a> ' +
+          '<button type="button" class="hd-mini" data-act="clear-file"' + data + '>Remove</button>' : '') +
+          '<input type="file" id="' + id + '" class="hd-input hd-file"' + data + (t === 'Attach Image' ? ' accept="image/*"' : '') + '></div>';
+      } else if (t === 'Rating') {
+        const stars = Math.round(Number(v || 0) * 5);
+        ctrl = '<select id="' + id + '" class="hd-input" data-rating="1"' + data + '>' + [0, 1, 2, 3, 4, 5].map(n => '<option value="' + n + '"' + (n === stars ? ' selected' : '') + '>' + n + ' / 5</option>').join('') + '</select>';
+      } else if (t === 'Color') {
+        ctrl = '<input type="color" id="' + id + '" class="hd-input"' + data + ' value="' + hdEsc(/^#[0-9a-f]{6}$/i.test(v || '') ? v : '#000000') + '">';
+      } else if (t === 'Password') {
+        ctrl = '<input type="password" autocomplete="new-password" id="' + id + '" class="hd-input"' + data + ' placeholder="' + (v ? 'Unchanged' : '') + '" value="">';
+      } else {
+        const type = df.options === 'Email' ? 'email' : (df.options === 'Phone' || t === 'Phone' ? 'tel' : 'text');
+        ctrl = '<input type="' + type + '" id="' + id + '" class="hd-input"' + data + ' value="' + hdEsc(v === undefined || v === null ? '' : v) + '"' +
+          (df.length ? ' maxlength="' + Number(df.length) + '"' : '') + '>';
+      }
+      if (compact) return ctrl.replace('<input ', '<input aria-label="' + label + '" ').replace('<select ', '<select aria-label="' + label + '" ');
+      return '<div class="hd-field' + (HD_LONG_TYPES.includes(t) || t === 'Text Editor' ? ' hd-field-wide' : '') + '"><label class="hd-label" for="' + id + '">' + label + req + '</label>' + ctrl + help + '</div>';
+    }
+
+    // child table (grid)
+    function hdGridCols(cm) {
+      const ok = df => !HD_LAYOUT_TYPES.includes(df.fieldtype) && !HD_SKIP_TYPES.includes(df.fieldtype) && !HD_TABLE_TYPES.includes(df.fieldtype) && !df.hidden;
+      let cols = cm.fields.filter(df => ok(df) && df.in_list_view);
+      if (!cols.length) cols = cm.fields.filter(ok).slice(0, 4);
+      return cols.slice(0, 6);
+    }
+    function hdGridHtml(f, df, ro) {
+      const cm = f.md.children[df.options];
+      if (!cm) return '<div class="hd-muted">-</div>';
+      const cols = hdGridCols(cm);
+      const rows = f.doc[df.fieldname] || [];
+      const tf = df.fieldname;
+      let html = '<div class="hd-grid"><table class="modern-table hd-grid-table"><thead><tr><th style="width: 40px;">#</th>' +
+        cols.map(c => '<th>' + hdEsc(c.label || hdTitleCase(c.fieldname)) + (c.reqd ? '<span class="hd-req">*</span>' : '') + '</th>').join('') + '<th style="width: 90px;"></th></tr></thead><tbody>';
+      if (!rows.length) html += '<tr><td colspan="' + (cols.length + 2) + '"><div class="hd-muted" style="padding: 8px;">No rows.</div></td></tr>';
+      rows.forEach((r, ri) => {
+        const ctx = { tf: tf, ri: ri, tableDf: df };
+        html += '<tr><td>' + (ri + 1) + '</td>' + cols.map(c => {
+          const cell = hdReadOnly(f, c, r, df) || ro ? hdShowValue(c, r[c.fieldname], r) : hdFieldHtml(f, cm, c, r, ctx, true);
+          return '<td class="hd-grid-cell">' + cell + '</td>';
+        }).join('') + '<td class="hd-grid-row-actions"><button type="button" class="hd-mini" data-act="row-expand" data-tf="' + hdEsc(tf) + '" data-ri="' + ri + '" title="All fields of this row">' +
+          (f.expanded[tf + ':' + ri] ? 'Less' : 'More') + '</button>' +
+          (ro ? '' : '<button type="button" class="hd-mini danger" data-act="row-del" data-tf="' + hdEsc(tf) + '" data-ri="' + ri + '" title="Delete row" aria-label="Delete row ' + (ri + 1) + '">✕</button>') + '</td></tr>';
+        if (f.expanded[tf + ':' + ri]) {
+          const fields = cm.fields.filter(c => !HD_LAYOUT_TYPES.includes(c.fieldtype) && hdShown(f, cm, c, r) && !HD_TABLE_TYPES.includes(c.fieldtype));
+          html += '<tr class="hd-grid-more"><td></td><td colspan="' + (cols.length + 1) + '"><div class="hd-cols" style="--hd-cols: 2"><div class="hd-col">' +
+            fields.map(c => ro ? '<div class="hd-field"><div class="hd-label">' + hdEsc(c.label || c.fieldname) + '</div><div class="hd-ro">' + hdShowValue(c, r[c.fieldname], r) + '</div></div>' : hdFieldHtml(f, cm, c, r, ctx)).join('') +
+            '</div></div></td></tr>';
+        }
+      });
+      html += '</tbody></table>' + (ro ? '' : '<button type="button" class="btn-emp-action" data-act="row-add" data-tf="' + hdEsc(tf) + '">+ Add row</button>') + '</div>';
+      return html;
+    }
+    // Table MultiSelect: chips + a link box to add more
+    function hdMultiHtml(f, df, ro) {
+      const cm = f.md.children[df.options];
+      const linkDf = cm && cm.fields.find(c => c.fieldtype === 'Link');
+      const rows = f.doc[df.fieldname] || [];
+      const chips = rows.map((r, ri) => '<span class="hd-chip">' + hdEsc(linkDf ? r[linkDf.fieldname] : r.name) +
+        (ro ? '' : ' <button type="button" class="hd-chip-x" data-act="row-del" data-tf="' + hdEsc(df.fieldname) + '" data-ri="' + ri + '" aria-label="Remove">✕</button>') + '</span>').join('');
+      if (ro || !linkDf) return '<div class="hd-chips">' + (chips || '<span class="hd-muted">-</span>') + '</div>';
+      return '<div class="hd-chips">' + chips + '</div><div class="hd-link"><input type="text" class="hd-input hd-link-input" autocomplete="off" placeholder="Add…" data-multi="' + hdEsc(df.fieldname) +
+        '" data-link="' + hdEsc(linkDf.options) + '" data-fn="__multi"><div class="hd-suggest" role="listbox"></div></div>';
+    }
+
+    // ---- actions bar ----
+    function hdActionButtons(f) {
+      const d = f.doc, m = f.md.meta, p = f.perms;
+      const can = k => !p || !!p[k];
+      const b = [];
+      const btn = (act, label, cls, extra) => '<button type="button" class="btn-emp-action' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"' + (extra || '') + '>' + hdEsc(label) + '</button>';
+      if (f.readOnly) return btn('close', 'Close', '');
+      if (d.docstatus === 0 && can('write')) b.push(btn('save', d.__islocal ? 'Save' : 'Save', f.dirty || d.__islocal ? 'primary' : ''));
+      if (d.docstatus === 1 && f.dirty) b.push(btn('update', 'Update', 'primary'));
+      // Leave Application submits through Approve / Reject, Payroll Entry through Create Salary Slips (as in the desk)
+      if (m.is_submittable && d.docstatus === 0 && !d.__islocal && can('submit') && !f.opts.noSubmit && !['Leave Application', 'Payroll Entry'].includes(f.doctype)) b.push(btn('submit', 'Submit', f.dirty ? '' : 'primary'));
+      (f.extra = (HD_ACTIONS[f.doctype] ? HD_ACTIONS[f.doctype](f) : [])).forEach((a, i) => b.push(btn('extra', a.label, a.primary ? 'primary' : (a.danger ? 'danger' : ''), ' data-i="' + i + '"')));
+      if (!d.__islocal) {
+        if (m.is_submittable && d.docstatus === 1 && can('cancel')) b.push(btn('cancel', 'Cancel', 'danger'));
+        if (m.is_submittable && d.docstatus === 2 && can('amend')) b.push(btn('amend', 'Amend', ''));
+        if (!m.issingle && !f.opts.noPrint) b.push(btn('print', 'Print / PDF ▾', ''));
+        b.push(btn('reload', 'Reload', ''));
+        if (!m.issingle && d.docstatus !== 1 && can('delete') && !f.opts.noDelete) b.push(btn('delete', 'Delete', 'danger'));
+      }
+      return b.join('');
+    }
+    function hdFormError(f, msg) { f.error = msg || ''; hdRenderForm(true); }
+
+    function hdCleanDoc(doc) {
+      return JSON.parse(JSON.stringify(doc, (k, v) => (k.startsWith('__hd') ? undefined : v)));
+    }
+    function hdMissing(f) {
+      const miss = [];
+      const walk = (md, doc, prefix) => md.fields.forEach(df => {
+        if (HD_LAYOUT_TYPES.includes(df.fieldtype) || HD_SKIP_TYPES.includes(df.fieldtype)) return;
+        if (!hdShown(f, md, df, doc) || !hdRequired(f, df, doc)) return;
+        const v = doc[df.fieldname];
+        if (v === undefined || v === null || v === '' || (Array.isArray(v) && !v.length)) miss.push(prefix + (df.label || hdTitleCase(df.fieldname)));
+        if (df.fieldtype === 'Table' && f.md.children[df.options]) (v || []).forEach((r, i) => walk(f.md.children[df.options], r, (df.label || df.fieldname) + ' row ' + (i + 1) + ': '));
+      });
+      walk(f.md.meta, f.doc, '');
+      return miss;
+    }
+    async function hdSave(f, action) {
+      action = action || (f.doc.docstatus === 1 ? 'Update' : 'Save');
+      const miss = hdMissing(f);
+      if (miss.length) { hdFormError(f, 'Please fill in: ' + miss.join(', ')); return false; }
+      hdBusy(true, action === 'Submit' ? 'Submitting…' : 'Saving…');
+      try {
+        const wasNew = !!f.doc.__islocal;
+        const j = await hdApi('frappe.desk.form.save.savedocs', { doc: hdCleanDoc(f.doc), action: action });
+        if (j.docs && j.docs[0]) f.doc = j.docs[0];
+        else if (!wasNew) { f.doc = (await hdLoadDoc(f.doctype, f.doc.name)).doc; showToast('Queued: it will finish in the background. Use Reload to see the result.', 'info'); }
+        if (!f.perms && !f.md.meta.issingle) { try { f.perms = (await hdLoadDoc(f.doctype, f.doc.name)).perms; } catch (e) {} }
+        f.dirty = false; f.error = '';
+        hdRenderForm(true);
+        showToast(f.doctype + ' ' + (action === 'Submit' ? 'submitted' : (action === 'Update' ? 'updated' : 'saved')), 'success');
+        hdAfterChange(f.doctype);
+        if (wasNew && f.opts.onSaved) f.opts.onSaved(f.doc);
+        return true;
+      } catch (e) {
+        hdFormError(f, e.message + (e.status === 409 ? '\nSomeone else changed this document. Use Reload to get the latest version.' : ''));
+        return false;
+      } finally { hdBusy(false); }
+    }
+    async function hdReloadForm(f) {
+      try {
+        const r = await hdLoadDoc(f.doctype, f.md.meta.issingle ? f.doctype : f.doc.name);
+        f.doc = r.doc; f.perms = r.perms; f.dirty = false; f.error = '';
+        hdRenderForm(true);
+      } catch (e) { hdFormError(f, e.message); }
+    }
+    function hdBusy(on, label) {
+      const p = document.querySelector('#hdForm .hd-form-panel');
+      if (!p) return;
+      p.classList.toggle('busy', !!on);
+      p.querySelectorAll('.hd-form-actions button').forEach(b => { b.disabled = !!on; });
+      if (!on) p.querySelectorAll('.hd-busy').forEach(x => x.remove());
+      if (on && label) { const el = p.querySelector('.hd-form-actions'); if (el) el.insertAdjacentHTML('beforeend', '<span class="hd-busy">' + hdEsc(label) + '</span>'); }
+    }
+
+    // ---- confirm dialog (in-page, no browser pop-ups) ----
+    function hdConfirm(title, message, okLabel, danger) {
+      return new Promise(resolve => {
+        const d = document.createElement('div');
+        d.className = 'hd-confirm';
+        d.innerHTML = '<div class="hd-confirm-box" role="alertdialog" aria-modal="true" aria-labelledby="hdConfirmT"><h3 id="hdConfirmT">' + hdEsc(title) + '</h3><p>' + hdEsc(message).replace(/\n/g, '<br>') + '</p>' +
+          '<div class="hd-confirm-actions"><button type="button" class="btn-emp-action" data-v="0">Keep</button><button type="button" class="btn-emp-action ' + (danger ? 'danger' : 'primary') + '" data-v="1">' + hdEsc(okLabel || 'OK') + '</button></div></div>';
+        const done = v => { d.remove(); document.removeEventListener('keydown', key, true); resolve(v); };
+        const key = e => { if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); done(false); } };
+        d.addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (b) done(b.dataset.v === '1'); else if (e.target === d) done(false); });
+        document.addEventListener('keydown', key, true);
+        document.body.appendChild(d);
+        d.querySelector('button[data-v="1"]').focus();
+      });
+    }
+
+    // ---- print / PDF ----
+    const HD_PRINT_FORMATS = {};
+    async function hdPrintMenu(f, btn) {
+      let list = HD_PRINT_FORMATS[f.doctype];
+      if (!list) {
+        try {
+          const rows = await hdFetch('Print Format', ['name'], { filters: [['doc_type', '=', f.doctype], ['disabled', '=', 0]], order_by: 'name asc', limit: 0 });
+          list = rows.map(r => r.name);
+        } catch (e) { list = []; }
+        const def = f.md.meta.default_print_format;
+        list = [...new Set([def, ...list, 'Standard'].filter(Boolean))];
+        HD_PRINT_FORMATS[f.doctype] = list;
+      }
+      hdMenu(btn, 'Download PDF', list.map(n => ({ label: n, run: () => window.open('/api/method/frappe.utils.print_format.download_pdf?doctype=' + encodeURIComponent(f.doctype) +
+        '&name=' + encodeURIComponent(f.doc.name) + '&format=' + encodeURIComponent(n) + '&no_letterhead=0', '_blank', 'noopener') })));
+    }
+    // small pop-up menu anchored to a button
+    function hdMenu(anchor, title, items) {
+      hdCloseMenu();
+      const menu = document.createElement('div');
+      menu.className = 'hd-menu'; menu.id = 'hdMenu'; menu.setAttribute('role', 'menu');
+      menu.innerHTML = '<div class="hd-menu-title">' + hdEsc(title) + '</div>' + items.map((it, i) => '<button type="button" role="menuitem" data-i="' + i + '"><span>' + hdEsc(it.label) + '</span></button>').join('');
+      menu.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) { hdCloseMenu(); items[Number(b.dataset.i)].run(); } });
+      menu.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); hdCloseMenu(); anchor.focus(); } });
+      document.body.appendChild(menu);
+      const rc = anchor.getBoundingClientRect();
+      menu.style.top = (rc.bottom + window.scrollY + 6) + 'px';
+      menu.style.left = Math.max(8, Math.min(rc.left + window.scrollX, window.scrollX + window.innerWidth - menu.offsetWidth - 8)) + 'px';
+      const first = menu.querySelector('button'); if (first) first.focus();
+      setTimeout(() => document.addEventListener('click', hdMenuOutside), 0);
+    }
+
+    // ---- events ----
+    function hdRowCtx(el) {
+      const f = hdTopForm();
+      const tf = el.dataset.tf, ri = el.dataset.ri;
+      if (tf !== undefined && tf !== '' && ri !== undefined) {
+        const doc = (f.doc[tf] || [])[Number(ri)];
+        const tdf = f.md.meta.fields.find(x => x.fieldname === tf);
+        return { f: f, doc: doc, md: f.md.children[tdf.options], tf: tf, ri: Number(ri) };
+      }
+      return { f: f, doc: f.doc, md: f.md.meta, tf: '', ri: -1 };
+    }
+    function hdReadInput(el, df) {
+      const t = df.fieldtype;
+      if (t === 'Check') return el.checked ? 1 : 0;
+      if (el.dataset.rating) return Number(el.value) / 5;
+      if (t === 'Text Editor') return el.innerHTML;
+      if (t === 'Datetime') return el.value ? el.value.replace('T', ' ') + (el.value.length === 16 ? ':00' : '') : '';
+      if (HD_NUM_TYPES.includes(t)) return el.value === '' ? null : (t === 'Int' || t === 'Duration' ? parseInt(el.value, 10) : parseFloat(el.value));
+      return el.value;
+    }
+    function hdFormInput(e) {
+      const el = e.target;
+      if (!el.dataset || !el.dataset.fn) return;
+      if (el.classList.contains('hd-link-input')) { hdLinkSuggest(el); if (el.dataset.fn === '__multi') return; el.__hdTyped = true; }
+      const c = hdRowCtx(el);
+      const df = c.md.fields.find(x => x.fieldname === el.dataset.fn);
+      if (!df || df.fieldtype === 'Check' || df.fieldtype === 'Select' || el.type === 'file') return;
+      c.doc[df.fieldname] = hdReadInput(el, df);
+      if (!c.f.dirty) { c.f.dirty = true; const h = document.querySelector('#hdForm .hd-form-title'); if (h && !h.querySelector('.hd-dirty')) h.insertAdjacentHTML('beforeend', ' <span class="status-badge warning hd-dirty">Not saved</span>'); }
+    }
+    async function hdFormChange(e) {
+      const el = e.target;
+      if (!el.dataset || !el.dataset.fn || el.dataset.fn === '__multi') return;
+      const c = hdRowCtx(el);
+      const df = c.md.fields.find(x => x.fieldname === el.dataset.fn);
+      if (!df) return;
+      if (el.type === 'file') {
+        const file = el.files && el.files[0];
+        if (!file) return;
+        try {
+          hdBusy(true, 'Uploading…');
+          const url = await hdUpload(c.f, df, file);
+          await hdSetValue(c, df, url);
+        } catch (err) { hdFormError(c.f, err.message); } finally { hdBusy(false); }
+        return;
+      }
+      if (el.classList.contains('hd-link-input')) return; // links change when a suggestion is picked or on blur
+      await hdSetValue(c, df, hdReadInput(el, df), ['Select', 'Check', 'Date', 'Datetime', 'Rating'].includes(df.fieldtype) || hdNeedsRerender(c, df));
+    }
+    // set a value, run fetch_from and doctype rules, then refresh what depends on it
+    async function hdSetValue(c, df, value, rerender) {
+      c.doc[df.fieldname] = value;
+      c.f.dirty = true;
+      await hdFetchFrom(c, df);
+      await hdRunHooks(c.f, df.fieldname, c);
+      if (rerender !== false) hdRenderForm(true);
+    }
+    // does changing this field affect anything else on screen?
+    function hdNeedsRerender(c, df) {
+      const fn = df.fieldname;
+      const mentions = s => !!s && new RegExp('\\b' + fn + '\\b').test(String(s));
+      if (c.md.fields.some(x => (x.fetch_from && x.fetch_from.split('.')[0] === fn) || mentions(x.depends_on) || mentions(x.mandatory_depends_on) || mentions(x.read_only_depends_on))) return true;
+      if (c.md.fields.some(x => x.fieldtype === 'Dynamic Link' && x.options === fn)) return true;
+      return !c.tf && !!((HD_HOOKS[c.f.doctype] && HD_HOOKS[c.f.doctype][fn]) || HD_HOOKS['*'][fn]);
+    }
+    async function hdFetchFrom(c, df) {
+      if (df.fieldtype !== 'Link') return;
+      const targets = c.md.fields.filter(x => x.fetch_from && x.fetch_from.split('.')[0] === df.fieldname);
+      if (!targets.length) return;
+      const v = c.doc[df.fieldname];
+      if (!v) { targets.forEach(t => { if (!t.fetch_if_empty) c.doc[t.fieldname] = null; }); return; }
+      try {
+        const fields = [...new Set(targets.map(t => t.fetch_from.split('.')[1]))];
+        const j = await hdApi('frappe.client.get_value', { doctype: df.options, filters: v, fieldname: fields }, 'GET');
+        const vals = j.message || {};
+        targets.forEach(t => {
+          if (t.fetch_if_empty && c.doc[t.fieldname]) return;
+          const k = t.fetch_from.split('.')[1];
+          c.doc[t.fieldname] = vals[k] === undefined ? null : vals[k];
+        });
+      } catch (e) {}
+    }
+    async function hdUpload(f, df, file) {
+      const fd = new FormData();
+      fd.append('file', file, file.name);
+      fd.append('is_private', df.fieldtype === 'Attach Image' ? '0' : '1');
+      fd.append('doctype', f.doctype);
+      fd.append('docname', f.doc.name);
+      fd.append('fieldname', df.fieldname);
+      const r = await fetch('/api/method/upload_file', { method: 'POST', credentials: 'include', headers: { 'Accept': 'application/json', 'X-Frappe-CSRF-Token': window.csrf_token }, body: fd });
+      let j = {}; try { j = await r.json(); } catch (e) {}
+      if (!r.ok || !j.message) throw new Error(hdErrText(j) || 'The upload failed.');
+      return j.message.file_url;
+    }
+
+    // link suggestions
+    function hdLinkFilters(c, df) {
+      if (!df || !df.link_filters) return null;
+      try {
+        const out = {};
+        JSON.parse(df.link_filters).forEach(x => {
+          let val = x[3];
+          if (typeof val === 'string' && val.startsWith('eval:')) val = (new Function('doc', 'return (' + val.slice(5) + ');'))(c.doc);
+          out[x[1]] = [x[2], val];
+        });
+        return out;
+      } catch (e) { return null; }
+    }
+    function hdLinkSuggest(input) {
+      clearTimeout(input.__hdT);
+      input.__hdT = setTimeout(async () => {
+        const dt = input.dataset.link;
+        const box = input.parentNode.querySelector('.hd-suggest');
+        if (!dt || !box) return;
+        const seq = (input.__hdSeq = (input.__hdSeq || 0) + 1);
+        const c = hdRowCtx(input);
+        const df = input.dataset.fn === '__multi' ? null : c.md.fields.find(x => x.fieldname === input.dataset.fn);
+        const args = { doctype: dt, txt: input.value, page_length: 10, reference_doctype: c.f.doctype };
+        const fl = hdLinkFilters(c, df);
+        if (fl) args.filters = fl;
+        let res = [];
+        try { res = (await hdApi('frappe.desk.search.search_link', args, 'GET')).message || []; }
+        catch (e) { box.innerHTML = '<div class="hd-suggest-empty">' + hdEsc(e.message) + '</div>'; box.classList.add('open'); return; }
+        if (seq !== input.__hdSeq) return;
+        box.innerHTML = res.map(r => '<button type="button" role="option" class="hd-suggest-item" data-act="pick" data-value="' + hdEsc(r.value) + '"><span>' + hdEsc(r.value) + '</span>' +
+            ((r.label && r.label !== r.value) || r.description ? '<small>' + hdEsc(hdText(r.label && r.label !== r.value ? r.label : r.description)) + '</small>' : '') + '</button>').join('') +
+          (res.length ? '' : '<div class="hd-suggest-empty">No match</div>') +
+          (input.dataset.fn !== '__multi' ? '<button type="button" class="hd-suggest-item hd-suggest-new" data-act="link-new">+ Create a new ' + hdEsc(dt) + '</button>' : '');
+        box.classList.add('open');
+        input.setAttribute('aria-expanded', 'true');
+      }, 200);
+    }
+    async function hdPickLink(input, value) {
+      input.__hdTyped = false;
+      const box = input.parentNode.querySelector('.hd-suggest');
+      if (box) box.classList.remove('open');
+      const c = hdRowCtx(input);
+      if (input.dataset.fn === '__multi') {
+        const tdf = c.f.md.meta.fields.find(x => x.fieldname === input.dataset.multi);
+        const cm = c.f.md.children[tdf.options];
+        const linkDf = cm.fields.find(x => x.fieldtype === 'Link');
+        if ((c.f.doc[tdf.fieldname] || []).some(r => r[linkDf.fieldname] === value)) return;
+        const row = hdNewRow(c.f, tdf);
+        row[linkDf.fieldname] = value;
+        c.f.dirty = true;
+        hdRenderForm(true);
+        return;
+      }
+      const df = c.md.fields.find(x => x.fieldname === input.dataset.fn);
+      input.value = value;
+      await hdSetValue(c, df, value);
+    }
+    function hdFormKeys(e) {
+      const el = e.target;
+      if (el.classList && el.classList.contains('hd-link-input')) {
+        const box = el.parentNode.querySelector('.hd-suggest');
+        const items = box ? [...box.querySelectorAll('.hd-suggest-item')] : [];
+        if (e.key === 'ArrowDown' && items.length) { e.preventDefault(); items[0].focus(); return; }
+        if (e.key === 'Escape' && box && box.classList.contains('open')) { e.stopPropagation(); box.classList.remove('open'); return; }
+      }
+      if (el.classList && el.classList.contains('hd-suggest-item')) {
+        const items = [...el.parentNode.querySelectorAll('.hd-suggest-item')];
+        const i = items.indexOf(el);
+        if (e.key === 'ArrowDown') { e.preventDefault(); (items[i + 1] || items[i]).focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); i > 0 ? items[i - 1].focus() : el.parentNode.parentNode.querySelector('input').focus(); }
+        if (e.key === 'Escape') { e.stopPropagation(); el.parentNode.classList.remove('open'); el.parentNode.parentNode.querySelector('input').focus(); }
+      }
+    }
+    async function hdFormClick(e) {
+      const btn = e.target.closest('[data-act]');
+      if (!btn) return;
+      const f = hdTopForm();
+      if (!f) return;
+      const act = btn.dataset.act;
+      if (btn.tagName === 'A') e.preventDefault();
+      if (act === 'close') return hdCloseForm();
+      if (act === 'tab') { f.tab = Number(btn.dataset.i); return hdRenderForm(); }
+      if (act === 'save') return hdSave(f, 'Save');
+      if (act === 'update') return hdSave(f, 'Update');
+      if (act === 'submit') {
+        if (await hdConfirm('Submit ' + f.doctype + '?', 'After submitting, the document can no longer be edited (it can only be cancelled).', 'Submit')) hdSave(f, 'Submit');
+        return;
+      }
+      if (act === 'cancel') {
+        if (!(await hdConfirm('Cancel ' + f.doc.name + '?', 'The document stays in the system as cancelled. Linked entries are reversed by Frappe.', 'Cancel document', true))) return;
+        hdBusy(true, 'Cancelling…');
+        try { await hdApi('frappe.desk.form.save.cancel', { doctype: f.doctype, name: f.doc.name }); showToast(f.doc.name + ' cancelled', 'success'); hdAfterChange(f.doctype); await hdReloadForm(f); }
+        catch (err) { hdFormError(f, err.message); } finally { hdBusy(false); }
+        return;
+      }
+      if (act === 'amend') {
+        const copy = hdCleanDoc(f.doc);
+        const md = f.md;
+        const fresh = hdNewDoc(md, {});
+        Object.keys(copy).forEach(k => { if (!['name', 'docstatus', 'creation', 'modified', 'owner', 'modified_by', 'idx'].includes(k)) fresh[k] = copy[k]; });
+        fresh.amended_from = f.doc.name; fresh.docstatus = 0; fresh.__islocal = 1;
+        md.meta.fields.filter(x => HD_TABLE_TYPES.includes(x.fieldtype)).forEach(x => {
+          fresh[x.fieldname] = (copy[x.fieldname] || []).map((r, i) => Object.assign({}, r, { name: 'new-' + hdSlug(x.options) + '-' + i + Date.now().toString(36), __islocal: 1, parent: fresh.name, docstatus: 0 }));
+        });
+        md.meta.fields.forEach(x => { if (x.no_copy && x.fieldname !== 'amended_from') delete fresh[x.fieldname]; });
+        f.doc = fresh; f.dirty = true; f.perms = null; f.error = '';
+        return hdRenderForm();
+      }
+      if (act === 'delete') {
+        if (!(await hdConfirm('Delete ' + f.doc.name + '?', 'This permanently deletes the document. This cannot be undone.', 'Delete', true))) return;
+        hdBusy(true, 'Deleting…');
+        try { await hdApi('frappe.client.delete', { doctype: f.doctype, name: f.doc.name }); showToast(f.doc.name + ' deleted', 'success'); hdAfterChange(f.doctype); hdCloseForm(true); }
+        catch (err) { hdFormError(f, err.message); } finally { hdBusy(false); }
+        return;
+      }
+      if (act === 'reload') return hdReloadForm(f);
+      if (act === 'print') return hdPrintMenu(f, btn);
+      if (act === 'extra') { const a = f.extra && f.extra[Number(btn.dataset.i)]; if (a) a.run(); return; }
+      if (act === 'open-link') return hdOpenForm(btn.dataset.dt, btn.dataset.dn);
+      if (act === 'pick') { const input = btn.parentNode.parentNode.querySelector('input'); return hdPickLink(input, btn.dataset.value); }
+      if (act === 'link-new') {
+        const input = btn.parentNode.parentNode.querySelector('input');
+        btn.parentNode.classList.remove('open');
+        const dt = input.dataset.link;
+        const typed = input.value;
+        const sub = await hdMeta(dt).catch(() => null);
+        const defaults = {};
+        if (sub && typed) {
+          const tf = sub.meta.title_field || (sub.meta.autoname && sub.meta.autoname.startsWith('field:') ? sub.meta.autoname.slice(6) : '');
+          if (tf) defaults[tf] = typed;
+        }
+        const c = hdRowCtx(input);
+        const df = c.md.fields.find(x => x.fieldname === input.dataset.fn);
+        return hdOpenForm(dt, null, { defaults: defaults, onSaved: async saved => {
+          await hdCloseForm(true);
+          await hdSetValue(c, df, saved.name);
+        } });
+      }
+      if (act === 'clear-file') { const c = hdRowCtx(btn); const df = c.md.fields.find(x => x.fieldname === btn.dataset.fn); return hdSetValue(c, df, null); }
+      if (act === 'row-add') { const df = f.md.meta.fields.find(x => x.fieldname === btn.dataset.tf); hdNewRow(f, df); f.dirty = true; return hdRenderForm(true); }
+      if (act === 'row-del') {
+        const rows = f.doc[btn.dataset.tf] || [];
+        rows.splice(Number(btn.dataset.ri), 1);
+        rows.forEach((r, i) => { r.idx = i + 1; });
+        f.expanded = {}; f.dirty = true;
+        return hdRenderForm(true);
+      }
+      if (act === 'row-expand') { const k = btn.dataset.tf + ':' + btn.dataset.ri; f.expanded[k] = !f.expanded[k]; return hdRenderForm(true); }
+    }
+    // link inputs: a typed value that was not picked is kept (Frappe checks it on save)
+    document.addEventListener('focusout', e => {
+      const el = e.target;
+      if (!el.classList || !el.classList.contains('hd-link-input') || el.dataset.fn === '__multi' || !el.closest('#hdForm')) return;
+      setTimeout(() => {
+        const c = hdRowCtx(el);
+        if (!c.f || !c.doc) return;
+        const df = c.md.fields.find(x => x.fieldname === el.dataset.fn);
+        if (df && el.__hdTyped && !el.parentNode.querySelector('.hd-suggest.open')) { el.__hdTyped = false; hdSetValue(c, df, el.value || null, hdNeedsRerender(c, df)); }
+      }, 250);
+    });
+    document.addEventListener('keydown', e => {
+      if (!HD_FORMS.length || !document.getElementById('hdForm').classList.contains('open')) return;
+      if (document.querySelector('.hd-confirm')) return;
+      if (e.key === 'Escape' && !document.getElementById('hdMenu')) { e.preventDefault(); e.stopImmediatePropagation(); hdCloseForm(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        const f = hdTopForm();
+        if (f && f.doc.docstatus === 0 && !f.readOnly) hdSave(f, 'Save');
+        else if (f && f.doc.docstatus === 1 && f.dirty) hdSave(f, 'Update');
+      }
+    }, true);
+
+    // ---- doctype rules that the classic desk runs in its form scripts ----
+    const HD_HOOKS = {
+      '*': {
+        company: async (f) => {
+          // currency follows the company, as in the desk
+          const cur = f.md.meta.fields.find(x => x.fieldname === 'currency' && x.fieldtype === 'Link');
+          if (!cur || !f.doc.company) return;
+          try {
+            const j = await hdApi('frappe.client.get_value', { doctype: 'Company', filters: f.doc.company, fieldname: ['default_currency'] }, 'GET');
+            if (j.message && j.message.default_currency) f.doc.currency = j.message.default_currency;
+            if (f.md.meta.fields.some(x => x.fieldname === 'exchange_rate') && !f.doc.exchange_rate) f.doc.exchange_rate = 1;
+          } catch (e) {}
+        }
+      },
+      'Payroll Entry': {
+        __new: async (f) => {
+          if (!f.doc.posting_date) f.doc.posting_date = hdToday();
+          if (!f.doc.payroll_frequency) f.doc.payroll_frequency = 'Monthly';
+          if (!f.doc.start_date) f.doc.start_date = f.doc.posting_date;
+          await HD_HOOKS['Payroll Entry'].payroll_frequency(f);
+          if (f.doc.company) await HD_HOOKS['Payroll Entry'].company(f);
+        },
+        payroll_frequency: async (f) => {
+          f.doc.employees = [];
+          if (!f.doc.payroll_frequency) return;
+          try {
+            const j = await hdApi('hrms.payroll.doctype.payroll_entry.payroll_entry.get_start_end_dates', { payroll_frequency: f.doc.payroll_frequency, start_date: f.doc.start_date || f.doc.posting_date, company: f.doc.company }, 'GET');
+            if (j.message) { f.doc.start_date = j.message.start_date; f.doc.end_date = j.message.end_date; }
+          } catch (e) {}
+        },
+        start_date: async (f) => {
+          f.doc.employees = [];
+          if (!f.doc.start_date) return;
+          try {
+            const j = await hdApi('hrms.payroll.doctype.payroll_entry.payroll_entry.get_end_date', { start_date: f.doc.start_date, frequency: f.doc.payroll_frequency }, 'GET');
+            if (j.message && j.message.end_date) f.doc.end_date = j.message.end_date;
+          } catch (e) {}
+        },
+        end_date: async (f) => { f.doc.employees = []; },
+        company: async (f) => {
+          f.doc.employees = [];
+          if (!f.doc.company) return;
+          try {
+            const j = await hdApi('frappe.client.get_value', { doctype: 'Company', filters: f.doc.company, fieldname: ['default_currency', 'default_payroll_payable_account', 'cost_center'] }, 'GET');
+            const m = j.message || {};
+            if (m.default_currency) f.doc.currency = m.default_currency;
+            f.doc.payroll_payable_account = m.default_payroll_payable_account || f.doc.payroll_payable_account;
+            if (m.cost_center) f.doc.cost_center = m.cost_center;
+            if (!f.doc.exchange_rate) f.doc.exchange_rate = 1;
+          } catch (e) {}
+        }
+      }
+    };
+    async function hdRunHooks(f, field, ctx) {
+      if (ctx && ctx.tf) return;  // rules below are for the main document
+      const own = HD_HOOKS[f.doctype] && HD_HOOKS[f.doctype][field];
+      if (own) { try { await own(f, ctx); } catch (e) {} return; }
+      const any = HD_HOOKS['*'][field];
+      if (any) { try { await any(f, ctx); } catch (e) {} }
+    }
+
+    // run a server method of the open document (the desk's "frm.call") and show the result
+    async function hdDocMethod(f, method, args, busy) {
+      hdBusy(true, busy || 'Working…');
+      try {
+        const j = await hdApi('run_doc_method', { docs: hdCleanDoc(f.doc), method: method, args: args || null });
+        if (j.docs && j.docs[0]) f.doc = j.docs[0];
+        return j;
+      } finally { hdBusy(false); }
+    }
+    async function hdDocMethodByName(f, method, args, busy) {
+      hdBusy(true, busy || 'Working…');
+      try { return await hdApi('run_doc_method', { dt: f.doctype, dn: f.doc.name, method: method, args: args || null }); }
+      finally { hdBusy(false); }
+    }
+
+    // ---- link boxes outside forms (filters on Mark Attendance and Reports) ----
+    function hdSLinkHtml(id, doctype, value, placeholder) {
+      return '<div class="hd-link"><input type="text" id="' + id + '" class="hd-input hd-slink" autocomplete="off" data-link="' + hdEsc(doctype) + '" value="' + hdEsc(value || '') + '" placeholder="' + hdEsc(placeholder || 'Any') + '"><div class="hd-suggest" role="listbox"></div></div>';
+    }
+    document.addEventListener('input', e => {
+      const input = e.target;
+      if (!input.classList || !input.classList.contains('hd-slink')) return;
+      clearTimeout(input.__hdT);
+      input.__hdT = setTimeout(async () => {
+        const box = input.parentNode.querySelector('.hd-suggest');
+        const seq = (input.__hdSeq = (input.__hdSeq || 0) + 1);
+        let res = [];
+        try { res = (await hdApi('frappe.desk.search.search_link', { doctype: input.dataset.link, txt: input.value, page_length: 10 }, 'GET')).message || []; }
+        catch (err) { box.innerHTML = '<div class="hd-suggest-empty">' + hdEsc(err.message) + '</div>'; box.classList.add('open'); return; }
+        if (seq !== input.__hdSeq) return;
+        box.innerHTML = res.map(r => '<button type="button" role="option" class="hd-suggest-item" data-value="' + hdEsc(r.value) + '"><span>' + hdEsc(r.value) + '</span>' +
+          (r.description ? '<small>' + hdEsc(hdText(r.description)) + '</small>' : '') + '</button>').join('') || '<div class="hd-suggest-empty">No match</div>';
+        box.classList.add('open');
+      }, 200);
+    });
+    document.addEventListener('click', e => {
+      const item = e.target.closest('.hd-suggest-item');
+      if (item && !item.closest('#hdForm')) {
+        const input = item.parentNode.parentNode.querySelector('.hd-slink');
+        if (input) { input.value = item.dataset.value; input.dispatchEvent(new Event('change', { bubbles: true })); }
+        item.parentNode.classList.remove('open');
+        return;
+      }
+      document.querySelectorAll('.hd-slink + .hd-suggest.open').forEach(b => { if (!b.parentNode.contains(e.target)) b.classList.remove('open'); });
+    });
+
+    // =====================================================================================
+    // FIX-7 #5: Mark Attendance for a whole day inside HR Desk, using Frappe HR's Employee Attendance
+    // Tool methods (was: "Mark Attendance ↗" opened a single blank form in the classic desk).
+    // =====================================================================================
+    let HD_MARK = { unmarked: [], half: [], marked: [] };
+    function hdOpenMarkAttendance() {
+      navigateSidebar(null, 'Mark Attendance');
+      const d = document.getElementById('markDate');
+      if (d && !d.value) d.value = hdToday();
+      const c = document.getElementById('markCompany');
+      if (c && !c.value) c.value = window.hrDesk.defaultCompany || '';
+    }
+    async function hdMarkLoad() {
+      const box = document.getElementById('markResult');
+      const date = document.getElementById('markDate').value;
+      if (!date) { hdState(box, 'Choose a date first.', true); return; }
+      hdState(box, 'Loading employees…');
+      try {
+        const j = await hdApi('hrms.hr.doctype.employee_attendance_tool.employee_attendance_tool.get_employees', {
+          date: date, company: document.getElementById('markCompany').value || null, department: document.getElementById('markDepartment').value || null,
+          branch: document.getElementById('markBranch').value || null, designation: document.getElementById('markDesignation').value || null }, 'GET');
+        HD_MARK = { unmarked: j.message.unmarked || [], half: j.message.half_day_marked || [], marked: j.message.marked || [], date: date };
+        hdMarkRender();
+      } catch (e) { hdState(box, e.message, true); }
+    }
+    function hdMarkRender() {
+      const m = HD_MARK, box = document.getElementById('markResult');
+      hdSetText('markPill', m.unmarked.length + ' not marked · ' + m.marked.length + ' marked');
+      const list = (rows, name) => rows.map((r, i) => '<label class="hd-pick-row" data-text="' + hdEsc((r.employee + ' ' + (r.employee_name || '')).toLowerCase()) + '"><input type="checkbox" name="' + name + '" value="' + i + '"> ' +
+        '<strong>' + hdEsc(r.employee_name || r.employee) + '</strong> <span class="hd-sub">' + hdEsc(r.employee) + '</span></label>').join('');
+      box.innerHTML =
+        '<div class="metrics-grid">' + hdMetric('amber', m.unmarked.length, 'Not marked', 'users') + hdMetric('emerald', m.marked.length, 'Already marked', 'users') +
+          hdMetric('blue', m.half.length, 'Half-day leave', 'users') + hdMetric('indigo', hdDate(m.date).replace(/<[^>]*>/g, ''), 'Date', 'building') + '</div>' +
+        (m.unmarked.length ? '<div class="table-container hd-pad"><h3 class="hd-sec-title">Employees not marked yet</h3>' +
+          '<div class="hd-mark-bar"><label>Status <select id="markStatus" class="hd-input"><option>Present</option><option>Absent</option><option>Half Day</option><option>Work From Home</option></select></label>' +
+          '<label class="hd-check"><input type="checkbox" id="markLate"> Late entry</label><label class="hd-check"><input type="checkbox" id="markEarly"> Early exit</label>' +
+          '<input class="hd-search" type="search" placeholder="Search employees…" oninput="hdMarkFilter(this.value)" aria-label="Search employees">' +
+          '<label class="hd-check"><input type="checkbox" id="markAll" onchange="hdMarkAll(this.checked)"> Select all shown</label></div>' +
+          '<div class="hd-pick-list" id="markList">' + list(m.unmarked, 'mk') + '</div></div>' : '<div class="hd-state">Everyone is marked for this day.</div>') +
+        (m.half.length ? '<div class="table-container hd-pad"><h3 class="hd-sec-title">On half-day leave (mark the other half)</h3>' +
+          '<div class="hd-mark-bar"><label>Other half <select id="markHalfStatus" class="hd-input"><option>Present</option><option>Absent</option></select></label></div>' +
+          '<div class="hd-pick-list">' + list(m.half, 'mh') + '</div></div>' : '') +
+        (m.unmarked.length || m.half.length ? '<div class="hd-mark-go"><button type="button" class="btn-emp-action primary" onclick="hdMarkSubmit()">Mark attendance</button> <span class="hd-note" id="markCount"></span></div>' : '') +
+        (m.marked.length ? '<details class="table-container hd-pad"><summary>Already marked (' + m.marked.length + ')</summary><table class="modern-table"><thead><tr><th>Employee</th><th>Status</th><th>Leave Type</th></tr></thead><tbody>' +
+          m.marked.map(r => '<tr><td><strong>' + hdEsc(r.employee_name || r.employee) + '</strong><div class="hd-sub">' + hdEsc(r.employee) + '</div></td><td>' + hdBadge(r.status) + '</td><td>' + hdEsc(r.leave_type || '-') + '</td></tr>').join('') +
+          '</tbody></table></details>' : '');
+      box.querySelectorAll('.hd-pick-list').forEach(l => l.addEventListener('change', hdMarkCount));
+      hdMarkCount();
+    }
+    function hdMarkFilter(q) {
+      const t = String(q || '').toLowerCase().trim();
+      document.querySelectorAll('#markList .hd-pick-row').forEach(r => { r.style.display = !t || r.dataset.text.indexOf(t) !== -1 ? '' : 'none'; });
+    }
+    function hdMarkAll(on) {
+      document.querySelectorAll('#markList .hd-pick-row').forEach(r => { if (r.style.display !== 'none') r.querySelector('input').checked = on; });
+      hdMarkCount();
+    }
+    function hdMarkCount() {
+      const a = document.querySelectorAll('input[name="mk"]:checked').length, b = document.querySelectorAll('input[name="mh"]:checked').length;
+      hdSetText('markCount', a + b ? (a + b) + ' selected' : 'Select employees above');
+    }
+    async function hdMarkSubmit() {
+      const full = [...document.querySelectorAll('input[name="mk"]:checked')].map(i => HD_MARK.unmarked[Number(i.value)].employee);
+      const half = [...document.querySelectorAll('input[name="mh"]:checked')].map(i => HD_MARK.half[Number(i.value)].employee);
+      if (!full.length && !half.length) { showToast('Select at least one employee.', 'error'); return; }
+      const status = (document.getElementById('markStatus') || {}).value || 'Present';
+      const msg = (full.length ? full.length + ' employee(s) as ' + status : '') + (full.length && half.length ? ' and ' : '') + (half.length ? half.length + ' half-day employee(s)' : '') + ' on ' + hdDate(HD_MARK.date).replace(/<[^>]*>/g, '') + '.';
+      if (!(await hdConfirm('Mark attendance?', 'This marks ' + msg + ' Attendance is submitted right away.', 'Mark attendance'))) return;
+      try {
+        await hdApi('hrms.hr.doctype.employee_attendance_tool.employee_attendance_tool.mark_employee_attendance', {
+          employee_list: full, status: status, date: HD_MARK.date, company: document.getElementById('markCompany').value || null,
+          late_entry: (document.getElementById('markLate') || {}).checked ? 1 : 0, early_exit: (document.getElementById('markEarly') || {}).checked ? 1 : 0,
+          mark_half_day: half.length ? 1 : 0, half_day_status: (document.getElementById('markHalfStatus') || {}).value || 'Present', half_day_employee_list: half });
+        showToast('Attendance marked for ' + (full.length + half.length) + ' employee(s)', 'success');
+        hdAfterChange('Attendance');
+        hdMarkLoad();
+      } catch (e) { showToast(e.message, 'error'); }
+    }
+
+    // =====================================================================================
+    // FIX-7 #5: approve / reject leave inside HR Desk (was: "Review ↗" opened the classic desk)
+    // =====================================================================================
+    async function hdLeaveDecide(name, status) {
+      let f;
+      try {
+        const r = await hdLoadDoc('Leave Application', name);
+        const who = r.doc.employee_name || r.doc.employee;
+        const days = r.doc.total_leave_days ? r.doc.total_leave_days + ' day(s) of ' : '';
+        if (!(await hdConfirm((status === 'Approved' ? 'Approve' : 'Reject') + ' leave?', who + ': ' + days + (r.doc.leave_type || 'leave') + ', ' +
+          hdDate(r.doc.from_date).replace(/<[^>]*>/g, '') + ' to ' + hdDate(r.doc.to_date).replace(/<[^>]*>/g, '') + '.\nThe application is submitted with status ' + status + '.',
+          status === 'Approved' ? 'Approve' : 'Reject', status !== 'Approved'))) return;
+        r.doc.status = status;
+        await hdApi('frappe.desk.form.save.savedocs', { doc: hdCleanDoc(r.doc), action: 'Submit' });
+        showToast('Leave ' + (status === 'Approved' ? 'approved' : 'rejected') + ' for ' + who, 'success');
+        hdAfterChange('Leave Application');
+      } catch (e) { showToast(e.message, 'error'); }
+    }
+
+    async function hdLeaveInForm(f, status) {
+      if (!(await hdConfirm((status === 'Approved' ? 'Approve' : 'Reject') + ' leave?', 'The application is submitted with status ' + status + '.', status === 'Approved' ? 'Approve' : 'Reject', status !== 'Approved'))) return;
+      const before = f.doc.status;
+      f.doc.status = status;
+      if (!(await hdSave(f, 'Submit'))) { f.doc.status = before; hdRenderForm(true); }
+    }
+    // ---- doctype buttons inside the form ----
+    const HD_ACTIONS = {
+      'Leave Application': f => (f.doc.docstatus === 0 && !f.doc.__islocal) ? [
+        { label: 'Approve', primary: true, run: () => hdLeaveInForm(f, 'Approved') },
+        { label: 'Reject', danger: true, run: () => hdLeaveInForm(f, 'Rejected') }] : [],
+      'Payroll Entry': f => {
+        const d = f.doc, a = [];
+        if (d.__islocal) return a;
+        const emps = (d.employees || []).length;
+        if (d.docstatus === 0) {
+          a.push({ label: 'Get Employees', primary: !emps, run: async () => {
+            try {
+              await hdDocMethod(f, 'fill_employee_details', null, 'Fetching employees…');
+              if ((f.doc.employees || []).length) { f.dirty = true; await hdSave(f, 'Save'); } else { hdFormError(f, 'No employees found for these filters.'); }
+            } catch (e) { hdFormError(f, e.message); }
+          } });
+          if (emps && !Number(d.salary_slips_created)) {
+            if (d.overtime_step === 'Create') a.push({ label: 'Create Overtime Slips', run: () => hdDocMethod(f, 'create_overtime_slips').then(() => hdReloadForm(f)).catch(e => hdFormError(f, e.message)) });
+            else if (d.overtime_step === 'Submit') a.push({ label: 'Submit Overtime Slips', run: () => hdDocMethod(f, 'submit_overtime_slips').then(() => hdReloadForm(f)).catch(e => hdFormError(f, e.message)) });
+            else a.push({ label: 'Create Salary Slips', primary: true, run: async () => {
+              if (await hdConfirm('Create salary slips?', 'This submits the payroll entry and creates a draft salary slip for each of the ' + emps + ' employees.', 'Create Salary Slips')) hdSave(f, 'Submit');
+            } });
+          }
+        }
+        if (d.docstatus === 1) {
+          if (Number(d.salary_slips_submitted)) {
+            a.push({ label: 'Make Bank Entry', run: async () => {
+              if (!d.payment_account) { hdFormError(f, 'Set the Payment Account first (Update), then make the bank entry.'); return; }
+              if (!(await hdConfirm('Make bank entry?', 'This creates the payment journal entry for this payroll.', 'Make Bank Entry'))) return;
+              try { await hdDocMethodByName(f, 'make_bank_entry', { for_withheld_salaries: 0 }, 'Creating bank entry…'); showToast('Bank entry created', 'success'); hdReloadForm(f); } catch (e) { hdFormError(f, e.message); }
+            } });
+          } else if (Number(d.salary_slips_created) && d.status !== 'Queued') {
+            a.push({ label: 'Submit Salary Slips', primary: true, run: async () => {
+              if (!(await hdConfirm('Submit salary slips?', 'This submits every salary slip of this payroll entry and creates the accrual journal entry.', 'Submit Salary Slips'))) return;
+              try { await hdDocMethod(f, 'submit_salary_slips', null, 'Submitting salary slips…'); showToast('Salary slips submitted (large payrolls finish in the background)', 'success'); hdAfterChange('Salary Slip'); hdReloadForm(f); } catch (e) { hdFormError(f, e.message); }
+            } });
+          } else if (!Number(d.salary_slips_created) && d.status === 'Failed') {
+            a.push({ label: 'Create Salary Slips', primary: true, run: async () => {
+              try { await hdDocMethodByName(f, 'create_salary_slips', null, 'Creating salary slips…'); hdReloadForm(f); } catch (e) { hdFormError(f, e.message); }
+            } });
+          }
+          a.push({ label: 'View Salary Slips', run: () => { hdCloseAllForms(); hdShowBy('Salary Slips', 'slip', 'payroll_entry', d.name, 'Payroll Entry'); } });
+        }
+        return a;
+      },
+      'Data Import': f => {
+        const d = f.doc, a = [];
+        if (d.reference_doctype) a.push({ label: 'Download Template', run: () => hdImportTemplate(d.reference_doctype) });
+        if (d.__islocal) return a;
+        if (d.import_file && ['Pending', 'Error', 'Partial Success', 'Timed Out', '', undefined, null].includes(d.status)) a.push({ label: 'Check File', run: () => hdImportCheck(f) });
+        if (d.import_file && (!d.status || d.status === 'Pending')) a.push({ label: 'Start Import', primary: true, run: () => hdImportStart(f) });
+        if (d.status && d.status !== 'Pending') a.push({ label: 'Show Log', run: () => hdImportLog(f) });
+        if (['Partial Success', 'Error'].includes(d.status)) a.push({ label: 'Download Failed Rows', run: () => window.open('/api/method/frappe.core.doctype.data_import.data_import.download_errored_template?data_import_name=' + encodeURIComponent(d.name), '_blank', 'noopener') });
+        return a;
+      },
+      'User': f => f.opts.profile ? [{ label: 'Change Password', run: () => hdChangePassword() }] : []
+    };
+
+    // ---- import / export (was: "Excel Sync" opened the classic employee list) ----
+    function hdOpenImport(doctype) {
+      hdOpenForm('Data Import', null, { defaults: { reference_doctype: doctype, import_type: 'Insert New Records' }, title: 'Import ' + doctype, noSubmit: true });
+    }
+    async function hdImportTemplate(doctype) {
+      try {
+        const md = await hdMeta(doctype);
+        const cfg = Object.values(HD_LISTS).find(c => c.doctype === doctype);
+        const fields = md.meta.fields.filter(df => !HD_LAYOUT_TYPES.includes(df.fieldtype) && !HD_SKIP_TYPES.includes(df.fieldtype) && !HD_TABLE_TYPES.includes(df.fieldtype) &&
+          !df.read_only && !df.hidden && (df.reqd || df.in_list_view || (cfg && (cfg.fields || []).includes(df.fieldname)))).map(df => df.fieldname);
+        const url = '/api/method/frappe.core.doctype.data_import.data_import.download_template?doctype=' + encodeURIComponent(doctype) +
+          '&export_records=blank_template&file_type=Excel&export_fields=' + encodeURIComponent(JSON.stringify({ [doctype]: fields }));
+        window.open(url, '_blank', 'noopener');
+      } catch (e) { showToast(e.message, 'error'); }
+    }
+    async function hdImportCheck(f) {
+      try {
+        if (f.dirty) { if (!(await hdSave(f, 'Save'))) return; }
+        const j = await hdApi('frappe.core.doctype.data_import.data_import.get_preview_from_template', { data_import: f.doc.name, import_file: f.doc.import_file });
+        const p = j.message || {};
+        const warnings = (p.warnings || []).map(w => (w.row ? 'Row ' + w.row + ': ' : '') + hdText(w.message));
+        const rows = (p.data || []).length;
+        await hdInfo('File check', rows + ' row(s) found.' + (warnings.length ? '\n\nWarnings:\n' + warnings.slice(0, 30).join('\n') + (warnings.length > 30 ? '\n…' : '') : '\nNo problems found.'));
+      } catch (e) { hdFormError(f, e.message); }
+    }
+    async function hdImportStart(f) {
+      try {
+        if (f.dirty) { if (!(await hdSave(f, 'Save'))) return; }
+        if (!(await hdConfirm('Start import?', 'Records are created in ' + f.doc.reference_doctype + ' from the uploaded file.', 'Start Import'))) return;
+        await hdApi('frappe.core.doctype.data_import.data_import.form_start_import', { data_import: f.doc.name });
+        showToast('Import started', 'info');
+        for (let i = 0; i < 200; i++) {
+          await new Promise(r => setTimeout(r, 3000));
+          const s = (await hdApi('frappe.core.doctype.data_import.data_import.get_import_status', { data_import_name: f.doc.name }, 'GET')).message || {};
+          if (s.status && s.status !== 'Pending') {
+            showToast('Import ' + s.status + ': ' + (s.success || 0) + ' done, ' + (s.failed || 0) + ' failed', s.failed ? 'error' : 'success');
+            break;
+          }
+          if (s.total_records) hdSetText('hdFormTitle', hdDocTitle(f) + ' (' + (s.processed_records || 0) + ' of ' + s.total_records + ')');
+        }
+        hdAfterChange(f.doc.reference_doctype);
+        if (hdTopForm() === f) hdReloadForm(f);
+      } catch (e) { hdFormError(f, e.message); }
+    }
+    async function hdImportLog(f) {
+      try {
+        const logs = (await hdApi('frappe.core.doctype.data_import.data_import.get_import_logs', { data_import: f.doc.name, status: 'failed' }, 'GET')).message || [];
+        const lines = logs.map(l => {
+          let msg = '';
+          try { msg = JSON.parse(l.messages || '[]').map(m => hdText(typeof m === 'object' ? m.message : (() => { try { return JSON.parse(m).message; } catch (e) { return m; } })())).join(' '); } catch (e) { msg = hdText(l.exception || ''); }
+          return 'Row ' + (JSON.parse(l.row_indexes || '[]').join(', ') || '?') + ': ' + (msg || hdText(String(l.exception || '').split('\n').filter(Boolean).pop() || 'failed'));
+        });
+        await hdInfo('Import log', lines.length ? lines.slice(0, 50).join('\n') + (lines.length > 50 ? '\n…' : '') : 'No failed rows.');
+      } catch (e) { hdFormError(f, e.message); }
+    }
+    function hdInfo(title, text) {
+      return new Promise(resolve => {
+        const d = document.createElement('div');
+        d.className = 'hd-confirm';
+        d.innerHTML = '<div class="hd-confirm-box hd-info-box" role="dialog" aria-modal="true" aria-labelledby="hdInfoT"><h3 id="hdInfoT">' + hdEsc(title) + '</h3><pre class="hd-info-text">' + hdEsc(text) + '</pre>' +
+          '<div class="hd-confirm-actions"><button type="button" class="btn-emp-action primary">OK</button></div></div>';
+        const done = () => { d.remove(); document.removeEventListener('keydown', key, true); resolve(); };
+        const key = e => { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); done(); } };
+        d.addEventListener('click', e => { if (e.target === d || e.target.closest('button')) done(); });
+        document.addEventListener('keydown', key, true);
+        document.body.appendChild(d);
+        d.querySelector('button').focus();
+      });
+    }
+    // download the rows that are shown (filters and search applied) as a CSV file
+    function hdExportCsv(prefix) {
+      const st = HD_VIEW[prefix];
+      const body = document.getElementById(prefix + 'Rows');
+      if (!st || !st.rows || !body) { showToast('Nothing to export yet.', 'error'); return; }
+      const shown = [...body.querySelectorAll('tr[data-row]')].filter(tr => tr.style.display !== 'none').map(tr => st.rows[Number(tr.dataset.i)]).filter(Boolean);
+      const cols = st.exportCols || Object.keys(shown[0] || {});
+      const cell = v => {
+        let s = v === undefined || v === null ? '' : String(v);
+        if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;   // keep spreadsheet formulas from running
+        return '"' + s.replace(/"/g, '""') + '"';
+      };
+      const csv = '﻿' + [cols.map(cell).join(',')].concat(shown.map(r => cols.map(c => cell(r[c])).join(','))).join('\r\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = (st.title || prefix) + '-' + hdToday() + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      showToast(shown.length + ' row(s) exported', 'success');
+    }
+
+    // =====================================================================================
+    // FIX-10 #3: My Profile and password change inside HR Desk (was: My Settings opened the classic desk)
+    // =====================================================================================
+    function openMySettings() {
+      const menu = document.getElementById('userMenu'); if (menu) menu.classList.remove('open');
+      hdOpenForm('User', window.hrDesk.user, { profile: true, title: 'My Profile', noDelete: true, noPrint: true,
+        only: ['first_name', 'middle_name', 'last_name', 'language', 'time_zone', 'gender', 'birth_date', 'phone', 'mobile_no', 'location', 'bio', 'user_image'] });
+    }
+    function hdChangePassword() {
+      const d = document.createElement('div');
+      d.className = 'hd-confirm';
+      d.innerHTML = '<form class="hd-confirm-box" role="dialog" aria-modal="true" aria-labelledby="hdPwT" autocomplete="off"><h3 id="hdPwT">Change password</h3>' +
+        '<label class="hd-label" for="hdPwOld">Current password</label><input type="password" id="hdPwOld" class="hd-input" autocomplete="current-password" required>' +
+        '<label class="hd-label" for="hdPwNew">New password</label><input type="password" id="hdPwNew" class="hd-input" autocomplete="new-password" required minlength="8">' +
+        '<label class="hd-label" for="hdPwNew2">New password again</label><input type="password" id="hdPwNew2" class="hd-input" autocomplete="new-password" required>' +
+        '<div class="hd-form-error" id="hdPwErr" style="display: none;"></div>' +
+        '<div class="hd-confirm-actions"><button type="button" class="btn-emp-action" data-v="0">Close</button><button type="submit" class="btn-emp-action primary">Change password</button></div></form>';
+      const close = () => { d.remove(); document.removeEventListener('keydown', key, true); };
+      const key = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+      const err = t => { const el = d.querySelector('#hdPwErr'); el.textContent = t; el.style.display = t ? '' : 'none'; };
+      d.querySelector('button[data-v="0"]').addEventListener('click', close);
+      d.querySelector('form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const o = d.querySelector('#hdPwOld').value, n = d.querySelector('#hdPwNew').value, n2 = d.querySelector('#hdPwNew2').value;
+        if (n !== n2) { err('The new passwords do not match.'); return; }
+        try {
+          await hdApi('frappe.core.doctype.user.user.update_password', { new_password: n, old_password: o, logout_all_sessions: 0 });
+          close();
+          showToast('Password changed', 'success');
+        } catch (x) { err(x.message); }
+      });
+      document.addEventListener('keydown', key, true);
+      document.body.appendChild(d);
+      d.querySelector('#hdPwOld').focus();
+    }
+
+    // =====================================================================================
+    // FIX-10 #7: notifications inside HR Desk (was: opened the classic desk notification list)
+    // =====================================================================================
+    async function hdToggleNotifications(anchor) {
+      let p = document.getElementById('hdNotif');
+      if (p) { p.remove(); return; }
+      p = document.createElement('div');
+      p.id = 'hdNotif'; p.className = 'hd-notif'; p.setAttribute('role', 'dialog'); p.setAttribute('aria-label', 'Notifications');
+      p.innerHTML = '<div class="hd-notif-head"><strong>Notifications</strong><button type="button" class="hd-mini" data-act="all">Mark all as read</button></div><div class="hd-notif-list"><div class="hd-state">Loading…</div></div>';
+      document.body.appendChild(p);
+      const rc = anchor.getBoundingClientRect();
+      p.style.top = (rc.bottom + window.scrollY + 6) + 'px';
+      p.style.left = Math.max(8, rc.left + window.scrollX) + 'px';
+      setTimeout(() => document.addEventListener('click', hdNotifOutside), 0);
+      p.addEventListener('click', async e => {
+        const b = e.target.closest('[data-act]');
+        if (!b) return;
+        if (b.dataset.act === 'all') {
+          try { await hdApi('frappe.desk.doctype.notification_log.notification_log.mark_all_as_read', {}); p.querySelectorAll('.hd-notif-item.unread').forEach(x => x.classList.remove('unread')); loadUnreadNotifications(); } catch (x) { showToast(x.message, 'error'); }
+          return;
+        }
+        if (b.dataset.act === 'open') {
+          try { await hdApi('frappe.desk.doctype.notification_log.notification_log.mark_as_read', { docname: b.dataset.n }); } catch (x) {}
+          loadUnreadNotifications();
+          p.remove();
+          if (b.dataset.dt && b.dataset.dn) hdOpenForm(b.dataset.dt, b.dataset.dn);
+        }
+      });
+      try {
+        const j = await hdApi('frappe.desk.doctype.notification_log.notification_log.get_notification_logs', { limit: 30 }, 'GET');
+        const logs = (j.message && j.message.notification_logs) || [];
+        const users = (j.message && j.message.user_info) || {};
+        p.querySelector('.hd-notif-list').innerHTML = logs.length ? logs.map(l =>
+          '<button type="button" class="hd-notif-item' + (l.read ? '' : ' unread') + '" data-act="open" data-n="' + hdEsc(l.name) + '" data-dt="' + hdEsc(l.document_type || '') + '" data-dn="' + hdEsc(l.document_name || '') + '">' +
+            '<span class="hd-notif-subject">' + hdEsc(hdText(l.subject || l.document_name || 'Notification')) + '</span>' +
+            '<span class="hd-sub">' + hdEsc((users[l.from_user] && users[l.from_user].fullname) || l.from_user || '') + ' · ' + hdDate(l.creation) + '</span></button>').join('')
+          : '<div class="hd-state">No notifications.</div>';
+      } catch (e) { p.querySelector('.hd-notif-list').innerHTML = '<div class="hd-state error">' + hdEsc(e.message) + '</div>'; }
+    }
+    function hdNotifOutside(e) {
+      const p = document.getElementById('hdNotif');
+      if (p && !p.contains(e.target) && !e.target.closest('.sidebar-notifications')) { p.remove(); document.removeEventListener('click', hdNotifOutside); }
+    }
+
+    // =====================================================================================
+    // FIX-9 #4: reports inside HR Desk (was: every report card opened the classic desk).
+    // Filters follow each report's own definition; results come from Frappe's report engine.
+    // =====================================================================================
+    const HD_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const hdYearStart = () => new Date().getFullYear() + '-01-01';
+    const hdYearEnd = () => new Date().getFullYear() + '-12-31';
+    const hdAddMonths = (n) => { const d = new Date(); d.setMonth(d.getMonth() + n); return d.toISOString().slice(0, 10); };
+    const hdCo = () => window.hrDesk.defaultCompany || '';
+    const HD_EMP_STATUS = ['', 'Active', 'Inactive', 'Suspended', 'Left'];
+    const HD_REPORTS = {
+      'Monthly Attendance Sheet': { group: 'Attendance', sub: 'Day-by-day attendance for a month, per employee.', filters: [
+        { f: 'filter_based_on', l: 'Based On', t: 'Select', o: ['Month', 'Date Range'], d: 'Month', reqd: 1 },
+        { f: 'month', l: 'Month', t: 'Select', o: HD_MONTHS.map((m, i) => ({ v: i + 1, l: m })), d: () => new Date().getMonth() + 1, show: v => v.filter_based_on === 'Month', reqdIf: v => v.filter_based_on === 'Month' },
+        { f: 'year', l: 'Year', t: 'Select', o: async () => { try { return String((await hdApi('hrms.hr.report.monthly_attendance_sheet.monthly_attendance_sheet.get_attendance_years', {}, 'GET')).message || '').split('\n').filter(Boolean); } catch (e) { return [String(new Date().getFullYear())]; } },
+          show: v => v.filter_based_on === 'Month', reqdIf: v => v.filter_based_on === 'Month' },
+        { f: 'start_date', l: 'Start Date', t: 'Date', show: v => v.filter_based_on === 'Date Range', reqdIf: v => v.filter_based_on === 'Date Range' },
+        { f: 'end_date', l: 'End Date', t: 'Date', show: v => v.filter_based_on === 'Date Range', reqdIf: v => v.filter_based_on === 'Date Range' },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 },
+        { f: 'employee', l: 'Employee', t: 'Link', o: 'Employee' },
+        { f: 'status', l: 'Employee Status', t: 'Select', o: HD_EMP_STATUS, d: 'Active' },
+        { f: 'department', l: 'Department', t: 'Link', o: 'Department' },
+        { f: 'branch', l: 'Branch', t: 'Link', o: 'Branch' },
+        { f: 'group_by', l: 'Group By', t: 'Select', o: ['', 'Branch', 'Grade', 'Department', 'Designation'] },
+        { f: 'include_company_descendants', l: 'Include Company Descendants', t: 'Check', d: 1 },
+        { f: 'summarized_view', l: 'Summarized View', t: 'Check', d: 0 }] },
+      'Employees Working on a Holiday': { group: 'Attendance', sub: 'Attendance marked on holidays.', filters: [
+        { f: 'from_date', l: 'From Date', t: 'Date', d: hdYearStart, reqd: 1 }, { f: 'to_date', l: 'To Date', t: 'Date', d: hdYearEnd, reqd: 1 },
+        { f: 'holiday_list', l: 'Holiday List', t: 'Link', o: 'Holiday List' }, { f: 'department', l: 'Department', t: 'Link', o: 'Department' },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 }] },
+      'Employee Leave Balance': { group: 'Leave', sub: 'Opening, used and closing leave per employee and leave type.', filters: [
+        { f: 'from_date', l: 'From Date', t: 'Date', d: hdYearStart, reqd: 1 }, { f: 'to_date', l: 'To Date', t: 'Date', d: hdYearEnd, reqd: 1 },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 }, { f: 'department', l: 'Department', t: 'Link', o: 'Department' },
+        { f: 'employee', l: 'Employee', t: 'Link', o: 'Employee' }, { f: 'employee_status', l: 'Employee Status', t: 'Select', o: HD_EMP_STATUS, d: 'Active' },
+        { f: 'consolidate_leave_types', l: 'Consolidate Leave Types', t: 'Check', d: 1, show: v => !v.employee }] },
+      'Employee Leave Balance Summary': { group: 'Leave', sub: 'Leave balance of every employee on a date.', filters: [
+        { f: 'date', l: 'Date', t: 'Date', d: hdToday, reqd: 1 }, { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 },
+        { f: 'employee', l: 'Employee', t: 'Link', o: 'Employee' }, { f: 'department', l: 'Department', t: 'Link', o: 'Department' },
+        { f: 'employee_status', l: 'Employee Status', t: 'Select', o: HD_EMP_STATUS, d: 'Active' }] },
+      'Employee Analytics': { group: 'Employees', sub: 'Head count by branch, grade, department, designation or employment type.', filters: [
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 },
+        { f: 'parameter', l: 'Group By', t: 'Select', o: ['Branch', 'Grade', 'Department', 'Designation', 'Employment Type'], d: 'Department', reqd: 1 }] },
+      'Employee Information': { group: 'Employees', sub: 'Key details of every employee.', builder: true, filters: [] },
+      'Employee Birthday': { group: 'Employees', sub: 'Employees with a birthday in a month.', filters: [
+        { f: 'month', l: 'Month', t: 'Select', o: HD_MONTHS, d: () => HD_MONTHS[new Date().getMonth()] },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, always: 1 }] },
+      'Employee KYC Exception Report': { group: 'Employees', sub: 'Employees with missing KYC details.', filters: [] },
+      'Daily Work Summary Replies': { group: 'Employees', sub: 'Replies to daily work summary emails.', filters: [
+        { f: 'group', l: 'Group', t: 'Link', o: 'Daily Work Summary Group', reqd: 1 },
+        { f: 'range_from', l: 'From', t: 'Date', d: () => hdAddMonths(-1), reqd: 1, range: 'range' }, { f: 'range_to', l: 'To', t: 'Date', d: hdToday, reqd: 1, range: 'range' }] },
+      'Employee Exits': { group: 'Exits & Settlement', sub: 'Employees who left, with exit interview and full and final status.', filters: [
+        { f: 'from_date', l: 'From Date', t: 'Date', d: () => hdAddMonths(-12) }, { f: 'to_date', l: 'To Date', t: 'Date', d: hdToday },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company' }, { f: 'department', l: 'Department', t: 'Link', o: 'Department' },
+        { f: 'designation', l: 'Designation', t: 'Link', o: 'Designation' }, { f: 'employee', l: 'Employee', t: 'Link', o: 'Employee' },
+        { f: 'reports_to', l: 'Reports To', t: 'Link', o: 'Employee' },
+        { f: 'interview_status', l: 'Interview Status', t: 'Select', o: ['', 'Pending', 'Scheduled', 'Completed'] },
+        { f: 'final_decision', l: 'Final Decision', t: 'Select', o: ['', 'Employee Retained', 'Exit Confirmed'] },
+        { f: 'exit_interview_pending', l: 'Exit Interview Pending', t: 'Check' }, { f: 'questionnaire_pending', l: 'Questionnaire Pending', t: 'Check' },
+        { f: 'fnf_pending', l: 'Full and Final Pending', t: 'Check' }] },
+      'Employee Advance Summary': { group: 'Expenses', sub: 'Advances paid, claimed and returned.', filters: [
+        { f: 'employee', l: 'Employee', t: 'Link', o: 'Employee' }, { f: 'from_date', l: 'From Date', t: 'Date', d: hdYearStart }, { f: 'to_date', l: 'To Date', t: 'Date', d: hdToday },
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 },
+        { f: 'status', l: 'Status', t: 'Select', o: ['', 'Draft', 'Paid', 'Partially Paid', 'Unpaid', 'Claimed', 'Cancelled'] },
+        { f: 'department', l: 'Department', t: 'Link', o: 'Department', list: 1 }, { f: 'branch', l: 'Branch', t: 'Link', o: 'Branch', list: 1 },
+        { f: 'group_by', l: 'Group By', t: 'Select', o: ['', 'Employee', 'Department', 'Branch'] }] },
+      'Recruitment Analytics': { group: 'Recruitment', sub: 'Staffing plans, openings and job offers.', filters: [
+        { f: 'company', l: 'Company', t: 'Link', o: 'Company', d: hdCo, reqd: 1 }, { f: 'on_date', l: 'On Date', t: 'Date', d: hdToday, reqd: 1 }] }
+    };
+    const HD_REPORT_ALIASES = { 'Employee Exits Report': 'Employee Exits' };
+    let HD_REPORT_CURRENT = null;
+
+    function hdLoadReportsIndex() {
+      const box = document.getElementById('reportCards');
+      const groups = {};
+      Object.keys(HD_REPORTS).forEach(n => { (groups[HD_REPORTS[n].group] = groups[HD_REPORTS[n].group] || []).push(n); });
+      box.innerHTML = Object.keys(groups).map(g => '<div class="hd-report-group"><h3 class="hd-sec-title">' + hdEsc(g) + '</h3><div class="hd-report-list">' +
+        groups[g].map(n => '<button type="button" class="hd-report-card" data-report="' + hdEsc(n) + '"><strong>' + hdEsc(n) + '</strong><span class="hd-sub">' + hdEsc(HD_REPORTS[n].sub) + '</span></button>').join('') + '</div></div>').join('');
+      box.querySelectorAll('[data-report]').forEach(b => b.addEventListener('click', () => hdOpenReport(b.dataset.report)));
+    }
+    async function hdOpenReport(name) {
+      name = HD_REPORT_ALIASES[name] || name;
+      const def = HD_REPORTS[name];
+      if (!def) return;
+      HD_REPORT_CURRENT = name;
+      navigateSidebar(null, 'Report');
+      const bc = document.querySelector('.breadcrumb-current'); if (bc) bc.textContent = name;
+      history.replaceState(null, '', '#report-' + hdSlug(name));
+      hdSetText('reportTitle', name);
+      hdSetText('reportSubtitle', def.sub);
+      hdSetText('reportPill', 'Set filters and press Run');
+      const fbox = document.getElementById('reportFilters');
+      let html = '';
+      for (const flt of def.filters) {
+        const id = 'rf_' + flt.f;
+        let d = typeof flt.d === 'function' ? flt.d() : flt.d;
+        let ctrl;
+        if (flt.t === 'Select') {
+          let opts = typeof flt.o === 'function' ? await flt.o() : flt.o;
+          if (d === undefined && typeof flt.o === 'function') d = opts[0];
+          ctrl = '<select id="' + id + '" class="hd-input">' + opts.map(o => { const v = typeof o === 'object' ? o.v : o, l = typeof o === 'object' ? o.l : o;
+            return '<option value="' + hdEsc(v) + '"' + (String(v) === String(d === undefined ? '' : d) ? ' selected' : '') + '>' + hdEsc(l || '—') + '</option>'; }).join('') + '</select>';
+        } else if (flt.t === 'Link') ctrl = hdSLinkHtml(id, flt.o, d, 'Any ' + flt.l.toLowerCase());
+        else if (flt.t === 'Date') ctrl = '<input type="date" id="' + id + '" class="hd-input" value="' + hdEsc(d || '') + '">';
+        else if (flt.t === 'Check') ctrl = '<label class="hd-check"><input type="checkbox" id="' + id + '"' + (Number(d) ? ' checked' : '') + '> ' + hdEsc(flt.l) + '</label>';
+        html += '<div class="hd-filter-field" data-f="' + hdEsc(flt.f) + '">' + (flt.t === 'Check' ? '' : '<label class="hd-label" for="' + id + '">' + hdEsc(flt.l) + (flt.reqd ? '<span class="hd-req">*</span>' : '') + '</label>') + ctrl + '</div>';
+      }
+      fbox.innerHTML = html + '<div class="hd-filter-field hd-filter-run"><button type="button" class="btn-emp-action primary" onclick="hdRunReport()">Run report</button></div>';
+      fbox.onchange = () => hdReportDeps();
+      hdReportDeps();
+      document.getElementById('reportHead').innerHTML = '';
+      hdState(document.getElementById('reportRows'), def.filters.some(x => x.reqd && !hdReportValues()[x.f]) ? 'Fill in the required filters and press Run report.' : 'Loading…');
+      document.getElementById('reportSummary').innerHTML = '';
+      hdSetText('reportNote', '');
+      if (!def.filters.some(x => (x.reqd || (x.reqdIf && x.reqdIf(hdReportValues()))) && !hdReportValues()[x.f])) hdRunReport();
+    }
+    function hdReportValues() {
+      const def = HD_REPORTS[HD_REPORT_CURRENT], v = {};
+      (def ? def.filters : []).forEach(flt => {
+        const el = document.getElementById('rf_' + flt.f);
+        if (!el) return;
+        v[flt.f] = flt.t === 'Check' ? (el.checked ? 1 : 0) : el.value;
+      });
+      return v;
+    }
+    function hdReportDeps() {
+      const def = HD_REPORTS[HD_REPORT_CURRENT], v = hdReportValues();
+      def.filters.forEach(flt => {
+        const w = document.querySelector('#reportFilters [data-f="' + flt.f + '"]');
+        if (w) w.style.display = !flt.show || flt.show(v) ? '' : 'none';
+      });
+    }
+    async function hdRunReport() {
+      const name = HD_REPORT_CURRENT, def = HD_REPORTS[name];
+      if (!def) return;
+      const v = hdReportValues(), filters = {}, missing = [];
+      def.filters.forEach(flt => {
+        if (flt.show && !flt.show(v)) return;
+        const val = v[flt.f];
+        if ((flt.reqd || (flt.reqdIf && flt.reqdIf(v))) && (val === '' || val === undefined)) missing.push(flt.l);
+        if (flt.range) { (filters[flt.range] = filters[flt.range] || []).push(val); return; }
+        if (val === '' || val === undefined || (flt.t === 'Check' && !val && !flt.d)) { if (flt.always) filters[flt.f] = ''; return; }
+        filters[flt.f] = flt.list ? [val] : (flt.t === 'Select' && /^\d+$/.test(val) && flt.f === 'month' && typeof def.filters.find(x => x.f === 'month').o[0] === 'object' ? Number(val) : val);
+      });
+      const body = document.getElementById('reportRows');
+      if (missing.length) { hdState(body, 'Please fill in: ' + missing.join(', '), true); return; }
+      hdState(body, 'Running report…');
+      hdSetText('reportPill', 'Running…');
+      document.getElementById('reportSummary').innerHTML = '';
+      try {
+        let cols, rows, msg = '', summary = [];
+        if (def.builder) {
+          const rep = (await hdApi('frappe.client.get', { doctype: 'Report', name: name }, 'GET')).message;
+          const spec = JSON.parse(rep.json || '{}');
+          const md = await hdMeta(rep.ref_doctype);
+          const fields = (spec.columns || []).filter(c => c[1] === rep.ref_doctype).map(c => c[0]);
+          rows = await hdFetch(rep.ref_doctype, fields, { limit: 0, order_by: (spec.sort_by || 'name').split('.').pop() + ' ' + (spec.sort_order || 'asc') });
+          cols = fields.map(fn => { const df = md.meta.fields.find(x => x.fieldname === fn) || {}; return { fieldname: fn, label: fn === 'name' ? rep.ref_doctype : (df.label || hdTitleCase(fn)), fieldtype: fn === 'name' ? 'Link' : (df.fieldtype || 'Data'), options: fn === 'name' ? rep.ref_doctype : df.options }; });
+        } else {
+          const j = await hdApi('frappe.desk.query_report.run', { report_name: name, filters: filters, ignore_prepared_report: 1 });
+          const m = j.message || {};
+          cols = (m.columns || []).map((c, i) => {
+            if (typeof c === 'string') { const parts = c.split(':'); const to = (parts[1] || 'Data').split('/'); return { label: parts[0], fieldtype: to[0] || 'Data', options: to[1], fieldname: String(i) }; }
+            return { label: c.label || c.fieldname, fieldtype: c.fieldtype || 'Data', options: c.options, fieldname: c.fieldname || c.id || String(i) };
+          });
+          rows = (m.result || []).filter(r => r && !Array.isArray(r) || Array.isArray(r)).map(r => {
+            if (!Array.isArray(r)) return r;
+            const o = {}; cols.forEach((c, i) => { o[c.fieldname] = r[i]; }); return o;
+          });
+          msg = m.message || '';
+          summary = m.report_summary || [];
+        }
+        HD_VIEW.report = { rows: rows, cards: [], filter: null, exportCols: cols.map(c => c.fieldname), title: name };
+        document.getElementById('reportHead').innerHTML = cols.map(c => '<th' + (HD_NUM_TYPES.includes(c.fieldtype) ? ' class="hd-num"' : '') + '>' + hdEsc(c.label) + '</th>').join('');
+        body.innerHTML = rows.length ? rows.map((r, i) => '<tr data-row="1" data-i="' + i + '"' + (r.bold || r.is_total_row ? ' class="hd-bold"' : '') + '>' + cols.map(c => '<td' + (HD_NUM_TYPES.includes(c.fieldtype) ? ' class="hd-num"' : '') + '>' + hdReportCell(c, r[c.fieldname]) + '</td>').join('') + '</tr>').join('')
+          : '<tr><td colspan="' + Math.max(cols.length, 1) + '"><div class="hd-state">No rows for these filters.</div></td></tr>';
+        document.getElementById('reportSummary').innerHTML = (summary.length ? '<div class="metrics-grid">' + summary.slice(0, 8).map(s => hdMetric(s.indicator === 'Red' ? 'rose' : s.indicator === 'Green' ? 'emerald' : 'indigo', s.datatype === 'Currency' ? hdMoney(s.value) : s.value, hdText(s.label), 'users')).join('') + '</div>' : '') +
+          (msg ? '<div class="hd-report-msg">' + hdSafeHtml(typeof msg === 'string' ? msg : JSON.stringify(msg)) + '</div>' : '');
+        hdSetText('reportPill', hdPlural(rows.length, 'row'));
+        const note = document.getElementById('reportNote'); delete note.dataset.base; note.textContent = hdPlural(rows.length, 'row');
+        const search = document.querySelector('#view-report .hd-search'); body.dataset.term = '';
+        if (search && search.value) hdFilterRows('reportRows', search.value);
+      } catch (e) {
+        hdSetText('reportPill', 'Error');
+        hdState(body, e.message, true);
+      }
+    }
+    // cell values: links open the record in HR Desk; attendance codes are coloured like the desk report
+    function hdReportCell(c, v) {
+      if (v === undefined || v === null || v === '') return '<span class="hd-muted">-</span>';
+      if (c.fieldtype === 'Link' && c.options && !/^\d+$/.test(c.options)) return '<a href="#" class="hd-linkval" data-dt="' + hdEsc(c.options) + '" data-dn="' + hdEsc(v) + '" onclick="hdOpenForm(this.dataset.dt, this.dataset.dn); return false;">' + hdEsc(v) + '</a>';
+      if (c.fieldtype === 'Currency') return hdEsc(hdMoney(v));
+      if (c.fieldtype === 'Date' || c.fieldtype === 'Datetime') return hdDate(v);
+      if (c.fieldtype === 'Check') return Number(v) ? 'Yes' : 'No';
+      if (c.fieldtype === 'Float' || c.fieldtype === 'Percent') return hdEsc(Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2 }));
+      if (c.fieldtype === 'HTML') return hdSafeHtml(v);
+      const codes = { P: 'success', WFH: 'success', A: 'danger', L: 'info', 'HD/P': 'info', 'HD/A': 'warning', H: 'warning', WO: 'warning' };
+      if (codes[v]) return '<span class="status-badge ' + codes[v] + '">' + hdEsc(v) + '</span>';
+      return hdEsc(typeof v === 'object' ? JSON.stringify(v) : v);
+    }
+
+    // =====================================================================================
+    // FIX-2f #7: live sync. Screens reload their data when you come back to HR Desk (e.g. after
+    // creating a record in another tab), when you reopen a screen after a minute, after every
+    // save in HR Desk, and from the "Refresh" button (was: each screen loaded once per page visit).
+    // =====================================================================================
+    const HD_STALE_MS = 60000;
+    function hdActiveViewId() { const v = document.querySelector('.workspace-view.active'); return v ? v.id : 'view-hr-setup'; }
+    function hdRefreshView(viewId) {
+      viewId = viewId || hdActiveViewId();
+      hdEmployeesPromise = null;
+      if (viewId === 'view-records' && HD_RECORDS_CURRENT) { hdOpenRecords(HD_RECORDS_CURRENT, true); return; }
+      if (viewId === 'view-report' && HD_REPORT_CURRENT) { hdRunReport(); return; }
+      delete hdLoaded[viewId];
+      hdLoadView(viewId);
+    }
+    // something changed: everything else reloads when it is next opened, the current screen reloads now
+    function hdAfterChange() {
+      Object.keys(hdLoaded).forEach(k => { hdLoaded[k] = 0; });
+      hdEmployeesPromise = null;
+      hdRefreshView();
+      loadUnreadNotifications();
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      if (HD_FORMS.length && hdTopForm().dirty) return;   // never reload under someone's unsaved typing
+      Object.keys(hdLoaded).forEach(k => { hdLoaded[k] = 0; });
+      hdRefreshView();
+      loadUnreadNotifications();
+    });
+
+    // FIX-10 #4: which doctype a list's Import button imports into
+    function hdImportFor(prefix) {
+      const dt = prefix === 'records' ? HD_RECORDS_CURRENT : (Object.values(HD_LISTS).find(c => c.prefix === prefix) || {}).doctype;
+      if (dt) hdOpenImport(dt);
+    }
+
     function hdLoadView(viewId) {
       const loaders = {
         'view-company': hdLoadCompanies,
@@ -3782,10 +5602,14 @@
         'view-process-payroll': () => hdLoadList(HD_LISTS.payroll),
         'view-salary-slips': () => hdLoadList(HD_LISTS.slip),
         'view-attendance': () => hdLoadList(HD_LISTS.attendance),
-        'view-leave-applications': () => hdLoadList(HD_LISTS.leave)
+        'view-leave-applications': () => hdLoadList(HD_LISTS.leave),
+        'view-job-offers': () => hdLoadList(HD_LISTS.offer),
+        'view-reports': hdLoadReportsIndex
       };
-      if (!loaders[viewId] || hdLoaded[viewId]) return;
-      hdLoaded[viewId] = true;
+      // FIX-2f #7: reload when the data is older than a minute or something changed (was: loaded once per visit)
+      if (!loaders[viewId]) return;
+      if (hdLoaded[viewId] && Date.now() - hdLoaded[viewId] < HD_STALE_MS) return;
+      hdLoaded[viewId] = Date.now();
       loaders[viewId]();
     }
 

@@ -15,6 +15,19 @@ def has_hr_desk_access() -> bool:
     return bool(HR_DESK_ROLES & set(frappe.get_roles()))
 
 
+def get_default_company() -> str:
+    """User default company, else the site default. The setup-wizard company often stays as the site
+    default with no employees; then the company with the most active employees is used."""
+    company = frappe.defaults.get_user_default("Company") or frappe.defaults.get_global_default("company")
+    if not company or not frappe.db.exists("Employee", {"company": company, "status": "Active"}):
+        rows = frappe.db.sql(
+            "select company from `tabEmployee` where status = 'Active' group by company order by count(*) desc limit 1"
+        )
+        if rows:
+            company = rows[0][0]
+    return company or ""
+
+
 def get_context(context):
     # FIX-1 #8: login required (was: public static page)
     if frappe.session.user == "Guest":
@@ -40,6 +53,14 @@ def get_context(context):
     context.user_email = user.email or user.name
     context.user_initial = (full_name[:1] or "U").upper()
     context.frappe_major = major
-    context.hr_desk_boot = {"user": user.name, "fullName": full_name, "deskUrl": desk_url}
+    # FIX-7 #5: default company and roles, so new forms start like the classic desk does
+    default_company = get_default_company()
+    context.hr_desk_boot = {
+        "user": user.name,
+        "fullName": full_name,
+        "deskUrl": desk_url,
+        "defaultCompany": default_company or "",
+        "roles": frappe.get_roles(),
+    }
     context.no_cache = 1
     return context
