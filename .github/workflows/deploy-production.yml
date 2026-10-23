@@ -66,6 +66,14 @@ jobs:
             docker exec erpnext-demo-backend-1 bench --site frontend clear-cache
             docker exec erpnext-demo-backend-1 bench --site frontend clear-website-cache
             if [ \"\$PY_CHANGED\" = 1 ]; then echo 'hr_desk.py changed: restarting backend (about 20 seconds)'; docker restart erpnext-demo-backend-1; fi
+            # FIX-7c: after a backend restart nginx keeps the backend's old address (502 Bad Gateway), so reload nginx;
+            # also make sure the backend is running and print the site status in this log
+            docker start erpnext-demo-backend-1 >/dev/null 2>&1 || true
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12; do docker exec erpnext-demo-backend-1 true >/dev/null 2>&1 && break; sleep 5; done
+            docker exec erpnext-demo-frontend-1 nginx -s reload || docker restart erpnext-demo-frontend-1
+            sleep 10
+            docker ps --filter name=erpnext-demo-backend-1 --filter name=erpnext-demo-frontend-1 --format '{{.Names}}: {{.Status}}'
+            echo \"Site check (200 = OK): \$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/api/method/ping)\"
           "
 
           echo "=========================================================="
