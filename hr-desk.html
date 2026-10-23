@@ -1786,6 +1786,8 @@
     .hd-card-edit { position: absolute; top: 12px; right: 12px; width: auto; padding: 4px 10px; font-size: 12px; }
     .employee-card { position: relative; }
     .hd-actions .btn-emp-action { width: auto; }
+    /* FIX-7g: on narrow screens wide tables scroll sideways (was: the Actions column was cut off) */
+    .table-container { overflow-x: auto; }
     @media (max-width: 760px) {
       .hd-cols { grid-template-columns: 1fr; }
       .hd-form-head, .hd-form-actions, .hd-form-body, .hd-form-tabs { padding-left: 16px; padding-right: 16px; }
@@ -3967,11 +3969,12 @@
       prefix: 'offer', doctype: 'Job Offer', order_by: 'offer_date desc', filters: [['docstatus', '!=', 2]],
       fields: ['name', 'job_applicant', 'applicant_name', 'designation', 'company', 'offer_date', 'status', 'docstatus'],
       pill: (rows, total) => hdPlural(total === null ? rows.length : total, 'Offer'),
+      // FIX-7g: this site uses its own offer statuses (Placed, Confirm, Yet to join…), so statuses come from the data
       metrics: (rows) => [
         ['amber', rows.filter(r => r.docstatus === 0).length, 'Draft', 'users', r => r.docstatus === 0],
-        ['blue', rows.filter(r => r.status === 'Awaiting Response').length, 'Awaiting Response', 'users', r => r.status === 'Awaiting Response'],
-        ['emerald', rows.filter(r => r.status === 'Accepted').length, 'Accepted', 'users', r => r.status === 'Accepted'],
-        ['rose', rows.filter(r => r.status === 'Rejected').length, 'Rejected', 'users', r => r.status === 'Rejected']],
+        ['emerald', rows.filter(r => r.docstatus === 1).length, 'Submitted', 'users', r => r.docstatus === 1],
+        ['blue', new Set(rows.map(r => r.status).filter(Boolean)).size, 'Statuses', 'users', { pick: 'status', name: 'Status' }],
+        ['indigo', new Set(rows.map(r => r.company).filter(Boolean)).size, 'Companies', 'building', { pick: 'company', name: 'Company' }]],
       columns: [
         ['Candidate', r => '<strong>' + hdEsc(r.applicant_name || r.job_applicant) + '</strong><div class="hd-sub">' + hdEsc(r.name) + '</div>'],
         ['Designation', r => hdEsc(r.designation || '-')],
@@ -4928,6 +4931,16 @@
             const j = await hdApi('frappe.client.get_value', { doctype: 'Company', filters: f.doc.company, fieldname: ['default_currency'] }, 'GET');
             if (j.message && j.message.default_currency) f.doc.currency = j.message.default_currency;
             if (f.md.meta.fields.some(x => x.fieldname === 'exchange_rate') && !f.doc.exchange_rate) f.doc.exchange_rate = 1;
+          } catch (e) {}
+        }
+      },
+      // FIX-7g: the leave approver comes from the employee / department, as in the desk (this site requires it)
+      'Leave Application': {
+        employee: async (f) => {
+          if (!f.doc.employee) return;
+          try {
+            const j = await hdApi('hrms.hr.doctype.leave_application.leave_application.get_leave_approver', { employee: f.doc.employee }, 'GET');
+            if (j.message) f.doc.leave_approver = j.message;
           } catch (e) {}
         }
       },
