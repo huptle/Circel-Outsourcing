@@ -68,6 +68,19 @@ jobs:
             docker exec erpnext-demo-backend-1 bench --site frontend clear-cache
             docker exec erpnext-demo-backend-1 bench --site frontend clear-website-cache
             if [ \"\$PY_CHANGED\" = 1 ]; then echo 'hr_desk.py changed: restarting backend (about 20 seconds)'; docker restart erpnext-demo-backend-1; fi
+            # FIX-7e: the backend stops at start-up because it cannot replace sites/assets (Permission denied).
+            # Give the sites folder and sites/assets back to the frappe user (done from a running container that shares the volume).
+            echo '==> Sites folder before fix'
+            docker exec -u root erpnext-demo-queue-short-1 ls -ld /home/frappe/frappe-bench/sites /home/frappe/frappe-bench/sites/assets
+            docker exec -u root erpnext-demo-queue-short-1 df -h /home/frappe/frappe-bench/sites
+            docker exec -u root erpnext-demo-queue-short-1 chown frappe:frappe /home/frappe/frappe-bench/sites
+            docker exec -u root erpnext-demo-queue-short-1 chown -hR frappe:frappe /home/frappe/frappe-bench/sites/assets
+            echo '==> Sites folder after fix'
+            docker exec -u root erpnext-demo-queue-short-1 ls -ld /home/frappe/frappe-bench/sites /home/frappe/frappe-bench/sites/assets
+            docker restart erpnext-demo-backend-1
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24; do docker exec erpnext-demo-backend-1 true >/dev/null 2>&1 && break; sleep 5; done
+            docker restart erpnext-demo-frontend-1
+            sleep 15
             # FIX-7c: after a backend restart nginx keeps the backend's old address (502 Bad Gateway), so reload nginx;
             # also make sure the backend is running and print the site status in this log
             docker start erpnext-demo-backend-1 >/dev/null 2>&1 || true
