@@ -58,10 +58,33 @@ jobs:
           echo "==> 2. Applying release and clearing cache..."
           $SSH_CMD "
             cp /opt/erpnext-demo/deploy_staging/hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html
+            # FIX-7b: Python page code is only re-read when the backend restarts, so restart it when hr_desk.py changed
+            PY_CHANGED=0
+            cmp -s /opt/erpnext-demo/deploy_staging/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py || PY_CHANGED=1
             cp /opt/erpnext-demo/deploy_staging/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
             chmod 644 /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
             docker exec erpnext-demo-backend-1 bench --site frontend clear-cache
             docker exec erpnext-demo-backend-1 bench --site frontend clear-website-cache
+            # FIX-7f: keep the sites folder owned by the frappe user (the backend cannot start otherwise); no restart here
+            docker exec -u root erpnext-demo-queue-short-1 chown frappe:frappe /home/frappe/frappe-bench/sites
+            docker exec -u root erpnext-demo-queue-short-1 chown -h frappe:frappe /home/frappe/frappe-bench/sites/assets
+            # FIX-7b/7f: Python page code is re-read only when the backend restarts. Restart it only when hr_desk.py changed,
+            # then reload nginx so it finds the backend again, and wait until the site answers.
+            if [ \"\$PY_CHANGED\" = 1 ]; then
+              echo 'hr_desk.py changed: restarting backend'
+              docker restart erpnext-demo-backend-1
+              sleep 5
+              docker exec erpnext-demo-frontend-1 nginx -s reload
+            fi
+            CODE=000
+            for i in \$(seq 1 24); do CODE=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/api/method/ping); [ \"\$CODE\" = 200 ] && break; sleep 5; done
+            echo \"Site check (200 = OK): \$CODE\"
+            if [ \"\$CODE\" != 200 ]; then
+              echo 'Site is not answering: container status and backend log follow'
+              docker ps -a --filter name=erpnext-demo --format '{{.Names}}: {{.Status}}'
+              docker logs --tail 40 erpnext-demo-backend-1 2>&1
+              exit 1
+            fi
           "
 
           echo "=========================================================="
