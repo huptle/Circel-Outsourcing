@@ -55,7 +55,8 @@ def sync_client_scripts():
             print(f"  ✓ Created Client Script: {script_name}")
     frappe.db.commit()
 
-def sync_print_formats():
+def sync_print_formats()
+    sync_company_logos():
     import frappe
     pf_dir = os.path.join(get_fixtures_dir(), "print_formats")
     if not os.path.exists(pf_dir):
@@ -100,10 +101,34 @@ def sync_print_formats():
             print(f"  ✓ Created Print Format: {pf_name}")
     frappe.db.commit()
 
+
+def sync_company_logos():
+    import frappe
+    import shutil
+    fixtures_logo_dir = os.path.join(get_fixtures_dir(), "logos")
+    public_files_dir = frappe.get_site_path("public", "files")
+    
+    circle_logo_src = os.path.join(fixtures_logo_dir, "circle_outsourcing_logo.png")
+    gcs_logo_src = os.path.join(fixtures_logo_dir, "gcs_logo.png")
+    
+    if os.path.exists(circle_logo_src) and os.path.exists(public_files_dir):
+        shutil.copy2(circle_logo_src, os.path.join(public_files_dir, "circle_outsourcing_logo.png"))
+        if frappe.db.exists("Company", "Circle Outsourcing"):
+            frappe.db.set_value("Company", "Circle Outsourcing", "company_logo", "/files/circle_outsourcing_logo.png")
+            print("  ✓ Linked Circle Outsourcing logo")
+            
+    if os.path.exists(gcs_logo_src) and os.path.exists(public_files_dir):
+        shutil.copy2(gcs_logo_src, os.path.join(public_files_dir, "gcs_logo.png"))
+        if frappe.db.exists("Company", "Global Complete Solutions"):
+            frappe.db.set_value("Company", "Global Complete Solutions", "company_logo", "/files/gcs_logo.png")
+            print("  ✓ Linked Global Complete Solutions logo")
+    frappe.db.commit()
+
 def sync_all():
     import frappe
     sync_client_scripts()
     sync_print_formats()
+    sync_company_logos()
     frappe.clear_cache()
     print("✓ All custom fixtures synced successfully and cache cleared!")
 
