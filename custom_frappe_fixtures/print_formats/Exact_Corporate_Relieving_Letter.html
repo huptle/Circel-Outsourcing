@@ -1,0 +1,102 @@
+<!-- Print Format for: Employee | Name: Exact Corporate Relieving Letter -->
+{% set company_name = doc.company or "Global Complete Solutions" %}
+{% set company_email = "accounts@globalcompletesolutions.com" if "Global" in company_name else "Operations@Circleoutsourcing.com" %}
+
+<style>
+    @media print {
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 13px; line-height: 1.6; }
+    }
+    .letter-page {
+        padding: 40px 50px;
+        min-height: 950px;
+        position: relative;
+        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+        color: #1e293b;
+        font-size: 13px;
+        line-height: 1.6;
+        background: #fff;
+    }
+    .header-table {
+        width: 100%;
+        margin-bottom: 25px;
+    }
+    .badge-corporate {
+        background-color: #1572e8;
+        color: #ffffff;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+    .bold { font-weight: bold; }
+</style>
+
+<div class="letter-page">
+    <table class="header-table">
+        <tr>
+            <td style="vertical-align: top;">
+                <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{{ company_name }}</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 500;">
+                    Corporate Office &bull; Human Resources Department<br>
+                    Email: {{ company_email }}
+                </div>
+            </td>
+            <td style="text-align: right; vertical-align: top;">
+                <span class="badge-corporate">Relieving Letter</span>
+                <div style="margin-top: 8px; font-size: 12px; color: #475569; font-weight: 600;">
+                    Date: {{ frappe.utils.formatdate(frappe.utils.nowdate(), "dd-MM-yyyy") }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <hr style="border: 0; border-top: 2px solid #1572e8; margin-bottom: 30px;">
+
+    <div style="margin-bottom: 20px;">
+        <div class="bold" style="font-size: 14px;">To Whomsoever It May Concern</div>
+        <div style="margin-top: 10px;">
+            <strong>Employee Name:</strong> {{ doc.employee_name or doc.name }}<br>
+            <strong>Employee ID:</strong> {{ doc.name }}<br>
+            <strong>Designation:</strong> {{ doc.designation or "Staff" }}<br>
+            <strong>Department:</strong> {{ doc.department or "Operations" }}
+        </div>
+    </div>
+
+    <div style="font-size: 14px; font-weight: bold; margin: 20px 0; text-decoration: underline; color: #0f172a;">
+        Subject: Relieving Letter & Official Clearance
+    </div>
+
+    <p>Dear <strong>{{ doc.employee_name or doc.name }}</strong>,</p>
+
+    <p>
+        This has reference to your resignation from the services of <strong>{{ company_name }}</strong>. 
+        We would like to confirm that your resignation has been accepted, and you are officially relieved from your duties and responsibilities as <strong>{{ doc.designation or "Staff" }}</strong> with effect from the close of business hours on <strong>{{ frappe.utils.formatdate(doc.relieving_date or frappe.utils.nowdate(), "dd-MM-yyyy") }}</strong>.
+    </p>
+
+    <p>
+        We also verify that you joined our organization on <strong>{{ frappe.utils.formatdate(doc.date_of_joining, "dd-MM-yyyy") }}</strong>. During your tenure with us, you have performed your responsibilities satisfactorily and have successfully handed over all company equipment, documents, identification badges, and operational assets.
+    </p>
+
+    <p>
+        Your Full and Final Settlement (including any statutory leaves encashment and dues) is being processed through the accounts division as per standard company settlement policies.
+    </p>
+
+    <p>
+        We thank you for your contributions during your tenure with <strong>{{ company_name }}</strong> and wish you all the very best in your future professional endeavors.
+    </p>
+
+    <div style="margin-top: 60px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%;">
+                    <div>Sincerely,</div>
+                    <div class="bold" style="color: #0f172a; margin-top: 5px;">For {{ company_name }}</div>
+                    <div style="margin-top: 45px; border-top: 1px dashed #64748b; width: 180px;"></div>
+                    <div class="bold" style="margin-top: 4px;">Authorized Signatory</div>
+                    <div style="font-size: 11px; color: #64748b;">Human Resources Division</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

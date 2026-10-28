@@ -1,0 +1,90 @@
+<!-- Print Format for: Employee | Name: Exact Corporate Experience Certificate -->
+{% set company_name = doc.company or "Global Complete Solutions" %}
+{% set company_email = "accounts@globalcompletesolutions.com" if "Global" in company_name else "Operations@Circleoutsourcing.com" %}
+
+<style>
+    @media print {
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 13px; line-height: 1.6; }
+    }
+    .letter-page {
+        padding: 40px 50px;
+        min-height: 950px;
+        position: relative;
+        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+        color: #1e293b;
+        font-size: 13px;
+        line-height: 1.6;
+        background: #fff;
+    }
+    .header-table {
+        width: 100%;
+        margin-bottom: 25px;
+    }
+    .badge-corporate {
+        background-color: #1572e8;
+        color: #ffffff;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+    .bold { font-weight: bold; }
+</style>
+
+<div class="letter-page">
+    <table class="header-table">
+        <tr>
+            <td style="vertical-align: top;">
+                <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{{ company_name }}</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 500;">
+                    Corporate Office &bull; Human Resources Department<br>
+                    Email: {{ company_email }}
+                </div>
+            </td>
+            <td style="text-align: right; vertical-align: top;">
+                <span class="badge-corporate">Experience Certificate</span>
+                <div style="margin-top: 8px; font-size: 12px; color: #475569; font-weight: 600;">
+                    Date: {{ frappe.utils.formatdate(frappe.utils.nowdate(), "dd-MM-yyyy") }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <hr style="border: 0; border-top: 2px solid #1572e8; margin-bottom: 30px;">
+
+    <div style="text-align: center; margin-bottom: 25px;">
+        <span style="font-size: 16px; font-weight: bold; color: #0f172a; text-decoration: underline; letter-spacing: 0.5px;">
+            TO WHOMSOEVER IT MAY CONCERN
+        </span>
+    </div>
+
+    <p style="text-align: justify; margin-top: 20px;">
+        This is to certify that <strong>{{ doc.employee_name or doc.name }}</strong> (Employee Code: <strong>{{ doc.name }}</strong>) was employed with <strong>{{ company_name }}</strong> from <strong>{{ frappe.utils.formatdate(doc.date_of_joining, "dd-MM-yyyy") }}</strong> to <strong>{{ frappe.utils.formatdate(doc.relieving_date or frappe.utils.nowdate(), "dd-MM-yyyy") }}</strong>.
+    </p>
+
+    <p style="text-align: justify;">
+        During this period of employment, {{ "he" if doc.gender == "Male" else ("she" if doc.gender == "Female" else "they") }} was designated as <strong>{{ doc.designation or "Staff" }}</strong> in the <strong>{{ doc.department or "Operations" }}</strong> Department.
+    </p>
+
+    <p style="text-align: justify;">
+        During {{ "his" if doc.gender == "Male" else ("her" if doc.gender == "Female" else "their") }} tenure, we found {{ "him" if doc.gender == "Male" else ("her" if doc.gender == "Female" else "them") }} to be hardworking, dedicated, and professional in discharging the duties assigned to {{ "him" if doc.gender == "Male" else ("her" if doc.gender == "Female" else "them") }}. {{ "He" if doc.gender == "Male" else ("She" if doc.gender == "Female" else "They") }} maintained cordial relationships with colleagues and clients.
+    </p>
+
+    <p style="text-align: justify;">
+        We take this opportunity to thank {{ "him" if doc.gender == "Male" else ("her" if doc.gender == "Female" else "them") }} for {{ "his" if doc.gender == "Male" else ("her" if doc.gender == "Female" else "their") }} services and wish {{ "him" if doc.gender == "Male" else ("her" if doc.gender == "Female" else "them") }} all success in future endeavors.
+    </p>
+
+    <div style="margin-top: 70px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%;">
+                    <div class="bold" style="color: #0f172a;">For {{ company_name }}</div>
+                    <div style="margin-top: 45px; border-top: 1px dashed #64748b; width: 180px;"></div>
+                    <div class="bold" style="margin-top: 4px;">Authorized Signatory</div>
+                    <div style="font-size: 11px; color: #64748b;">Human Resources Division</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

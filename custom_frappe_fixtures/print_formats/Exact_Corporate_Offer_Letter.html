@@ -1,0 +1,392 @@
+<!-- Print Format for: Job Offer | Name: Exact Corporate Offer Letter -->
+
+{% set company_name = doc.company or "Global Complete Solutions" %}
+{% set company_email = "accounts@globalcompletesolutions.com" if "Global" in company_name else "Operations@Circleoutsourcing.com" %}
+{% set is_gcs = "Global" in company_name %}
+
+<style>
+    @media print {
+        .page-break { page-break-after: always; }
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 13px; line-height: 1.5; }
+    }
+    .offer-page {
+        padding: 30px 40px;
+        min-height: 950px;
+        position: relative;
+        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+        color: #1e293b;
+        font-size: 13px;
+        line-height: 1.5;
+        background: #fff;
+    }
+    .header-table {
+        width: 100%;
+        margin-bottom: 25px;
+    }
+    .date-pill {
+        background-color: #fef08a;
+        padding: 4px 15px;
+        border-radius: 12px;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 12px;
+    }
+    .highlight-box {
+        background-color: #fef9c3;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    .detail-grid {
+        margin: 15px 0;
+        line-height: 1.8;
+    }
+    .terms-list ol {
+        padding-left: 20px;
+        margin: 0;
+    }
+    .terms-list li {
+        margin-bottom: 12px;
+        text-align: justify;
+    }
+    .annexure-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 13px;
+    }
+    .annexure-table th, .annexure-table td {
+        border: 1px solid #475569;
+        padding: 8px 12px;
+        text-align: left;
+    }
+    .annexure-table th {
+        background-color: #cbd5e1;
+        font-weight: bold;
+        text-align: center;
+    }
+    .annexure-table td.num {
+        text-align: right;
+        font-weight: 600;
+    }
+    .footer-text {
+        position: absolute;
+        bottom: 20px;
+        left: 40px;
+        right: 40px;
+        text-align: center;
+        font-size: 11px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 8px;
+    }
+    .footer-company {
+        color: #dc2626;
+        font-weight: bold;
+    }
+    .footer-address {
+        color: #dc2626;
+    }
+</style>
+
+<!-- PAGE 1 -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td>
+                <h2 style="margin:0; color:#1e3a8a; font-weight:bold;">{{ company_name }}</h2>
+            </td>
+            <td style="text-align: right;">
+                <span class="date-pill">{{ doc.get_formatted("offer_date") or frappe.utils.today() }}</span>
+            </td>
+        </tr>
+    </table>
+
+    <div style="margin-bottom: 15px;">
+        <p style="margin:0;"><strong>Mr. {{ doc.applicant_name }},</strong></p>
+        <p style="margin:0;">{{ doc.address_display or 'Vill: Nawadih, Post: Sikharia, Bihar - 821310' }}</p>
+    </div>
+
+    <p style="margin-top: 15px;">Dear <strong>Mr. {{ doc.applicant_name }}</strong></p>
+
+    <div class="detail-grid">
+        <p style="margin:3px 0;">Position Offered : <span class="highlight-box">{{ doc.designation or 'Operator' }}</span></p>
+        {% set raw_ctc = (doc.custom_ctc or 304704) | float %}
+        {% set ann_ctc = raw_ctc if raw_ctc > 60000 else (raw_ctc * 12) %}
+        {% set m_ctc = (ann_ctc / 12) | round(0) %}
+        <p style="margin:3px 0;">Cost to company : <span class="highlight-box">₹ {{ "{:,.0f}".format(ann_ctc) }} Per Annum (₹ {{ "{:,.0f}".format(m_ctc) }} Per Month)</span></p>
+        <p style="margin:3px 0;">Date of Joining : <span class="highlight-box">{{ doc.get_formatted("offer_date") or '05-Aug-2026' }}</span></p>
+        <p style="margin:3px 0;">Regional Location : <span class="highlight-box">{{ doc.custom_region or 'Kanpur' }}</span></p>
+        <p style="margin:3px 0;">Place of work : <span class="highlight-box">{{ doc.custom_place_of_work or 'Kanpur' }}</span></p>
+    </div>
+
+    <p>We have been entrusted with the contract of provision of Manpower at <strong>{{ doc.custom_client or doc.company }}</strong>. This Letter of Service Engagement is extended based on your technical proficiency, qualification, skills, and work-related experience that you have declared to possess as per the information or documents furnished by you.</p>
+
+    <p>Please return the signed copy of the Letter of Service Engagement to the undersigned, indicating your acceptance, no later than 5 days from the issuance date. The acceptance of this Letter of Service Engagement will not result in any contract or obligation or liability upon the Company.</p>
+
+    <p>This information is given to you because of the temporary nature of the assignment. Your terms of contract would be governed therefore, under the following conditions.</p>
+
+    <p>Further to our discussion with you, we are pleased to offer you a job opportunity with us. The terms and conditions of your job offer have been detailed below:</p>
+
+    <h4 style="margin: 15px 0 10px; text-decoration: underline;">GENERAL TERMS & CONDITIONS</h4>
+
+    <div class="terms-list">
+        <ol>
+            <li>You will be appointed as <strong>{{ doc.designation or 'Operator' }}</strong> and your contract of appointment will commence from <span class="highlight-box">{{ doc.get_formatted("offer_date") or '05-Aug-2026' }}</span>.</li>
+            <li>During your engagement period you shall be entitled to remuneration of <span class="highlight-box">INR {{ doc.custom_monthly_remuneration or '25392' }}/-</span> per month. For details, Please refer Annexure-A appended to this letter.</li>
+            <li>Statutory benefits such as Provident Fund (PF) & Employee State Insurance (ESI) etc. shall apply as per eligibility and its deductions shall be made from your remuneration accordingly.</li>
+            <li>Employment as per this offer is subject to your being medically fit and your consolidated pay is inclusive of your medical expenses/treatment etc. and there is no separate payment that will be entertained for your medical expenses if any.</li>
+            <li>The particulars furnished by you in your application & resume are correct. In case the said particulars are found to be incorrect or that you have concealed or withheld some other relevant facts, the engagement with the company will stand terminated / cancelled without any notice.</li>
+            <li>You are required not to divulge, communicate or pass on any information in any aspect of the company or principal to any one not employed by the company. Indulgence in such activity shall render you liable for termination with immediate effect notwithstanding any other terms mentioned in this engagement letter including the fixed period of engagement. All clauses mentioned in Confidentiality shall apply to you during your services with the company & select clauses shall also apply, post separation from the Company.</li>
+        </ol>
+    </div>
+
+    <div class="footer-text">
+        <div class="footer-company">{{ company_name }}</div>
+        <div class="footer-address">Office: Urbtech Trade Centre, Unit ??? C 532 & 533, 5th Floor, Sec 132, Noida. Email: {{ company_email }}</div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PAGE 2 -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td>
+                <h2 style="margin:0; color:#1e3a8a; font-weight:bold;">{{ company_name }}</h2>
+            </td>
+        </tr>
+    </table>
+
+    <div class="terms-list">
+        <ol start="7">
+            <li>You are required to deal with the company's money, material, equipment, documents, and any other property with utmost honesty and professional ethics. If you are found guilty at any point of time of moral turpitude or dishonesty in dealing with the property of the company or of theft or of misappropriation regardless of the value involved, your engagement shall be terminated with immediate effect notwithstanding any other terms & conditions mentioned in this letter.</li>
+            <li>You are required not to engage yourself in any other gainful commercial employment, business or activity, part time or full time, directly or indirectly simultaneously as long as you are engaged with {{ company_name }} or engage yourself directly or indirectly in any other profitable business connected with the dealing or activity of the company in any way. Any action to the contrary shall render your engagement liable for termination notwithstanding any other condition in this letter.</li>
+            <li>Your engagement is liable to be terminated without assigning any reason. In the event of your resignation or termination of engagement, either side will have to give one month notice or remuneration in lieu thereof.</li>
+            <li>You shall ensure that any change in the residential address given by you at the time of employment is intimated at once. Any failure to ensure updating this information will be viewed seriously. Letters sent to the address furnished by you will be treated as proper service of any communication meant for you.</li>
+            <li>You will be governed by the rules and regulations of the establishment in force from time to time. You will also be subject to rules of the establishment where you are assigned to work.</li>
+            <li>The company will expect you to work with high standard of initiative, efficiency, loyalty & economy.</li>
+            <li>Though you have been engaged to a specific position, the company reserves the right to send you on deputation/transfer/assignment to any of the company or client sites in India or abroad.</li>
+            <li>In the light of the above, you are requested to submit all Mandatory Documents as stated in Annexure-B.</li>
+            <li>Your joining is subject to successful registration of PF and ESI or else your joining will stand revoke without any notice. Ensure PF and ESI registration with {{ company_name }} on the joining itself.</li>
+            <li>The Company does not provide accommodation facilities. Any accommodation arrangements shall be the sole responsibility of the employee.</li>
+        </ol>
+    </div>
+
+    <p style="margin-top: 30px;">You are requested to sign and return the copy of this letter in token of acceptance and agreement, without any reservation.</p>
+
+    <div style="margin-top: 40px;">
+        <p style="margin:0;"><strong>Yours Sincerely,</strong></p>
+        <p style="margin:0;"><strong>For {{ company_name }}.,</strong></p>
+        <br><br><br>
+        <p style="margin:0;">_______________________________</p>
+        <p style="margin:0;"><strong>Authorized Signature</strong></p>
+    </div>
+
+    <div class="footer-text">
+        <div class="footer-company">{{ company_name }}</div>
+        <div class="footer-address">Office: Urbtech Trade Centre, Unit ??? C 532 & 533, 5th Floor, Sec 132, Noida. Email: {{ company_email }}</div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PAGE 3: ANNEXURE A -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td>
+                <h2 style="margin:0; color:#1e3a8a; font-weight:bold;">{{ company_name }}</h2>
+            </td>
+        </tr>
+    </table>
+
+    <h3 style="text-align: center; margin-bottom: 20px; text-decoration: underline;">Annexure - A</h3>
+
+    <table class="annexure-table">
+        <tr>
+            <th colspan="3">Salary Annexure</th>
+        </tr>
+        <tr>
+            <td><strong>Designation</strong></td>
+            <td colspan="2" style="background:#fef9c3; font-weight:bold;">{{ doc.designation or 'Welder Cum Fitter' }}</td>
+        </tr>
+        <tr>
+            <td><strong>Category</strong></td>
+            <td colspan="2" style="background:#fef9c3; font-weight:bold;">{{ doc.custom_category or 'Skilled' }}</td>
+        </tr>
+        <tr style="background:#e2e8f0; font-weight:bold;">
+            <td>Component</td>
+            <td style="text-align:right;">Monthly (INR)</td>
+            <td style="text-align:right;">Annual (INR)</td>
+        </tr>
+        {# Dynamic Salary Breakup Calculations based on CTC & Editable Doc Fields #}
+        {% set raw_ctc = (doc.custom_ctc or (doc.custom_monthly_remuneration * 12) or 304704) | float %}
+        {% set ann_ctc = raw_ctc if raw_ctc > 60000 else (raw_ctc * 12) %}
+        {% set m_ctc = (ann_ctc / 12) | round(0) %}
+
+        {% if doc.custom_basic and doc.custom_basic > 0 %}
+            {# Use user-edited values from Job Offer document #}
+            {% set m_basic = (doc.custom_basic or 0) | round(0) %}
+            {% set m_hra = (doc.custom_hra or 0) | round(0) %}
+            {% set m_bonus = (doc.custom_bonus or 0) | round(0) %}
+            {% set m_other = (doc.custom_other_allowances or 0) | round(0) %}
+            {% set m_gross = (doc.custom_gross_salary or (m_basic + m_hra + m_bonus + m_other)) | round(0) %}
+            {% set m_esi_ee = (doc.custom_esi_employee or 0) | round(0) %}
+            {% set m_pf_ee = (doc.custom_pf_employee or 0) | round(0) %}
+            {% set m_net = (doc.custom_net_salary or (m_gross - m_pf_ee - m_esi_ee)) | round(0) %}
+            {% set m_pf_er = (doc.custom_pf_employer or 0) | round(0) %}
+            {% set m_esi_er = (doc.custom_esi_employer or 0) | round(0) %}
+            {% set m_ctc = (m_gross + m_pf_er + m_esi_er) | round(0) %}
+            {% set ann_ctc = (m_ctc * 12) | round(0) %}
+        {% else %}
+            {# Fallback automatic calculations #}
+            {% if m_ctc >= 30000 %}
+                {% set m_basic = (m_ctc * 0.50) | round(0) %}
+                {% set m_hra = (m_basic * 0.40) | round(0) %}
+            {% elif m_ctc >= 20000 %}
+                {% set m_basic = 16025 %}
+                {% set m_hra = 0 %}
+            {% else %}
+                {% set m_basic = (m_ctc * 0.60) | round(0) %}
+                {% set m_hra = 0 %}
+            {% endif %}
+            
+            {% set m_bonus = (m_basic * 0.0833) | round(0) %}
+            {% set pf_wage = m_basic if m_basic < 15000 else 15000 %}
+            {% set m_pf_ee = (pf_wage * 0.12) | round(0) %}
+            {% set m_pf_er = (pf_wage * 0.13) | round(0) %}
+            
+            {% set gross_approx = m_ctc - m_pf_er %}
+            {% if gross_approx <= 21000 %}
+                {% set m_esi_er = (gross_approx * 0.0325) | round(0) %}
+                {% set m_gross = m_ctc - m_pf_er - m_esi_er %}
+                {% set m_esi_ee = (m_gross * 0.0075) | round(0) %}
+            {% else %}
+                {% set m_esi_er = 0 %}
+                {% set m_esi_ee = 0 %}
+                {% set m_gross = m_ctc - m_pf_er %}
+            {% endif %}
+            
+            {% set m_other = m_gross - m_basic - m_hra - m_bonus %}
+            {% if m_other < 0 %}
+                {% set m_other = 0 %}
+                {% set m_gross = m_basic + m_hra + m_bonus %}
+            {% endif %}
+            
+            {% set m_net = m_gross - m_pf_ee - m_esi_ee %}
+        {% endif %}
+        
+        {% set a_basic = m_basic * 12 %}
+        {% set a_hra = m_hra * 12 %}
+        {% set a_bonus = m_bonus * 12 %}
+        {% set a_other = m_other * 12 %}
+        {% set a_gross = m_gross * 12 %}
+        {% set a_esi_ee = m_esi_ee * 12 %}
+        {% set a_pf_ee = m_pf_ee * 12 %}
+        {% set a_net = m_net * 12 %}
+        {% set a_pf_er = m_pf_er * 12 %}
+        {% set a_esi_er = m_esi_er * 12 %}
+        {% set a_ctc = m_ctc * 12 %}
+
+        <tr>
+            <td>Basic Salary + DA</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_basic) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_basic) }}</td>
+        </tr>
+        <tr>
+            <td>House Rent Allowances</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_hra) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_hra) }}</td>
+        </tr>
+        <tr>
+            <td>Statutory Bonus</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_bonus) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_bonus) }}</td>
+        </tr>
+        <tr>
+            <td>Other Allowances</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_other) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_other) }}</td>
+        </tr>
+        <tr style="background:#bfdbfe; font-weight:bold;">
+            <td>Gross Salary</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_gross) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_gross) }}</td>
+        </tr>
+        <tr>
+            <td>ESI Employee Contribution</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_esi_ee) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_esi_ee) }}</td>
+        </tr>
+        <tr>
+            <td>PF Employees Contribution</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_pf_ee) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_pf_ee) }}</td>
+        </tr>
+        <tr style="background:#bbf7d0; font-weight:bold;">
+            <td>Net in Hand</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_net) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_net) }}</td>
+        </tr>
+        <tr>
+            <td>PF Employer Contribution</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_pf_er) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_pf_er) }}</td>
+        </tr>
+        <tr>
+            <td>ESI Employer Contribution</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_esi_er) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_esi_er) }}</td>
+        </tr>
+        <tr style="background:#fed7aa; font-weight:bold;">
+            <td>CTC (Cost To Company)</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_ctc) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_ctc) }}</td>
+        </tr>
+    </table>
+
+    <div style="font-size: 11px; color: #475569; margin-top: 15px; line-height: 1.6;">
+        <p style="margin:3px 0;">* Income Tax will be deducted at source if applicable as per Income Tax rules. As per applicable statutory rules / policies of the Company.</p>
+        <p style="margin:3px 0;">** Bonus Includes statutory bonus and discretionary Ex gratia. Compensation related information is strictly confidential. It should not be shared with anyone other than your reporting manager.</p>
+        <p style="margin:3px 0;">*** Conveyance/Fuel charges will be paid extra separately over and above the above compensation.</p>
+    </div>
+
+    <div class="footer-text">
+        <div class="footer-company">{{ company_name }}</div>
+        <div class="footer-address">Office: Urbtech Trade Centre, Unit ??? C 532 & 533, 5th Floor, Sec 132, Noida. Email: {{ company_email }}</div>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PAGE 4: ANNEXURE B -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td>
+                <h2 style="margin:0; color:#1e3a8a; font-weight:bold;">{{ company_name }}</h2>
+            </td>
+        </tr>
+    </table>
+
+    <h3 style="text-align: center; margin-bottom: 25px; text-decoration: underline;">Annexure - B</h3>
+
+    <h4 style="text-align: center; margin-bottom: 30px; letter-spacing: 0.5px;">DOCUMENTS TO BE SUBMITTED ON YOUR FIRST DAY</h4>
+
+    <div style="font-size: 14px; line-height: 2.2; margin-left: 40px;">
+        <p style="margin:5px 0;">1. Application form duly filled</p>
+        <p style="margin:5px 0;">2. Aadhar Card and PAN Card</p>
+        <p style="margin:5px 0;">3. All Education - Mark sheets and Degree certificate</p>
+        <p style="margin:5px 0;">4. Passport size photograph</p>
+        <p style="margin:5px 0;">5. Permanent and current Address Proofs</p>
+        <p style="margin:5px 0;">6. Relieving letter from last employer</p>
+        <p style="margin:5px 0;">7. Last 3 months salary slips</p>
+        <p style="margin:5px 0;">8. Cancelled cheque or bank statement (First sheet) or pass book (First sheet)</p>
+    </div>
+
+    <div class="footer-text">
+        <div class="footer-company">{{ company_name }}</div>
+        <div class="footer-address">Office: Urbtech Trade Centre, Unit ??? C 532 & 533, 5th Floor, Sec 132, Noida. Email: {{ company_email }}</div>
+    </div>
+</div>

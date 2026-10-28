@@ -1,0 +1,336 @@
+<!-- Print Format for: Job Offer | Name: Exact Corporate Appointment Letter -->
+{% set company_name = doc.company or "Global Complete Solutions" %}
+{% set company_email = "accounts@globalcompletesolutions.com" if "Global" in company_name else "Operations@Circleoutsourcing.com" %}
+{% set is_gcs = "Global" in company_name %}
+
+<style>
+    @media print {
+        .page-break { page-break-after: always; }
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 13px; line-height: 1.5; }
+    }
+    .offer-page {
+        padding: 30px 40px;
+        min-height: 950px;
+        position: relative;
+        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+        color: #1e293b;
+        font-size: 13px;
+        line-height: 1.5;
+        background: #fff;
+    }
+    .header-table {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .date-pill {
+        background-color: #dbeafe;
+        color: #1e40af;
+        padding: 4px 15px;
+        border-radius: 12px;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 12px;
+        border: 1px solid #bfdbfe;
+    }
+    .highlight-box {
+        background-color: #eff6ff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+        color: #1d4ed8;
+    }
+    .detail-grid {
+        margin: 15px 0;
+        line-height: 1.8;
+    }
+    .terms-list ol {
+        padding-left: 20px;
+        margin: 0;
+    }
+    .terms-list li {
+        margin-bottom: 11px;
+        text-align: justify;
+    }
+    .annexure-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 13px;
+    }
+    .annexure-table th, .annexure-table td {
+        border: 1px solid #475569;
+        padding: 7px 12px;
+        text-align: left;
+    }
+    .annexure-table th {
+        background-color: #f1f5f9;
+        font-weight: bold;
+    }
+    .text-right {
+        text-align: right;
+    }
+    .text-center {
+        text-align: center;
+    }
+    .bold {
+        font-weight: bold;
+    }
+    .signature-section {
+        margin-top: 35px;
+        width: 100%;
+    }
+    .badge-corporate {
+        background-color: #1572e8;
+        color: #ffffff;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+</style>
+
+<!-- PAGE 1: FORMAL APPOINTMENT LETTER -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td style="vertical-align: top;">
+                <div style="font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;">{{ company_name }}</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 500;">
+                    Corporate Office &bull; Human Resources Department<br>
+                    Email: {{ company_email }}
+                </div>
+            </td>
+            <td style="text-align: right; vertical-align: top;">
+                <span class="badge-corporate">Official Letter of Appointment</span>
+                <div style="margin-top: 8px;">
+                    <span class="date-pill">Ref: APPT/{{ doc.name }} &bull; Date: {{ frappe.utils.formatdate(doc.offer_date or doc.creation, "dd-MM-yyyy") }}</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <hr style="border: 0; border-top: 2px solid #1572e8; margin-bottom: 20px;">
+
+    <div class="detail-grid">
+        <div class="bold" style="font-size: 14px; color: #0f172a;">To,</div>
+        <div class="bold" style="font-size: 15px; color: #1e3a8a;">{{ doc.applicant_name }}</div>
+        <div><strong>Designation:</strong> {{ doc.designation }}</div>
+        <div><strong>Worker Category:</strong> {{ doc.custom_category or "Skilled" }}</div>
+        <div><strong>Deployment Location / Site:</strong> {{ doc.custom_place_of_work or doc.custom_site or "Head Office" }}</div>
+    </div>
+
+    <div style="margin: 15px 0; font-size: 14px; font-weight: bold; color: #0f172a; text-decoration: underline;">
+        Subject: Letter of Appointment for the position of {{ doc.designation }}
+    </div>
+
+    <p>Dear <strong>{{ doc.applicant_name }}</strong>,</p>
+
+    <p>With reference to your acceptance of our offer and your subsequent joining, the Management of <strong>{{ company_name }}</strong> is pleased to confirm your appointment as <strong>{{ doc.designation }}</strong> with effect from <strong>{{ frappe.utils.formatdate(doc.offer_date or doc.creation, "dd-MM-yyyy") }}</strong> on the terms and conditions outlined below:</p>
+
+    <div class="terms-list">
+        <ol>
+            <li><strong>Place of Posting & Deployment:</strong> You will be deployed at our client location <strong>{{ doc.custom_place_of_work or doc.custom_site or doc.custom_client or "designated project sites" }}</strong>. The company reserves the right to transfer or reassign your services to any other site, department, or client location within India as per operational exigencies.</li>
+            <li><strong>Remuneration & Retirals:</strong> Your total monthly gross salary and Cost to Company (CTC) shall be as per the detailed salary structure set forth in <strong>Annexure A</strong> attached herewith. Statutory deductions including Employee Provident Fund (EPF), ESIC, Professional Tax, and TDS will be effected as per prevailing government statutory laws.</li>
+            <li><strong>Probation & Confirmation:</strong> You shall be on probation for a period of <strong>3 (Three) Months</strong> from your date of joining. Upon successful completion of the probation period, your employment will be confirmed in writing by the Management.</li>
+            <li><strong>Hours of Work & Shift:</strong> You will be required to work as per the scheduled operational working hours and shifts designated at the deployment site, including compliance with site attendance punching and biometric systems.</li>
+            <li><strong>Duties & Standard of Conduct:</strong> You shall faithfully, diligently, and to the best of your ability perform all assigned duties. You will maintain strict decorum and abide by the rules, regulations, and standing orders of <strong>{{ company_name }}</strong> and client protocols.</li>
+        </ol>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%; vertical-align: bottom;">
+                    <div>Yours faithfully,</div>
+                    <div class="bold" style="color: #0f172a; margin-top: 5px;">For {{ company_name }}</div>
+                    <div style="margin-top: 45px; border-top: 1px dashed #64748b; width: 180px;"></div>
+                    <div class="bold" style="margin-top: 4px;">Authorized Signatory</div>
+                    <div style="font-size: 11px; color: #64748b;">Human Resources Division</div>
+                </td>
+                <td style="width: 50%; vertical-align: bottom; text-align: right;">
+                    <div>Accepted & Confirmed:</div>
+                    <div style="margin-top: 55px; border-top: 1px dashed #64748b; width: 180px; margin-left: auto;"></div>
+                    <div class="bold" style="margin-top: 4px;">Signature of Employee</div>
+                    <div style="font-size: 11px; color: #64748b;">Date: ________________________</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PAGE 2: TERMS OF EMPLOYMENT & CODE OF CONDUCT -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td style="font-size: 16px; font-weight: bold; color: #0f172a;">{{ company_name }}</td>
+            <td style="text-align: right; font-size: 12px; color: #64748b;">Ref: APPT/{{ doc.name }} &bull; Page 2 of 3</td>
+        </tr>
+    </table>
+    <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 20px;">
+
+    <div style="font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #1e3a8a; text-decoration: underline;">
+        Standard Terms of Employment & Regulatory Provisions
+    </div>
+
+    <div class="terms-list">
+        <ol start="6">
+            <li><strong>Confidentiality & Non-Disclosure:</strong> You shall strictly maintain the secrecy of all confidential operational records, customer information, trade processes, client data, and proprietary know-how of <strong>{{ company_name }}</strong>. You shall not at any time disclose such information to any third party.</li>
+            <li><strong>Termination & Notice Period:</strong> During the probationary period, either party may terminate this employment contract by providing <strong>15 days' notice</strong> in writing or salary in lieu thereof. Post-confirmation, the notice period shall be <strong>30 days</strong>. The company reserves the right to terminate employment immediately without notice or compensation in cases of gross misconduct, insubordination, fraud, breach of trust, or violation of company policies.</li>
+            <li><strong>Verification & KYC Compliance:</strong> This appointment is subject to satisfactory verification of your credentials, past employment records, identity documents (Aadhaar & PAN), educational certificates, and police verification. Any misrepresentation discovered at any stage will render this appointment null and void.</li>
+            <li><strong>Return of Company Assets:</strong> Upon separation from the services of the company, you will immediately surrender all identity cards, access badges, uniforms, tools, documents, and client property entrusted to your custody prior to Full & Final settlement.</li>
+            <li><strong>Governing Law:</strong> This agreement and all aspects of your service shall be governed by and construed in accordance with the laws of India, subject to the jurisdiction of competent courts in the state of company registration.</li>
+        </ol>
+    </div>
+
+    <div style="margin-top: 40px; padding: 15px; background: #f8fafc; border-left: 4px solid #1572e8; border-radius: 4px;">
+        <div class="bold" style="color: #0f172a; margin-bottom: 5px;">Declaration by the Appointee:</div>
+        <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #334155;">
+            "I, <strong>{{ doc.applicant_name }}</strong>, have carefully read and fully understood the above terms and conditions of my appointment. I hereby accept this appointment unconditionally and pledge to faithfully execute my duties in strict compliance with the policies and operational guidelines of <strong>{{ company_name }}</strong>."
+        </p>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%;">
+                    <div class="bold">For {{ company_name }}</div>
+                    <div style="margin-top: 40px; border-top: 1px dashed #64748b; width: 160px;"></div>
+                    <div style="font-size: 11px; margin-top: 3px;">Authorized Signatory</div>
+                </td>
+                <td style="width: 50%; text-align: right;">
+                    <div class="bold">Candidate Acceptance</div>
+                    <div style="margin-top: 40px; border-top: 1px dashed #64748b; width: 160px; margin-left: auto;"></div>
+                    <div style="font-size: 11px; margin-top: 3px;">Signature & Date</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PAGE 3: ANNEXURE A (CTC BREAKDOWN) -->
+<div class="offer-page">
+    <table class="header-table">
+        <tr>
+            <td style="font-size: 16px; font-weight: bold; color: #0f172a;">{{ company_name }}</td>
+            <td style="text-align: right; font-size: 12px; color: #64748b;">Annexure A &bull; Salary Breakdown</td>
+        </tr>
+    </table>
+    <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 15px;">
+
+    <div style="text-align: center; margin-bottom: 15px;">
+        <span class="badge-corporate" style="font-size: 13px; padding: 5px 15px;">ANNEXURE A - SALARY STRUCTURE & STATUTORY BREAKUP</span>
+    </div>
+
+    <table style="width: 100%; margin-bottom: 12px; font-size: 12px;">
+        <tr>
+            <td style="width: 50%;"><strong>Employee Name:</strong> {{ doc.applicant_name }}</td>
+            <td style="width: 50%; text-align: right;"><strong>Designation:</strong> {{ doc.designation }}</td>
+        </tr>
+        <tr>
+            <td><strong>Company:</strong> {{ company_name }}</td>
+            <td style="text-align: right;"><strong>Place of Work:</strong> {{ doc.custom_place_of_work or doc.custom_site or "Main Site" }}</td>
+        </tr>
+    </table>
+
+    <table class="annexure-table">
+        <thead>
+            <tr>
+                <th style="width: 8%;">S.No</th>
+                <th style="width: 52%;">Salary Components</th>
+                <th style="width: 20%;" class="text-right">Monthly (INR)</th>
+                <th style="width: 20%;" class="text-right">Annual (INR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">1</td>
+                <td>Basic Salary + DA</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_basic, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_basic or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">2</td>
+                <td>House Rent Allowance (HRA)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_hra, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_hra or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">3</td>
+                <td>Statutory Bonus</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_bonus, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_bonus or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">4</td>
+                <td>Other / Site Allowances</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_other_allowances, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_other_allowances or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr style="background-color: #f8fafc; font-weight: bold;">
+                <td colspan="2">A. GROSS SALARY</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_gross_salary, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_gross_salary or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">5</td>
+                <td>Provident Fund (PF) Employee Share (12%)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_pf_employee, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_pf_employee or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">6</td>
+                <td>ESIC Employee Share (0.75%)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_esi_employee, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_esi_employee or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr style="background-color: #f1f5f9; font-weight: bold; color: #047857;">
+                <td colspan="2">B. NET TAKE HOME SALARY (A - Employee Deductions)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_net_salary, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_net_salary or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">7</td>
+                <td>Provident Fund (PF) Employer Share (13%)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_pf_employer, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_pf_employer or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">8</td>
+                <td>ESIC Employer Share (3.25%)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_esi_employer, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_esi_employer or 0) * 12, currency="INR") }}</td>
+            </tr>
+            <tr style="background-color: #e0f2fe; font-weight: 800; font-size: 14px; color: #0369a1;">
+                <td colspan="2">TOTAL COST TO COMPANY (CTC) (Gross + Employer Retirals)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((doc.custom_ctc or 0) / 12, currency="INR") }}</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(doc.custom_ctc, currency="INR") }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="font-size: 11px; color: #64748b; margin-top: 15px;">
+        * Note: Income Tax (TDS) and Professional Tax will be deducted at source in accordance with statutory regulations. Retirals benefits (PF/ESIC) are administered under applicable statutory boards.
+    </div>
+
+    <div style="margin-top: 40px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%;">
+                    <div class="bold">For {{ company_name }}</div>
+                    <div style="margin-top: 40px; border-top: 1px dashed #64748b; width: 160px;"></div>
+                    <div style="font-size: 11px; margin-top: 3px;">Authorized Signatory</div>
+                </td>
+                <td style="width: 50%; text-align: right;">
+                    <div class="bold">Acknowledged & Accepted</div>
+                    <div style="margin-top: 40px; border-top: 1px dashed #64748b; width: 160px; margin-left: auto;"></div>
+                    <div style="font-size: 11px; margin-top: 3px;">Signature of {{ doc.applicant_name }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
