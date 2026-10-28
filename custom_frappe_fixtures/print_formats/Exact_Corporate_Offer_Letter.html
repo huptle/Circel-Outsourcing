@@ -220,153 +220,174 @@
 
     <h3 style="text-align: center; margin-bottom: 20px; text-decoration: underline;">Annexure - A</h3>
 
-    <table class="annexure-table">
+            <table class="annexure-table">
         <tr>
-            <th colspan="3">Salary Annexure</th>
+            <th colspan="4" style="text-align: center; font-size: 14px; background: #1e3a8a; color: white;">Annexure: Compensation Details</th>
+        </tr>
+        <tr>
+            <td style="width: 28%;"><strong>Employee Code</strong></td>
+            <td colspan="3">-</td>
+        </tr>
+        <tr>
+            <td><strong>Name of Appointee</strong></td>
+            <td colspan="3" style="font-weight:bold;">Mr. {{ candidate_name }}</td>
         </tr>
         <tr>
             <td><strong>Designation</strong></td>
-            <td colspan="2" style="background:#fef9c3; font-weight:bold;">{{ doc.designation or 'Welder Cum Fitter' }}</td>
+            <td colspan="3" style="font-weight:bold;">{{ doc.designation or 'Sr. Accountant' }}</td>
         </tr>
         <tr>
-            <td><strong>Category</strong></td>
-            <td colspan="2" style="background:#fef9c3; font-weight:bold;">{{ doc.custom_category or 'Skilled' }}</td>
+            <td><strong>Grade / Category</strong></td>
+            <td colspan="3">{{ doc.custom_category or '-' }}</td>
+        </tr>
+        <tr>
+            <td><strong>Date of Joining (DOJ)</strong></td>
+            <td colspan="3">{{ doc.get_formatted("offer_date") or frappe.utils.today() }}</td>
         </tr>
         <tr style="background:#e2e8f0; font-weight:bold;">
-            <td>Component</td>
-            <td style="text-align:right;">Monthly (INR)</td>
-            <td style="text-align:right;">Annual (INR)</td>
+            <th style="width: 44%;">Salary Structure</th>
+            <th style="width: 16%; text-align: center;">Payable</th>
+            <th style="width: 20%; text-align: right;">Monthly (INR)</th>
+            <th style="width: 20%; text-align: right;">Annually (INR)</th>
         </tr>
-        {# Dynamic Salary Breakup Calculations based on CTC & Editable Doc Fields #}
-        {% set raw_ctc = (doc.custom_ctc or (doc.custom_monthly_remuneration * 12) or 304704) | float %}
-        {% set ann_ctc = raw_ctc if raw_ctc > 60000 else (raw_ctc * 12) %}
-        {% set m_ctc = (ann_ctc / 12) | round(0) %}
-
+        {# Dynamic / User-customized calculations matching Salary Compensation Excel #}
+        {% set m_gross = (doc.custom_gross_salary or doc.custom_monthly_remuneration or ((doc.custom_ctc or 384000) / 12)) | float %}
         {% if doc.custom_basic and doc.custom_basic > 0 %}
-            {# Use user-edited values from Job Offer document #}
             {% set m_basic = (doc.custom_basic or 0) | round(0) %}
             {% set m_hra = (doc.custom_hra or 0) | round(0) %}
             {% set m_bonus = (doc.custom_bonus or 0) | round(0) %}
+            {% set m_conv = (doc.custom_conveyance or 0) | round(0) %}
             {% set m_other = (doc.custom_other_allowances or 0) | round(0) %}
-            {% set m_gross = (doc.custom_gross_salary or (m_basic + m_hra + m_bonus + m_other)) | round(0) %}
-            {% set m_esi_ee = (doc.custom_esi_employee or 0) | round(0) %}
-            {% set m_pf_ee = (doc.custom_pf_employee or 0) | round(0) %}
-            {% set m_net = (doc.custom_net_salary or (m_gross - m_pf_ee - m_esi_ee)) | round(0) %}
+            {% set m_gross = (doc.custom_gross_salary or (m_basic + m_hra + m_bonus + m_conv + m_other)) | round(0) %}
             {% set m_pf_er = (doc.custom_pf_employer or 0) | round(0) %}
             {% set m_esi_er = (doc.custom_esi_employer or 0) | round(0) %}
-            {% set m_ctc = (m_gross + m_pf_er + m_esi_er) | round(0) %}
-            {% set ann_ctc = (m_ctc * 12) | round(0) %}
+            {% set m_gratuity = (doc.custom_gratuity or 0) | round(0) %}
+            {% set m_medical = (doc.custom_medical if doc.custom_medical is not none and doc.custom_medical != '' else 2000) | round(0) %}
+            {% set m_fixed_comp = (doc.custom_fixed_compensation or (m_gross + m_pf_er + m_esi_er + m_gratuity + m_medical)) | round(0) %}
+            {% set m_ctc = (doc.custom_ctc / 12 if doc.custom_ctc else m_fixed_comp) | round(0) %}
+            {% set ann_ctc = (doc.custom_ctc or (m_fixed_comp * 12)) | round(0) %}
+            {% set m_take_home = (doc.custom_net_salary or (m_gross - m_pf_er - m_gratuity - m_esi_er)) | round(0) %}
         {% else %}
-            {# Fallback automatic calculations #}
-            {% if m_ctc >= 30000 %}
-                {% set m_basic = (m_ctc * 0.50) | round(0) %}
-                {% set m_hra = (m_basic * 0.40) | round(0) %}
-            {% elif m_ctc >= 20000 %}
-                {% set m_basic = 16025 %}
-                {% set m_hra = 0 %}
-            {% else %}
-                {% set m_basic = (m_ctc * 0.60) | round(0) %}
-                {% set m_hra = 0 %}
-            {% endif %}
-            
-            {% set m_bonus = (m_basic * 0.0833) | round(0) %}
-            {% set pf_wage = m_basic if m_basic < 15000 else 15000 %}
-            {% set m_pf_ee = (pf_wage * 0.12) | round(0) %}
-            {% set m_pf_er = (pf_wage * 0.13) | round(0) %}
-            
-            {% set gross_approx = m_ctc - m_pf_er %}
-            {% if gross_approx <= 21000 %}
-                {% set m_esi_er = (gross_approx * 0.0325) | round(0) %}
-                {% set m_gross = m_ctc - m_pf_er - m_esi_er %}
-                {% set m_esi_ee = (m_gross * 0.0075) | round(0) %}
-            {% else %}
-                {% set m_esi_er = 0 %}
-                {% set m_esi_ee = 0 %}
-                {% set m_gross = m_ctc - m_pf_er %}
-            {% endif %}
-            
-            {% set m_other = m_gross - m_basic - m_hra - m_bonus %}
-            {% if m_other < 0 %}
-                {% set m_other = 0 %}
-                {% set m_gross = m_basic + m_hra + m_bonus %}
-            {% endif %}
-            
-            {% set m_net = m_gross - m_pf_ee - m_esi_ee %}
+            {% set m_basic = (m_gross * 0.50) | round(0) %}
+            {% set m_hra = (m_basic * 0.50) | round(0) %}
+            {% set m_bonus = ((8.33 * m_basic) / 100) | round(0) %}
+            {% set m_conv = (m_basic * 0.10) | round(0) %}
+            {% set m_other = (m_gross - m_bonus - m_conv - (m_basic + m_hra)) | round(0) %}
+            {% set pf_wage = m_basic if m_basic <= 25000 else 25000 %}
+            {% set m_pf_er = (pf_wage * 0.12) | round(0) %}
+            {% set m_esi_er = 0 if m_gross > 21000 else ((m_gross * 0.04) | round(0)) %}
+            {% set m_gratuity = ((4.81 * m_basic) / 100) | round(0) %}
+            {% set m_medical = 2000 %}
+            {% set m_fixed_comp = (m_gross + m_pf_er + m_esi_er + m_gratuity + m_medical) | round(0) %}
+            {% set m_ctc = m_fixed_comp %}
+            {% set ann_ctc = (m_fixed_comp * 12) | round(0) %}
+            {% set m_take_home = (m_gross - m_pf_er - m_gratuity - m_esi_er) | round(0) %}
         {% endif %}
-        
+
         {% set a_basic = m_basic * 12 %}
         {% set a_hra = m_hra * 12 %}
         {% set a_bonus = m_bonus * 12 %}
+        {% set a_conv = m_conv * 12 %}
         {% set a_other = m_other * 12 %}
         {% set a_gross = m_gross * 12 %}
-        {% set a_esi_ee = m_esi_ee * 12 %}
-        {% set a_pf_ee = m_pf_ee * 12 %}
-        {% set a_net = m_net * 12 %}
         {% set a_pf_er = m_pf_er * 12 %}
         {% set a_esi_er = m_esi_er * 12 %}
-        {% set a_ctc = m_ctc * 12 %}
+        {% set a_gratuity = m_gratuity * 12 %}
+        {% set a_medical = m_medical * 12 %}
+        {% set a_fixed_comp = m_fixed_comp * 12 %}
+        {% set a_take_home = m_take_home * 12 %}
 
         <tr>
-            <td>Basic Salary + DA</td>
+            <td>Basic</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_basic) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_basic) }}</td>
         </tr>
         <tr>
-            <td>House Rent Allowances</td>
+            <td>HRA</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_hra) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_hra) }}</td>
         </tr>
         <tr>
-            <td>Statutory Bonus</td>
+            <td>Bonus</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_bonus) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_bonus) }}</td>
         </tr>
         <tr>
-            <td>Other Allowances</td>
+            <td>Conveyance Allowance</td>
+            <td style="text-align:center;">Monthly</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_conv) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_conv) }}</td>
+        </tr>
+        <tr>
+            <td>Other Allowance</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_other) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_other) }}</td>
         </tr>
         <tr style="background:#bfdbfe; font-weight:bold;">
-            <td>Gross Salary</td>
+            <td>Total Gross</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_gross) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_gross) }}</td>
         </tr>
         <tr>
-            <td>ESI Employee Contribution</td>
-            <td class="num">₹ {{ "{:,.0f}".format(m_esi_ee) }}</td>
-            <td class="num">₹ {{ "{:,.0f}".format(a_esi_ee) }}</td>
-        </tr>
-        <tr>
-            <td>PF Employees Contribution</td>
-            <td class="num">₹ {{ "{:,.0f}".format(m_pf_ee) }}</td>
-            <td class="num">₹ {{ "{:,.0f}".format(a_pf_ee) }}</td>
-        </tr>
-        <tr style="background:#bbf7d0; font-weight:bold;">
-            <td>Net in Hand</td>
-            <td class="num">₹ {{ "{:,.0f}".format(m_net) }}</td>
-            <td class="num">₹ {{ "{:,.0f}".format(a_net) }}</td>
-        </tr>
-        <tr>
-            <td>PF Employer Contribution</td>
+            <td>Employer PF Contribution</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_pf_er) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_pf_er) }}</td>
         </tr>
         <tr>
-            <td>ESI Employer Contribution</td>
+            <td>Employees & Employer ESI Contribution (4%)</td>
+            <td style="text-align:center;">Monthly</td>
             <td class="num">₹ {{ "{:,.0f}".format(m_esi_er) }}</td>
             <td class="num">₹ {{ "{:,.0f}".format(a_esi_er) }}</td>
         </tr>
+        <tr>
+            <td>Gratuity</td>
+            <td style="text-align:center;">Monthly</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_gratuity) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_gratuity) }}</td>
+        </tr>
+        <tr>
+            <td>Medical</td>
+            <td style="text-align:center;">Monthly</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_medical) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_medical) }}</td>
+        </tr>
         <tr style="background:#fed7aa; font-weight:bold;">
-            <td>CTC (Cost To Company)</td>
-            <td class="num">₹ {{ "{:,.0f}".format(m_ctc) }}</td>
-            <td class="num">₹ {{ "{:,.0f}".format(a_ctc) }}</td>
+            <td>Fixed Compensation (A)</td>
+            <td style="text-align:center;">Monthly</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_fixed_comp) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_fixed_comp) }}</td>
+        </tr>
+        <tr style="background:#fef08a; font-weight:800; font-size:13.5px; color:#854d0e;">
+            <td>Total Cost to Company (CTC)</td>
+            <td style="text-align:center;">Annual</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_fixed_comp) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(ann_ctc) }}</td>
+        </tr>
+        <tr style="background:#bbf7d0; font-weight:bold; color:#166534;">
+            <td>Take Home (Exclusive of TDS)</td>
+            <td style="text-align:center;">Monthly</td>
+            <td class="num">₹ {{ "{:,.0f}".format(m_take_home) }}</td>
+            <td class="num">₹ {{ "{:,.0f}".format(a_take_home) }}</td>
         </tr>
     </table>
 
-    <div style="font-size: 11px; color: #475569; margin-top: 15px; line-height: 1.6;">
-        <p style="margin:3px 0;">* Income Tax will be deducted at source if applicable as per Income Tax rules. As per applicable statutory rules / policies of the Company.</p>
-        <p style="margin:3px 0;">** Bonus Includes statutory bonus and discretionary Ex gratia. Compensation related information is strictly confidential. It should not be shared with anyone other than your reporting manager.</p>
-        <p style="margin:3px 0;">*** Conveyance/Fuel charges will be paid extra separately over and above the above compensation.</p>
+    <table style="width: 100%; margin-top: 10px; font-size: 12px; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 4px 8px; background: #f8fafc; border: 1px solid #e2e8f0; width: 50%;"><strong>Probation:</strong> {{ doc.custom_probation or '6 Months' }}</td>
+            <td style="padding: 4px 8px; background: #f8fafc; border: 1px solid #e2e8f0; width: 50%; text-align: right;"><strong>Notice Period:</strong> {{ doc.custom_notice_period or '1 Month' }}</td>
+        </tr>
+    </table>
+
+    <div style="font-size: 11px; color: #475569; margin-top: 12px; line-height: 1.5;">
+        <p style="margin:2px 0;">* Note: Gratuity shall be payable as per Gratuity Act 1972, Tax shall be deducted as per Income Tax Act, 1961.</p>
+        <p style="margin:2px 0;">** PF ceiling limit is 25000/- Basic. Statutory Bonus / Exgratia payable based on statutory regulations.</p>
+        <p style="margin:2px 0;">*** Compensation related information is strictly confidential between the employee and the Company.</p>
     </div>
 
     <div class="footer-text">
