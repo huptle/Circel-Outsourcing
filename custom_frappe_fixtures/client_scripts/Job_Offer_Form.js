@@ -28,7 +28,7 @@ frappe.ui.form.on('Job Offer', {
         }, __('Compensation'));
 
         frm.add_custom_button(__('⚡ Auto-Calculate from Gross / CTC'), function() {
-            calculate_and_set_breakdown(frm, true);
+            calculate_and_set_breakdown(frm, true, frm.doc.custom_ctc ? 'custom_ctc' : 'custom_monthly_remuneration');
         }, __('Compensation'));
 
         // Initialize formula defaults if empty
@@ -37,15 +37,12 @@ frappe.ui.form.on('Job Offer', {
 
     custom_monthly_remuneration: function(frm) {
         if (frm.__updating) return;
-        calculate_and_set_breakdown(frm, false);
+        calculate_and_set_breakdown(frm, false, 'custom_monthly_remuneration');
     },
 
     custom_ctc: function(frm) {
         if (frm.__updating) return;
-        // If CTC is entered but Gross isn't, calculate from CTC
-        if (!frm.doc.custom_monthly_remuneration || frm.doc.custom_monthly_remuneration == 0) {
-            calculate_and_set_breakdown(frm, false);
-        }
+        calculate_and_set_breakdown(frm, false, 'custom_ctc');
     },
 
     // Formula changes trigger re-calculation
@@ -96,16 +93,26 @@ function ensure_formula_defaults(frm) {
     }
 }
 
-function calculate_and_set_breakdown(frm, force) {
-    let m_gross = flt(frm.doc.custom_monthly_remuneration) || flt(frm.doc.custom_gross_salary);
+function calculate_and_set_breakdown(frm, force, changed_field) {
     const raw_ctc = flt(frm.doc.custom_ctc);
+    let m_gross = flt(frm.doc.custom_monthly_remuneration) || flt(frm.doc.custom_gross_salary);
 
-    // If gross is not provided, estimate gross from CTC
-    if (!m_gross && raw_ctc) {
+    const med_amt = frm.doc.custom_formula_medical_amt !== undefined && frm.doc.custom_formula_medical_amt !== null && frm.doc.custom_formula_medical_amt !== '' 
+                    ? flt(frm.doc.custom_formula_medical_amt) : 2000.0;
+
+    // If CTC was edited, or Gross isn't present, derive Gross from CTC
+    if (changed_field === 'custom_ctc' || (!m_gross && raw_ctc)) {
+        if (!raw_ctc) return;
         const m_ctc = raw_ctc > 60000 ? (raw_ctc / 12) : raw_ctc;
-        // CTC = Gross + PF(approx 6% of gross) + Gratuity(approx 2.4% of gross) + Medical(2000)
-        // Approximate m_gross:
-        m_gross = Math.max(10000, Math.round((m_ctc - 2000) / 1.09));
+        let g = 0;
+        if (m_ctc <= (21000 * 1.12405 + med_amt)) {
+            g = (m_ctc - med_amt) / 1.12405;
+        } else if (m_ctc <= (50000 * 1.08405 + med_amt)) {
+            g = (m_ctc - med_amt) / 1.08405;
+        } else {
+            g = (m_ctc - (25000 * 0.12 + med_amt)) / 1.02405;
+        }
+        m_gross = Math.round(Math.max(0, g));
     }
 
     if (!m_gross) return;
@@ -121,8 +128,6 @@ function calculate_and_set_breakdown(frm, force) {
     const esi_ceiling = flt(frm.doc.custom_formula_esi_ceiling) || 21000.0;
     const esi_er_rate = flt(frm.doc.custom_formula_esi_er_rate) || 4.0;
     const grat_pct = flt(frm.doc.custom_formula_gratuity_pct) || 4.81;
-    const med_amt = frm.doc.custom_formula_medical_amt !== undefined && frm.doc.custom_formula_medical_amt !== null && frm.doc.custom_formula_medical_amt !== '' 
-                    ? flt(frm.doc.custom_formula_medical_amt) : 2000.0;
 
     // 1. Basic = ROUND(basic_pct * Gross, 0)
     const m_basic = Math.round(m_gross * (basic_pct / 100.0));
@@ -145,11 +150,11 @@ function calculate_and_set_breakdown(frm, force) {
 
     // 6. Employer PF Contribution = IF(Basic <= pf_ceiling, Basic * pf_rate%, pf_ceiling * pf_rate%)
     const pf_wage = Math.min(m_basic, pf_ceiling);
-    const m_pf_er = Math.round(pf_wage * (pf_er_rate / 100.0));
+    const m_pf_er = Math.round(pf_wage * (pf_rate / 100.0));
     const m_pf_ee = Math.round(pf_wage * (pf_ee_rate / 100.0));
 
     // 7. ESI Total Contribution (4%) = ROUNDUP(IF(Gross > esi_ceiling, 0, Gross * esi_rate%), 0)
-    const m_esi_total = m_gross > esi_ceiling ? 0 : Math.ceil(m_gross * (esi_er_rate / 100.0));
+    const m_esi_total = m_gross > esi_ceiling ? 0 : Math.ceil(m_gross * (esi_rate / 100.0));
     const m_esi_ee = m_gross > esi_ceiling ? 0 : Math.round(m_gross * 0.0075);
 
     // 8. Gratuity = ROUND((grat_pct * Basic) / 100, 0)
@@ -265,7 +270,7 @@ function open_formula_modal(frm) {
                 custom_notice_period: values.notice_period
             }).then(() => {
                 frm.__updating = false;
-                calculate_and_set_breakdown(frm, true);
+                calculate_and_set_breakdown(frm, true, frm.doc.custom_ctc ? 'custom_ctc' : 'custom_monthly_remuneration');
                 d.hide();
                 frappe.show_alert({ message: __('Compensation formulas updated & breakdown recalculated!'), indicator: 'green' });
             });

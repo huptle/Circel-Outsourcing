@@ -4568,6 +4568,11 @@
       return miss;
     }
     async function hdSave(f, action) {
+      if (f.doctype === 'Job Offer') {
+        if (!Number(f.doc.custom_basic) && (Number(f.doc.custom_ctc) || Number(f.doc.custom_monthly_remuneration) || Number(f.doc.custom_gross_salary))) {
+          hdCalcJobOfferBreakdown(f.doc, f.doc.custom_ctc ? 'custom_ctc' : 'custom_monthly_remuneration');
+        }
+      }
       action = action || (f.doc.docstatus === 1 ? 'Update' : 'Save');
       const miss = hdMissing(f);
       if (miss.length) { hdFormError(f, 'Please fill in: ' + miss.join(', ')); return false; }
@@ -4682,6 +4687,17 @@
       if (!df || df.fieldtype === 'Check' || df.fieldtype === 'Select' || el.type === 'file') return;
       c.doc[df.fieldname] = hdReadInput(el, df);
       if (!c.f.dirty) { c.f.dirty = true; const h = document.querySelector('#hdForm .hd-form-title'); if (h && !h.querySelector('.hd-dirty')) h.insertAdjacentHTML('beforeend', ' <span class="status-badge warning hd-dirty">Not saved</span>'); }
+      // Auto-calculate Job Offer breakdown in real-time as user types
+      if (c.f.doctype === 'Job Offer') {
+        const joFields = ['custom_ctc', 'custom_monthly_remuneration', 'custom_gross_salary', 'custom_basic', 'custom_hra', 'custom_bonus', 'custom_conveyance', 'custom_other_allowances', 'custom_pf_employer', 'custom_esi_employer', 'custom_gratuity', 'custom_medical'];
+        if (joFields.includes(df.fieldname)) {
+          clearTimeout(el.__calcT);
+          el.__calcT = setTimeout(async () => {
+            await hdRunHooks(c.f, df.fieldname, c);
+            hdUpdateJobOfferDOM(c.f, el);
+          }, 150);
+        }
+      }
     }
     async function hdFormChange(e) {
       const el = e.target;
@@ -4944,6 +4960,44 @@
           } catch (e) {}
         }
       },
+      'Job Offer': {
+        __new: async (f) => {
+          if (!f.doc.custom_probation) f.doc.custom_probation = '6 Months';
+          if (!f.doc.custom_notice_period) f.doc.custom_notice_period = '1 Month';
+          if (!f.doc.custom_formula_basic_pct) f.doc.custom_formula_basic_pct = 50.0;
+          if (!f.doc.custom_formula_hra_pct) f.doc.custom_formula_hra_pct = 50.0;
+          if (!f.doc.custom_formula_bonus_pct) f.doc.custom_formula_bonus_pct = 8.33;
+          if (!f.doc.custom_formula_conveyance_pct) f.doc.custom_formula_conveyance_pct = 10.0;
+          if (!f.doc.custom_formula_pf_ceiling) f.doc.custom_formula_pf_ceiling = 25000.0;
+          if (!f.doc.custom_formula_pf_er_rate) f.doc.custom_formula_pf_er_rate = 12.0;
+          if (!f.doc.custom_formula_pf_ee_rate) f.doc.custom_formula_pf_ee_rate = 12.0;
+          if (!f.doc.custom_formula_esi_ceiling) f.doc.custom_formula_esi_ceiling = 21000.0;
+          if (!f.doc.custom_formula_esi_er_rate) f.doc.custom_formula_esi_er_rate = 4.0;
+          if (!f.doc.custom_formula_esi_ee_rate) f.doc.custom_formula_esi_ee_rate = 0.75;
+          if (!f.doc.custom_formula_gratuity_pct) f.doc.custom_formula_gratuity_pct = 4.81;
+          if (f.doc.custom_formula_medical_amt === undefined || f.doc.custom_formula_medical_amt === null || f.doc.custom_formula_medical_amt === '') f.doc.custom_formula_medical_amt = 2000.0;
+          if (f.doc.custom_medical === undefined || f.doc.custom_medical === null || f.doc.custom_medical === '') f.doc.custom_medical = 2000;
+          if (f.doc.custom_conveyance === undefined || f.doc.custom_conveyance === null || f.doc.custom_conveyance === '') f.doc.custom_conveyance = 0;
+        },
+        custom_ctc: async (f) => {
+          hdCalcJobOfferBreakdown(f.doc, 'custom_ctc');
+        },
+        custom_monthly_remuneration: async (f) => {
+          hdCalcJobOfferBreakdown(f.doc, 'custom_monthly_remuneration');
+        },
+        custom_gross_salary: async (f) => {
+          hdCalcJobOfferBreakdown(f.doc, 'custom_gross_salary');
+        },
+        custom_basic: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_hra: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_bonus: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_conveyance: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_other_allowances: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_pf_employer: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_esi_employer: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_gratuity: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); },
+        custom_medical: async (f) => { hdCalcJobOfferBreakdown(f.doc, 'manual_component'); }
+      },
       'Payroll Entry': {
         __new: async (f) => {
           if (!f.doc.posting_date) f.doc.posting_date = hdToday();
@@ -4983,6 +5037,118 @@
         }
       }
     };
+    // ---- Salary Breakdown calculation for Job Offer (matching Salary Compensation Excel) ----
+    function hdCalcJobOfferBreakdown(doc, changedField) {
+      const b_pct = Number(doc.custom_formula_basic_pct) || 50.0;
+      const hra_pct = Number(doc.custom_formula_hra_pct) || 50.0;
+      const bonus_pct = Number(doc.custom_formula_bonus_pct) || 8.33;
+      const conv_pct = Number(doc.custom_formula_conveyance_pct) || 10.0;
+      const pf_ceiling = Number(doc.custom_formula_pf_ceiling) || 25000.0;
+      const pf_rate = Number(doc.custom_formula_pf_er_rate) || 12.0;
+      const pf_ee_rate = Number(doc.custom_formula_pf_ee_rate) || 12.0;
+      const esi_ceiling = Number(doc.custom_formula_esi_ceiling) || 21000.0;
+      const esi_rate = Number(doc.custom_formula_esi_er_rate) || 4.0;
+      const grat_pct = Number(doc.custom_formula_gratuity_pct) || 4.81;
+      const med_amt = doc.custom_formula_medical_amt !== undefined && doc.custom_formula_medical_amt !== null && doc.custom_formula_medical_amt !== '' 
+                      ? Number(doc.custom_formula_medical_amt) : 2000.0;
+
+      if (changedField === 'custom_ctc') {
+        const raw_ctc = Number(doc.custom_ctc) || 0;
+        if (!raw_ctc) return;
+        const m_ctc = raw_ctc > 60000 ? (raw_ctc / 12) : raw_ctc;
+        let g = 0;
+        if (m_ctc <= (21000 * 1.12405 + med_amt)) {
+          g = (m_ctc - med_amt) / 1.12405;
+        } else if (m_ctc <= (50000 * 1.08405 + med_amt)) {
+          g = (m_ctc - med_amt) / 1.08405;
+        } else {
+          g = (m_ctc - (25000 * 0.12 + med_amt)) / 1.02405;
+        }
+        doc.custom_monthly_remuneration = Math.round(Math.max(0, g));
+        doc.custom_gross_salary = doc.custom_monthly_remuneration;
+      }
+
+      const m_gross = Number(doc.custom_monthly_remuneration) || Number(doc.custom_gross_salary) || 0;
+      if (!m_gross && changedField !== 'manual_component') return;
+
+      if (changedField !== 'manual_component') {
+        const m_basic = Math.round(m_gross * (b_pct / 100.0));
+        const m_hra = Math.round(m_basic * (hra_pct / 100.0));
+        const m_bonus = Math.round(m_basic * (bonus_pct / 100.0));
+        const m_conv = Math.round(m_basic * (conv_pct / 100.0));
+        let m_other = Math.round(m_gross - m_bonus - m_conv - (m_basic + m_hra));
+        if (m_other < 0) m_other = 0;
+
+        const pf_wage = Math.min(m_basic, pf_ceiling);
+        const m_pf_er = Math.round(pf_wage * (pf_rate / 100.0));
+        const m_pf_ee = Math.round(pf_wage * (pf_ee_rate / 100.0));
+
+        const m_esi_total = m_gross > esi_ceiling ? 0 : Math.ceil(m_gross * (esi_rate / 100.0));
+        const m_esi_ee = m_gross > esi_ceiling ? 0 : Math.round(m_gross * 0.0075);
+
+        const m_gratuity = Math.round((grat_pct * m_basic) / 100.0);
+        const m_medical = Math.round(med_amt);
+
+        const m_fixed_comp = Math.round(m_gross + m_pf_er + m_esi_total + m_gratuity + m_medical);
+        const ann_ctc = Math.round(m_fixed_comp * 12);
+        const m_take_home = Math.round(m_gross - m_pf_er - m_gratuity - m_esi_total);
+
+        doc.custom_basic = m_basic;
+        doc.custom_hra = m_hra;
+        doc.custom_bonus = m_bonus;
+        doc.custom_conveyance = m_conv;
+        doc.custom_other_allowances = m_other;
+        doc.custom_gross_salary = m_gross;
+        doc.custom_monthly_remuneration = m_gross;
+        doc.custom_pf_employer = m_pf_er;
+        doc.custom_pf_employee = m_pf_ee;
+        doc.custom_esi_employer = m_esi_total;
+        doc.custom_esi_employee = m_esi_ee;
+        doc.custom_gratuity = m_gratuity;
+        doc.custom_medical = m_medical;
+        doc.custom_fixed_compensation = m_fixed_comp;
+        doc.custom_ctc = ann_ctc;
+        doc.custom_net_salary = m_take_home;
+      } else {
+        const b = Number(doc.custom_basic) || 0;
+        const hra = Number(doc.custom_hra) || 0;
+        const bonus = Number(doc.custom_bonus) || 0;
+        const conv = Number(doc.custom_conveyance) || 0;
+        const other = Number(doc.custom_other_allowances) || 0;
+        const gross = Math.round(b + hra + bonus + conv + other);
+
+        const pf_er = Number(doc.custom_pf_employer) || 0;
+        const esi_total = Number(doc.custom_esi_employer) || 0;
+        const gratuity = Number(doc.custom_gratuity) || 0;
+        const medical = Number(doc.custom_medical) || 0;
+
+        const fixed_comp = Math.round(gross + pf_er + esi_total + gratuity + medical);
+        const ann_ctc = Math.round(fixed_comp * 12);
+        const take_home = Math.round(gross - pf_er - gratuity - esi_total);
+
+        doc.custom_gross_salary = gross;
+        doc.custom_monthly_remuneration = gross;
+        doc.custom_fixed_compensation = fixed_comp;
+        doc.custom_ctc = ann_ctc;
+        doc.custom_net_salary = take_home;
+      }
+    }
+
+    function hdUpdateJobOfferDOM(f, activeEl) {
+      const fields = [
+        'custom_basic', 'custom_hra', 'custom_bonus', 'custom_conveyance', 'custom_other_allowances',
+        'custom_gross_salary', 'custom_monthly_remuneration', 'custom_pf_employee', 'custom_esi_employee',
+        'custom_net_salary', 'custom_pf_employer', 'custom_esi_employer', 'custom_gratuity', 'custom_medical',
+        'custom_fixed_compensation', 'custom_ctc'
+      ];
+      fields.forEach(fn => {
+        const el = document.getElementById('hdf' + f.uid + '_' + fn);
+        if (el && el !== activeEl) {
+          el.value = f.doc[fn] !== undefined && f.doc[fn] !== null ? f.doc[fn] : '';
+        }
+      });
+    }
+
     async function hdRunHooks(f, field, ctx) {
       if (ctx && ctx.tf) return;  // rules below are for the main document
       const own = HD_HOOKS[f.doctype] && HD_HOOKS[f.doctype][field];
@@ -5143,6 +5309,34 @@
     }
     // ---- doctype buttons inside the form ----
     const HD_ACTIONS = {
+      'Job Offer': f => {
+        const a = [];
+        a.push({
+          label: '⚡ Auto-Calculate Breakdown',
+          primary: false,
+          run: () => {
+            hdCalcJobOfferBreakdown(f.doc, f.doc.custom_ctc ? 'custom_ctc' : 'custom_monthly_remuneration');
+            f.dirty = true;
+            hdRenderForm(true);
+            showToast('Salary breakdown recalculated!', 'success');
+          }
+        });
+        if (!f.doc.__islocal) {
+          a.push({
+            label: '📄 Offer Letter (PDF)',
+            run: () => {
+              window.open('/api/method/frappe.utils.print_format.download_pdf?doctype=Job%20Offer&name=' + encodeURIComponent(f.doc.name) + '&format=Exact%20Corporate%20Offer%20Letter&no_letterhead=0', '_blank');
+            }
+          });
+          a.push({
+            label: '📄 Appointment Letter (PDF)',
+            run: () => {
+              window.open('/api/method/frappe.utils.print_format.download_pdf?doctype=Job%20Offer&name=' + encodeURIComponent(f.doc.name) + '&format=Exact%20Corporate%20Appointment%20Letter&no_letterhead=0', '_blank');
+            }
+          });
+        }
+        return a;
+      },
       'Leave Application': f => (f.doc.docstatus === 0 && !f.doc.__islocal) ? [
         { label: 'Approve', primary: true, run: () => hdLeaveInForm(f, 'Approved') },
         { label: 'Reject', danger: true, run: () => hdLeaveInForm(f, 'Rejected') }] : [],
