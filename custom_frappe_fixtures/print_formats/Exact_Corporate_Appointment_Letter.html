@@ -17,18 +17,24 @@
 
 <style>
     @media print {
-        .page-break { page-break-after: always; }
-        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 13px; line-height: 1.5; }
+        .page-break { page-break-after: always; height: 0; margin: 0; padding: 0; border: 0; }
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 12.5px; line-height: 1.45; }
     }
     .offer-page {
-        padding: 30px 40px;
-        min-height: 950px;
+        padding: 12px 30px;
         position: relative;
         font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
         color: #1e293b;
-        font-size: 13px;
-        line-height: 1.5;
+        font-size: 12px;
+        line-height: 1.4;
         background: #fff;
+    }
+    .page-break {
+        page-break-after: always;
+        height: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
     }
     .header-table {
         width: 100%;
@@ -71,8 +77,9 @@
     }
     .annexure-table th, .annexure-table td {
         border: 1px solid #475569;
-        padding: 7px 12px;
+        padding: 2.5px 6px;
         text-align: left;
+        font-size: 11.5px;
     }
     .annexure-table th {
         background-color: #f1f5f9;
@@ -153,25 +160,7 @@
         </ol>
     </div>
 
-    <div style="margin-top: 30px;">
-        <table style="width: 100%;">
-            <tr>
-                <td style="width: 50%; vertical-align: bottom;">
-                    <div>Yours faithfully,</div>
-                    <div class="bold" style="color: #0f172a; margin-top: 5px;">For {{ company_name }}</div>
-                    <div style="margin-top: 45px; border-top: 1px dashed #64748b; width: 180px;"></div>
-                    <div class="bold" style="margin-top: 4px;">Authorized Signatory</div>
-                    <div style="font-size: 11px; color: #64748b;">Human Resources Division</div>
-                </td>
-                <td style="width: 50%; vertical-align: bottom; text-align: right;">
-                    <div>Accepted & Confirmed:</div>
-                    <div style="margin-top: 55px; border-top: 1px dashed #64748b; width: 180px; margin-left: auto;"></div>
-                    <div class="bold" style="margin-top: 4px;">Signature of Employee</div>
-                    <div style="font-size: 11px; color: #64748b;">Date: ________________________</div>
-                </td>
-            </tr>
-        </table>
-    </div>
+
 </div>
 
 <div class="page-break"></div>
@@ -229,22 +218,22 @@
 
 <!-- PAGE 3: ANNEXURE A (CTC BREAKDOWN) -->
 <div class="offer-page">
-    <table class="header-table" style="width: 100%; border-collapse: collapse; margin-bottom: 12px;">
+    <table class="header-table" style="width: 100%; border-collapse: collapse; margin-bottom: 6px;">
         <tr>
             <td style="vertical-align: middle; text-align: left; width: 60%;">
-                <img src="{{ logo_uri }}" alt="{{ company_name }}" style="height: 38px; max-height: 40px; max-width: 150px; object-fit: contain; vertical-align: middle; margin-right: 10px; display: inline-block;" />
-                <span style="font-size: 16px; font-weight: bold; color: #0f172a; vertical-align: middle;">{{ company_name }}</span>
+                <img src="{{ logo_uri }}" alt="{{ company_name }}" style="height: 34px; max-height: 36px; max-width: 140px; object-fit: contain; vertical-align: middle; margin-right: 10px; display: inline-block;" />
+                <span style="font-size: 15px; font-weight: bold; color: #0f172a; vertical-align: middle;">{{ company_name }}</span>
             </td>
-            <td style="text-align: right; vertical-align: middle; font-size: 12px; color: #64748b; width: 40%;">Annexure A &bull; Salary Breakdown</td>
+            <td style="text-align: right; vertical-align: middle; font-size: 11.5px; color: #64748b; width: 40%;">Annexure A &bull; Salary Breakdown</td>
         </tr>
     </table>
-    <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 15px;">
+    <hr style="border: 0; border-top: 1px solid #cbd5e1; margin-bottom: 8px;">
 
-        <div style="text-align: center; margin-bottom: 15px;">
-        <span class="badge-corporate" style="font-size: 13px; padding: 5px 15px;">ANNEXURE A - COMPENSATION DETAILS & SALARY STRUCTURE</span>
+    <div style="text-align: center; margin-bottom: 8px;">
+        <span class="badge-corporate" style="font-size: 12px; padding: 3px 12px;">ANNEXURE A - COMPENSATION DETAILS & SALARY STRUCTURE</span>
     </div>
 
-    <table style="width: 100%; margin-bottom: 12px; font-size: 12px; border-collapse: collapse;">
+    <table style="width: 100%; margin-bottom: 6px; font-size: 11.5px; border-collapse: collapse;">
         <tr>
             <td style="width: 50%; padding: 3px 0;"><strong>Employee Name:</strong> {{ candidate_name }}</td>
             <td style="width: 50%; text-align: right; padding: 3px 0;"><strong>Designation:</strong> {{ doc.designation }}</td>
@@ -397,29 +386,24 @@
         </tbody>
     </table>
 
-    <table style="width: 100%; margin-top: 10px; font-size: 12px; border-collapse: collapse;">
-        <tr>
-            <td style="padding: 4px 8px; background: #f8fafc; border: 1px solid #e2e8f0; width: 50%;"><strong>Probation:</strong> {{ doc.custom_probation or '6 Months' }}</td>
-            <td style="padding: 4px 8px; background: #f8fafc; border: 1px solid #e2e8f0; width: 50%; text-align: right;"><strong>Notice Period:</strong> {{ doc.custom_notice_period or '1 Month' }}</td>
-        </tr>
-    </table>
 
-    <div style="font-size: 11px; color: #64748b; margin-top: 12px; margin-bottom: 25px; line-height: 1.5;">
+
+    <div style="font-size: 10px; color: #64748b; margin-top: 6px; margin-bottom: 8px; line-height: 1.35;">
         * Note: Gratuity shall be payable as per Gratuity Act 1972, Tax shall be deducted as per Income Tax Act, 1961. PF ceiling limit is 25000/- Basic. Statutory Bonus / Exgratia payable based on statutory regulations.
     </div>
 
-<div style="margin-top: 40px;">
+    <div style="margin-top: 14px;">
         <table style="width: 100%;">
             <tr>
                 <td style="width: 50%;">
-                    <div class="bold">For {{ company_name }}</div>
-                    <div style="margin-top: 40px; border-top: 1px dashed #64748b; width: 160px;"></div>
-                    <div style="font-size: 11px; margin-top: 3px;">Authorized Signatory</div>
+                    <div class="bold" style="font-size: 11px;">For {{ company_name }}</div>
+                    <div style="margin-top: 25px; border-top: 1px dashed #64748b; width: 150px;"></div>
+                    <div style="font-size: 10px; margin-top: 2px;">Authorized Signatory</div>
                 </td>
                 <td style="width: 50%; text-align: right;">
-                    <div class="bold">Acknowledged & Accepted</div>
-                    <div style="margin-top: 40px; border-top: 1px dashed #64748b; width: 160px; margin-left: auto;"></div>
-                    <div style="font-size: 11px; margin-top: 3px;">Signature of {{ candidate_name }}</div>
+                    <div class="bold" style="font-size: 11px;">Acknowledged & Accepted</div>
+                    <div style="margin-top: 25px; border-top: 1px dashed #64748b; width: 150px; margin-left: auto;"></div>
+                    <div style="font-size: 10px; margin-top: 2px;">Signature of {{ candidate_name }}</div>
                 </td>
             </tr>
         </table>
