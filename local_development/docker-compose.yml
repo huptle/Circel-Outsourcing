@@ -1,0 +1,158 @@
+name: erpnext-local-dev
+
+services:
+  backend:
+    image: frappe/erpnext:v15.35.0
+    restart: unless-stopped
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+      - ../hr-desk.html:/home/frappe/frappe-bench/apps/hrms/hrms/www/hr-desk.html:ro
+      - ../hr_desk.py:/home/frappe/frappe-bench/apps/hrms/hrms/www/hr_desk.py:ro
+      - ./seed_demo_data.py:/home/frappe/frappe-bench/seed_demo_data.py:ro
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      MYSQL_ROOT_PASSWORD: admin
+      MARIADB_ROOT_PASSWORD: admin
+    depends_on:
+      configurator:
+        condition: service_completed_successfully
+
+  configurator:
+    image: frappe/erpnext:v15.35.0
+    restart: on-failure
+    entrypoint:
+      - bash
+      - -c
+    command:
+      - >
+        ls -1 apps > sites/apps.txt;
+        bench set-config -g db_host $$DB_HOST;
+        bench set-config -gp db_port $$DB_PORT;
+        bench set-config -g redis_cache "redis://$$REDIS_CACHE";
+        bench set-config -g redis_queue "redis://$$REDIS_QUEUE";
+        bench set-config -g redis_socketio "redis://$$REDIS_QUEUE";
+        bench set-config -gp socketio_port $$SOCKETIO_PORT;
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      REDIS_CACHE: redis-cache:6379
+      REDIS_QUEUE: redis-queue:6379
+      SOCKETIO_PORT: "9000"
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+
+  create-site:
+    image: frappe/erpnext:v15.35.0
+    deploy:
+      restart_policy:
+        condition: none
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    entrypoint:
+      - bash
+      - -c
+    command:
+      - >
+        wait-for-it -t 120 db:3306;
+        wait-for-it -t 120 redis-cache:6379;
+        wait-for-it -t 120 redis-queue:6379;
+        export start=`date +%s`;
+        until [[ -n `grep -hs ^ sites/common_site_config.json | jq -r ".db_host // empty"` ]] && \
+          [[ -n `grep -hs ^ sites/common_site_config.json | jq -r ".redis_cache // empty"` ]] && \
+          [[ -n `grep -hs ^ sites/common_site_config.json | jq -r ".redis_queue // empty"` ]];
+        do
+          echo "Waiting for sites/common_site_config.json to be created...";
+          sleep 5;
+        done;
+        if [ -d "sites/frontend" ]; then
+          echo "Site 'frontend' already exists, ready for use.";
+        else
+          echo "Initializing fresh local development site...";
+          bench new-site --mariadb-user-host-login-scope='%' --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default frontend;
+          bench --site frontend install-app hrms;
+          bench --site frontend set-config developer_mode 1;
+        fi;
+    depends_on:
+      - db
+      - redis-cache
+      - redis-queue
+
+  db:
+    image: mariadb:10.6
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MARIADB_ROOT_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/mysql
+
+  frontend:
+    image: frappe/erpnext:v15.35.0
+    restart: unless-stopped
+    command:
+      - nginx-entrypoint.sh
+    environment:
+      BACKEND: backend:8000
+      FRAPPE_SITE_NAME_HEADER: frontend
+      SOCKETIO: websocket:9000
+      UPSTREAM_REAL_IP_ADDRESS: 127.0.0.1
+      UPSTREAM_REAL_IP_HEADER: X-Forwarded-For
+      UPSTREAM_REAL_IP_RECURSIVE: "off"
+      PROXY_READ_TIMEOUT: 120
+      CLIENT_MAX_BODY_SIZE: 50m
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    ports:
+      - "8090:8080"
+    depends_on:
+      - backend
+      - websocket
+
+  queue-short:
+    image: frappe/erpnext:v15.35.0
+    restart: unless-stopped
+    command: bench worker --queue short,default
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    depends_on:
+      configurator:
+        condition: service_completed_successfully
+
+  redis-queue:
+    image: redis:6.2-alpine
+    restart: unless-stopped
+
+  redis-cache:
+    image: redis:6.2-alpine
+    restart: unless-stopped
+
+  websocket:
+    image: frappe/erpnext:v15.35.0
+    restart: unless-stopped
+    command:
+      - node
+      - /home/frappe/frappe-bench/apps/frappe/socketio.js
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+    depends_on:
+      configurator:
+        condition: service_completed_successfully
+
+volumes:
+  db-data:
+  sites:
+  logs:

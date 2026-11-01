@@ -1,0 +1,159 @@
+<!-- Print Format for: Salary Structure Assignment | Name: Corporate Salary Increment Letter -->
+{% set emp = frappe.get_doc("Employee", doc.employee) if doc.employee else None %}
+{% set company_name = doc.company or (emp.company if emp else "Global Complete Solutions") %}
+{% set company_email = "accounts@globalcompletesolutions.com" if "Global" in company_name else "Operations@Circleoutsourcing.com" %}
+
+<style>
+    @media print {
+        body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #1e293b; font-size: 13px; line-height: 1.6; }
+    }
+    .letter-page {
+        padding: 40px 50px;
+        min-height: 950px;
+        position: relative;
+        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+        color: #1e293b;
+        font-size: 13px;
+        line-height: 1.6;
+        background: #fff;
+    }
+    .header-table {
+        width: 100%;
+        margin-bottom: 25px;
+    }
+    .badge-corporate {
+        background-color: #1572e8;
+        color: #ffffff;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+    .annexure-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 13px;
+    }
+    .annexure-table th, .annexure-table td {
+        border: 1px solid #475569;
+        padding: 8px 12px;
+        text-align: left;
+    }
+    .annexure-table th {
+        background-color: #f1f5f9;
+        font-weight: bold;
+    }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .bold { font-weight: bold; }
+</style>
+
+<div class="letter-page">
+    <table class="header-table">
+        <tr>
+            <td style="vertical-align: top;">
+                <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{{ company_name }}</div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 500;">
+                    Corporate Office &bull; Human Resources Department<br>
+                    Email: {{ company_email }}
+                </div>
+            </td>
+            <td style="text-align: right; vertical-align: top;">
+                <span class="badge-corporate">Salary Increment / Appraisal Letter</span>
+                <div style="margin-top: 8px; font-size: 12px; color: #475569; font-weight: 600;">
+                    Ref: INCR/{{ doc.name }}<br>
+                    Date: {{ frappe.utils.formatdate(frappe.utils.nowdate(), "dd-MM-yyyy") }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <hr style="border: 0; border-top: 2px solid #1572e8; margin-bottom: 25px;">
+
+    <div style="margin-bottom: 20px;">
+        <div class="bold" style="font-size: 14px;">To,</div>
+        <div class="bold" style="font-size: 15px; color: #1e3a8a;">{{ emp.employee_name if emp else doc.employee }}</div>
+        <div><strong>Employee ID:</strong> {{ doc.employee }}</div>
+        <div><strong>Designation:</strong> {{ emp.designation if emp else "Staff" }}</div>
+        <div><strong>Department:</strong> {{ emp.department if emp else "Operations" }}</div>
+    </div>
+
+    <div style="font-size: 14px; font-weight: bold; margin: 20px 0; text-decoration: underline; color: #0f172a;">
+        Subject: Annual Compensation Appraisal & Salary Revision
+    </div>
+
+    <p>Dear <strong>{{ emp.employee_name if emp else doc.employee }}</strong>,</p>
+
+    <p>
+        In recognition of your performance, dedication, and contributions toward the growth of <strong>{{ company_name }}</strong>, the Management is pleased to announce a revision in your compensation package.
+    </p>
+
+    <p>
+        Effective from <strong>{{ frappe.utils.formatdate(doc.from_date, "dd-MM-yyyy") }}</strong>, your revised annual Cost to Company (CTC) has been updated to <strong>{{ frappe.utils.fmt_money(emp.custom_ctc or doc.base, currency="INR") }}</strong>.
+    </p>
+
+    <p>
+        The revised monthly salary breakup structure is detailed below:
+    </p>
+
+    <table class="annexure-table">
+        <thead>
+            <tr>
+                <th style="width: 10%;" class="text-center">S.No</th>
+                <th style="width: 50%;">Compensation Component</th>
+                <th style="width: 40%;" class="text-right">Monthly Amount (INR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">1</td>
+                <td>Basic Salary + DA</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(emp.custom_fixed_basic_salary if emp else (doc.base * 0.5), currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">2</td>
+                <td>House Rent Allowance (HRA)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(emp.custom_fixed_hra if emp else (doc.base * 0.2), currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">3</td>
+                <td>Statutory Bonus</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(emp.custom_fixed_statutory_bonus if emp else 0, currency="INR") }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">4</td>
+                <td>Other / Special Allowances</td>
+                <td class="text-right">{{ frappe.utils.fmt_money(emp.custom_fixed_other_allowances if emp else 0, currency="INR") }}</td>
+            </tr>
+            <tr style="background-color: #f1f5f9; font-weight: bold; color: #1e3a8a;">
+                <td colspan="2">TOTAL REVISED MONTHLY COST TO COMPANY (CTC)</td>
+                <td class="text-right">{{ frappe.utils.fmt_money((emp.custom_ctc or doc.base) / 12 if (emp and emp.custom_ctc and emp.custom_ctc > 60000) else (emp.custom_ctc or doc.base), currency="INR") }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        All other terms and conditions of your employment as set out in your Letter of Appointment will remain unchanged. We look forward to your continued dedication and commitment to excellence.
+    </p>
+
+    <div style="margin-top: 50px;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 50%;">
+                    <div>Sincerely,</div>
+                    <div class="bold" style="color: #0f172a; margin-top: 5px;">For {{ company_name }}</div>
+                    <div style="margin-top: 45px; border-top: 1px dashed #64748b; width: 180px;"></div>
+                    <div class="bold" style="margin-top: 4px;">Authorized Signatory</div>
+                    <div style="font-size: 11px; color: #64748b;">Human Resources Division</div>
+                </td>
+                <td style="width: 50%; text-align: right; vertical-align: bottom;">
+                    <div>Acknowledged & Accepted:</div>
+                    <div style="margin-top: 45px; border-top: 1px dashed #64748b; width: 180px; margin-left: auto;"></div>
+                    <div class="bold" style="margin-top: 4px;">Employee Signature</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
