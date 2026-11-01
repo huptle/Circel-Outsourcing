@@ -50,32 +50,58 @@ jobs:
             exit 1
           fi
 
-          # FIX-0: production deploys only hr-desk.html and hr_desk.py (single source of truth).
-          echo "==> 1. Uploading hr-desk.html and hr_desk.py to staging..."
-          $SSH_CMD "mkdir -p /opt/erpnext-demo/deploy_staging"
-          $SCP_CMD hr-desk.html hr_desk.py "$USER@$HOST:/opt/erpnext-demo/deploy_staging/"
+          echo "==> 1. Packing bundle (frontend, backend overrides, and database fixtures)..."
+          tar -czf /tmp/prod_bundle.tar.gz hr-desk.html hr_desk.py custom_frappe_fixtures $(test -d backend_overrides && echo "backend_overrides")
 
-          echo "==> 2. Applying release and clearing cache..."
+          echo "==> 2. Uploading bundle to production staging..."
+          $SSH_CMD "mkdir -p /opt/erpnext-demo/deploy_staging"
+          $SCP_CMD /tmp/prod_bundle.tar.gz "$USER@$HOST:/opt/erpnext-demo/deploy_staging/bundle.tar.gz"
+
+          echo "==> 3. Applying release, syncing fixtures, and updating containers..."
           $SSH_CMD "
-            cp /opt/erpnext-demo/deploy_staging/hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html
-            # FIX-7b: Python page code is only re-read when the backend restarts, so restart it when hr_desk.py changed
+            cd /opt/erpnext-demo/deploy_staging
+            tar -xzf bundle.tar.gz
+
+            # 1. Update frontend web page
+            cp hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html
             PY_CHANGED=0
-            cmp -s /opt/erpnext-demo/deploy_staging/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py || PY_CHANGED=1
-            cp /opt/erpnext-demo/deploy_staging/hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
+            cmp -s hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py || PY_CHANGED=1
+            cp hr_desk.py /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
             chmod 644 /opt/erpnext-demo/apps/hrms/hrms/www/hr-desk.html /opt/erpnext-demo/apps/hrms/hrms/www/hr_desk.py
+
+            # 2. Apply backend overrides if present
+            if [ -d backend_overrides ]; then
+              echo 'Applying backend overrides...'
+              cp -r backend_overrides/* /opt/erpnext-demo/apps/ 2>/dev/null || true
+              docker cp backend_overrides/. erpnext-demo-backend-1:/home/frappe/frappe-bench/apps/ 2>/dev/null || true
+              PY_CHANGED=1
+            fi
+
+            # 3. Sync Frappe database fixtures (Client Scripts, Print Formats, Logos)
+            if [ -d custom_frappe_fixtures ]; then
+              echo 'Syncing custom fixtures to database...'
+              docker exec -u root erpnext-demo-backend-1 rm -rf /tmp/custom_frappe_fixtures
+              docker cp custom_frappe_fixtures erpnext-demo-backend-1:/tmp/custom_frappe_fixtures
+              docker exec -u root erpnext-demo-backend-1 chown -R frappe:frappe /tmp/custom_frappe_fixtures
+              docker exec -u frappe -w /home/frappe/frappe-bench erpnext-demo-backend-1 ./env/bin/python /tmp/custom_frappe_fixtures/sync_fixtures.py frontend
+            fi
+
+            # 4. Clear cache and assets
+            docker exec erpnext-demo-frontend-1 rm -rf /home/frappe/frappe-bench/assets/hr-desk || true
             docker exec erpnext-demo-backend-1 bench --site frontend clear-cache
             docker exec erpnext-demo-backend-1 bench --site frontend clear-website-cache
-            # FIX-7f: keep the sites folder owned by the frappe user (the backend cannot start otherwise); no restart here
             docker exec -u root erpnext-demo-queue-short-1 chown frappe:frappe /home/frappe/frappe-bench/sites
             docker exec -u root erpnext-demo-queue-short-1 chown -h frappe:frappe /home/frappe/frappe-bench/sites/assets
-            # FIX-7b/7f: Python page code is re-read only when the backend restarts. Restart it only when hr_desk.py changed,
-            # then reload nginx so it finds the backend again, and wait until the site answers.
+
+            # 5. Restart backend if Python code changed
             if [ \"\$PY_CHANGED\" = 1 ]; then
-              echo 'hr_desk.py changed: restarting backend'
+              echo 'Python code changed: restarting backend container...'
               docker restart erpnext-demo-backend-1
               sleep 5
               docker exec erpnext-demo-frontend-1 nginx -s reload
             fi
+
+            # 6. Verify health
             CODE=000
             for i in \$(seq 1 24); do CODE=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/api/method/ping); [ \"\$CODE\" = 200 ] && break; sleep 5; done
             echo \"Site check (200 = OK): \$CODE\"
