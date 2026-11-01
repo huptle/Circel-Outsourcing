@@ -4631,16 +4631,27 @@
     async function hdPrintMenu(f, btn) {
       let list = HD_PRINT_FORMATS[f.doctype];
       if (!list) {
-        try {
-          const rows = await hdFetch('Print Format', ['name'], { filters: [['doc_type', '=', f.doctype], ['disabled', '=', 0]], order_by: 'name asc', limit: 0 });
-          list = rows.map(r => r.name);
-        } catch (e) { list = []; }
-        const def = f.md.meta.default_print_format;
-        list = [...new Set([def, ...list, 'Standard'].filter(Boolean))];
+        if (f.doctype === 'Salary Slip') {
+          list = [
+            { label: 'Salary Slip based on Timesheet', format: 'Salary Slip based on Timesheet' },
+            { label: 'Standard', format: 'Salary Slip Standard' }
+          ];
+        } else {
+          let rows = [];
+          try {
+            rows = await hdFetch('Print Format', ['name'], { filters: [['doc_type', '=', f.doctype], ['disabled', '=', 0]], order_by: 'name asc', limit: 0 });
+          } catch (e) { rows = []; }
+          const def = f.md.meta.default_print_format;
+          const names = [...new Set([def, ...rows.map(r => r.name), 'Standard'].filter(Boolean))];
+          list = names.map(n => ({ label: n, format: n }));
+        }
         HD_PRINT_FORMATS[f.doctype] = list;
       }
-      hdMenu(btn, 'Download PDF', list.map(n => ({ label: n, run: () => window.open('/api/method/frappe.utils.print_format.download_pdf?doctype=' + encodeURIComponent(f.doctype) +
-        '&name=' + encodeURIComponent(f.doc.name) + '&format=' + encodeURIComponent(n) + '&no_letterhead=0', '_blank', 'noopener') })));
+      hdMenu(btn, 'Download PDF', list.map(item => ({
+        label: item.label,
+        run: () => window.open('/api/method/frappe.utils.print_format.download_pdf?doctype=' + encodeURIComponent(f.doctype) +
+          '&name=' + encodeURIComponent(f.doc.name) + '&format=' + encodeURIComponent(item.format) + '&no_letterhead=0', '_blank', 'noopener')
+      })));
     }
     // small pop-up menu anchored to a button
     function hdMenu(anchor, title, items) {
