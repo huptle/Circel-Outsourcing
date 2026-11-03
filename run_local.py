@@ -240,7 +240,8 @@ class HRDeskPreviewHandler(SimpleHTTPRequestHandler):
 
         # 2. Login Page route (triggered after clicking Log out)
         if path == "/login":
-            self.serve_login_html()
+            redirect_to = query.get("redirect-to", ["/hr-desk"])[0]
+            self.serve_login_html(redirect_to=redirect_to)
             return
 
         # 3. Mock REST API calls
@@ -276,11 +277,12 @@ class HRDeskPreviewHandler(SimpleHTTPRequestHandler):
 
         super().do_POST()
 
-    def serve_login_html(self):
+    def serve_login_html(self, redirect_to="/hr-desk"):
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.end_headers()
-        self.wfile.write(LOGIN_PAGE_HTML.encode("utf-8"))
+        html = LOGIN_PAGE_HTML.replace('action="/hr-desk"', f'action="{redirect_to}"')
+        self.wfile.write(html.encode("utf-8"))
 
     def serve_hr_desk_html(self):
         if not os.path.exists(HR_DESK_HTML_PATH):
