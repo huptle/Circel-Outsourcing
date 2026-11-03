@@ -4159,12 +4159,12 @@
       docs.forEach(d => { if (d.name !== m.meta.name) m.children[d.name] = d; });
       // remember which section / tab each field sits in, so hidden sections hide their fields
       [m.meta, ...Object.values(m.children)].forEach(md => {
-        md.__parentDeps = {};
+        md['__parentDeps'] = {};
         let tabDep = '', secDep = '', tabHidden = 0, secHidden = 0;
         (md.fields || []).forEach(df => {
           if (df.fieldtype === 'Tab Break') { tabDep = df.depends_on || ''; tabHidden = df.hidden; secDep = ''; secHidden = 0; return; }
           if (df.fieldtype === 'Section Break') { secDep = df.depends_on || ''; secHidden = df.hidden; return; }
-          md.__parentDeps[df.fieldname] = { deps: [tabDep, secDep].filter(Boolean), hidden: tabHidden || secHidden };
+          md['__parentDeps'][df.fieldname] = { deps: [tabDep, secDep].filter(Boolean), hidden: tabHidden || secHidden };
         });
       });
       HD_META[doctype] = m;
@@ -4243,7 +4243,7 @@
     function hdShown(f, md, df, doc) {
       if (df.hidden || HD_SKIP_TYPES.includes(df.fieldtype)) return false;
       if (f.opts.only && md === f.md.meta && !f.opts.only.includes(df.fieldname)) return false;
-      const p = md.__parentDeps && md.__parentDeps[df.fieldname];
+      const p = md['__parentDeps'] && md['__parentDeps'][df.fieldname];
       if (p && (p.hidden || p.deps.some(dep => !hdEval(dep, doc, f.doc)))) return false;
       return hdEval(df.depends_on, doc, f.doc);
     }
@@ -4314,9 +4314,9 @@
         if (single || name) { const r = await hdLoadDoc(doctype, single ? doctype : name); doc = r.doc; perms = r.perms; }
         else doc = hdNewDoc(md, opts.defaults);
         const f = { doctype: md.meta.name, md: md, doc: doc, perms: perms, opts: opts, uid: ++hdUid, tab: 0, expanded: {}, error: '',
-                    dirty: !!doc.__islocal, readOnly: !!opts.readOnly };
+                    dirty: !!doc['__islocal'], readOnly: !!opts.readOnly };
         HD_FORMS.push(f);
-        if (doc.__islocal) await hdRunHooks(f, '__new');
+        if (doc['__islocal']) await hdRunHooks(f, '__new');
         hdRenderForm();
         return f;
       } catch (e) {
@@ -4342,14 +4342,14 @@
     function hdDocTitle(f) {
       if (f.opts.title) return f.opts.title;
       if (f.md.meta.issingle) return f.doctype;
-      if (f.doc.__islocal) return 'New ' + f.doctype;
+      if (f.doc['__islocal']) return 'New ' + f.doctype;
       const tf = f.md.meta.title_field;
       const t = tf && f.doc[tf];
       return t && t !== f.doc.name ? t : f.doc.name;
     }
     function hdDocBadge(f) {
       const d = f.doc;
-      if (d.__islocal) return '<span class="status-badge warning">Not saved</span>';
+      if (d['__islocal']) return '<span class="status-badge warning">Not saved</span>';
       let s = '';
       if (f.md.meta.is_submittable) s += hdBadge(hdDocStatus(d.docstatus));
       if (d.status && d.status !== hdDocStatus(d.docstatus)) s += ' ' + hdBadge(d.status);
@@ -4370,7 +4370,7 @@
         '<div class="hd-form-head">' +
           '<div class="hd-form-titles">' + (crumbs ? '<div class="hd-form-crumbs">' + crumbs + ' ›</div>' : '') +
             '<div class="hd-form-title"><span id="hdFormTitle">' + hdEsc(hdDocTitle(f)) + '</span> ' + hdDocBadge(f) + '</div>' +
-            '<div class="hd-form-sub">' + hdEsc(f.doctype) + (f.doc.__islocal || f.md.meta.issingle ? '' : ' · ' + hdEsc(f.doc.name)) + '</div></div>' +
+            '<div class="hd-form-sub">' + hdEsc(f.doctype) + (f.doc['__islocal'] || f.md.meta.issingle ? '' : ' · ' + hdEsc(f.doc.name)) + '</div></div>' +
           '<button type="button" class="action-icon-btn" data-act="close" title="Close (Esc)" aria-label="Close">✕</button>' +
         '</div>' +
         '<div class="hd-form-actions">' + hdActionButtons(f) + '</div>' +
@@ -4535,12 +4535,12 @@
       const b = [];
       const btn = (act, label, cls, extra) => '<button type="button" class="btn-emp-action' + (cls ? ' ' + cls : '') + '" data-act="' + act + '"' + (extra || '') + '>' + hdEsc(label) + '</button>';
       if (f.readOnly) return btn('close', 'Close', '');
-      if (d.docstatus === 0 && can('write')) b.push(btn('save', d.__islocal ? 'Save' : 'Save', f.dirty || d.__islocal ? 'primary' : ''));
+      if (d.docstatus === 0 && can('write')) b.push(btn('save', d['__islocal'] ? 'Save' : 'Save', f.dirty || d['__islocal'] ? 'primary' : ''));
       if (d.docstatus === 1 && f.dirty) b.push(btn('update', 'Update', 'primary'));
       // Leave Application submits through Approve / Reject, Payroll Entry through Create Salary Slips (as in the desk)
-      if (m.is_submittable && d.docstatus === 0 && !d.__islocal && can('submit') && !f.opts.noSubmit && !['Leave Application', 'Payroll Entry'].includes(f.doctype)) b.push(btn('submit', 'Submit', f.dirty ? '' : 'primary'));
+      if (m.is_submittable && d.docstatus === 0 && !d['__islocal'] && can('submit') && !f.opts.noSubmit && !['Leave Application', 'Payroll Entry'].includes(f.doctype)) b.push(btn('submit', 'Submit', f.dirty ? '' : 'primary'));
       (f.extra = (HD_ACTIONS[f.doctype] ? HD_ACTIONS[f.doctype](f) : [])).forEach((a, i) => b.push(btn('extra', a.label, a.primary ? 'primary' : (a.danger ? 'danger' : ''), ' data-i="' + i + '"')));
-      if (!d.__islocal) {
+      if (!d['__islocal']) {
         if (m.is_submittable && d.docstatus === 1 && can('cancel')) b.push(btn('cancel', 'Cancel', 'danger'));
         if (m.is_submittable && d.docstatus === 2 && can('amend')) b.push(btn('amend', 'Amend', ''));
         if (!m.issingle && !f.opts.noPrint) b.push(btn('print', 'Print / PDF ▾', ''));
@@ -4577,7 +4577,7 @@
       if (miss.length) { hdFormError(f, 'Please fill in: ' + miss.join(', ')); return false; }
       hdBusy(true, action === 'Submit' ? 'Submitting…' : 'Saving…');
       try {
-        const wasNew = !!f.doc.__islocal;
+        const wasNew = !!f.doc['__islocal'];
         const j = await hdApi('frappe.desk.form.save.savedocs', { doc: hdCleanDoc(f.doc), action: action });
         if (j.docs && j.docs[0]) f.doc = j.docs[0];
         else if (!wasNew) { f.doc = (await hdLoadDoc(f.doctype, f.doc.name)).doc; showToast('Queued: it will finish in the background. Use Reload to see the result.', 'info'); }
@@ -4691,7 +4691,7 @@
     function hdFormInput(e) {
       const el = e.target;
       if (!el.dataset || !el.dataset.fn) return;
-      if (el.classList.contains('hd-link-input')) { hdLinkSuggest(el); if (el.dataset.fn === '__multi') return; el.__hdTyped = true; }
+      if (el.classList.contains('hd-link-input')) { hdLinkSuggest(el); if (el.dataset.fn === '__multi') return; el._hdTyped = true; }
       const c = hdRowCtx(el);
       const df = c.md.fields.find(x => x.fieldname === el.dataset.fn);
       if (!df || df.fieldtype === 'Check' || df.fieldtype === 'Select' || el.type === 'file') return;
@@ -4701,8 +4701,8 @@
       if (c.f.doctype === 'Job Offer') {
         const joFields = ['custom_ctc', 'custom_monthly_remuneration', 'custom_gross_salary', 'custom_basic', 'custom_hra', 'custom_bonus', 'custom_conveyance', 'custom_other_allowances', 'custom_pf_employer', 'custom_esi_employer', 'custom_gratuity', 'custom_medical'];
         if (joFields.includes(df.fieldname)) {
-          clearTimeout(el.__calcT);
-          el.__calcT = setTimeout(async () => {
+          clearTimeout(el._calcT);
+          el._calcT = setTimeout(async () => {
             await hdRunHooks(c.f, df.fieldname, c);
             hdUpdateJobOfferDOM(c.f, el);
           }, 150);
@@ -4788,12 +4788,12 @@
       } catch (e) { return null; }
     }
     function hdLinkSuggest(input) {
-      clearTimeout(input.__hdT);
-      input.__hdT = setTimeout(async () => {
+      clearTimeout(input._hdT);
+      input._hdT = setTimeout(async () => {
         const dt = input.dataset.link;
         const box = input.parentNode.querySelector('.hd-suggest');
         if (!dt || !box) return;
-        const seq = (input.__hdSeq = (input.__hdSeq || 0) + 1);
+        const seq = (input._hdSeq = (input._hdSeq || 0) + 1);
         const c = hdRowCtx(input);
         const df = input.dataset.fn === '__multi' ? null : c.md.fields.find(x => x.fieldname === input.dataset.fn);
         const args = { doctype: dt, txt: input.value, page_length: 10, reference_doctype: c.f.doctype };
@@ -4802,7 +4802,7 @@
         let res = [];
         try { res = (await hdApi('frappe.desk.search.search_link', args, 'GET')).message || []; }
         catch (e) { box.innerHTML = '<div class="hd-suggest-empty">' + hdEsc(e.message) + '</div>'; box.classList.add('open'); return; }
-        if (seq !== input.__hdSeq) return;
+        if (seq !== input._hdSeq) return;
         box.innerHTML = res.map(r => '<button type="button" role="option" class="hd-suggest-item" data-act="pick" data-value="' + hdEsc(r.value) + '"><span>' + hdEsc(r.value) + '</span>' +
             ((r.label && r.label !== r.value) || r.description ? '<small>' + hdEsc(hdText(r.label && r.label !== r.value ? r.label : r.description)) + '</small>' : '') + '</button>').join('') +
           (res.length ? '' : '<div class="hd-suggest-empty">No match</div>') +
@@ -4812,7 +4812,7 @@
       }, 200);
     }
     async function hdPickLink(input, value) {
-      input.__hdTyped = false;
+      input._hdTyped = false;
       const box = input.parentNode.querySelector('.hd-suggest');
       if (box) box.classList.remove('open');
       const c = hdRowCtx(input);
@@ -4874,7 +4874,7 @@
         const md = f.md;
         const fresh = hdNewDoc(md, {});
         Object.keys(copy).forEach(k => { if (!['name', 'docstatus', 'creation', 'modified', 'owner', 'modified_by', 'idx'].includes(k)) fresh[k] = copy[k]; });
-        fresh.amended_from = f.doc.name; fresh.docstatus = 0; fresh.__islocal = 1;
+        fresh.amended_from = f.doc.name; fresh.docstatus = 0; fresh['__islocal'] = 1;
         md.meta.fields.filter(x => HD_TABLE_TYPES.includes(x.fieldtype)).forEach(x => {
           fresh[x.fieldname] = (copy[x.fieldname] || []).map((r, i) => Object.assign({}, r, { name: 'new-' + hdSlug(x.options) + '-' + i + Date.now().toString(36), __islocal: 1, parent: fresh.name, docstatus: 0 }));
         });
@@ -4931,7 +4931,7 @@
         const c = hdRowCtx(el);
         if (!c.f || !c.doc) return;
         const df = c.md.fields.find(x => x.fieldname === el.dataset.fn);
-        if (df && el.__hdTyped && !el.parentNode.querySelector('.hd-suggest.open')) { el.__hdTyped = false; hdSetValue(c, df, el.value || null, hdNeedsRerender(c, df)); }
+        if (df && el._hdTyped && !el.parentNode.querySelector('.hd-suggest.open')) { el._hdTyped = false; hdSetValue(c, df, el.value || null, hdNeedsRerender(c, df)); }
       }, 250);
     });
     document.addEventListener('keydown', e => {
@@ -5189,14 +5189,14 @@
     document.addEventListener('input', e => {
       const input = e.target;
       if (!input.classList || !input.classList.contains('hd-slink')) return;
-      clearTimeout(input.__hdT);
-      input.__hdT = setTimeout(async () => {
+      clearTimeout(input._hdT);
+      input._hdT = setTimeout(async () => {
         const box = input.parentNode.querySelector('.hd-suggest');
-        const seq = (input.__hdSeq = (input.__hdSeq || 0) + 1);
+        const seq = (input._hdSeq = (input._hdSeq || 0) + 1);
         let res = [];
         try { res = (await hdApi('frappe.desk.search.search_link', { doctype: input.dataset.link, txt: input.value, page_length: 10 }, 'GET')).message || []; }
         catch (err) { box.innerHTML = '<div class="hd-suggest-empty">' + hdEsc(err.message) + '</div>'; box.classList.add('open'); return; }
-        if (seq !== input.__hdSeq) return;
+        if (seq !== input._hdSeq) return;
         box.innerHTML = res.map(r => '<button type="button" role="option" class="hd-suggest-item" data-value="' + hdEsc(r.value) + '"><span>' + hdEsc(r.value) + '</span>' +
           (r.description ? '<small>' + hdEsc(hdText(r.description)) + '</small>' : '') + '</button>').join('') || '<div class="hd-suggest-empty">No match</div>';
         box.classList.add('open');
@@ -5331,7 +5331,7 @@
             showToast('Salary breakdown recalculated!', 'success');
           }
         });
-        if (!f.doc.__islocal) {
+        if (!f.doc['__islocal']) {
           a.push({
             label: '📄 Offer Letter (PDF)',
             run: () => {
@@ -5347,12 +5347,12 @@
         }
         return a;
       },
-      'Leave Application': f => (f.doc.docstatus === 0 && !f.doc.__islocal) ? [
+      'Leave Application': f => (f.doc.docstatus === 0 && !f.doc['__islocal']) ? [
         { label: 'Approve', primary: true, run: () => hdLeaveInForm(f, 'Approved') },
         { label: 'Reject', danger: true, run: () => hdLeaveInForm(f, 'Rejected') }] : [],
       'Payroll Entry': f => {
         const d = f.doc, a = [];
-        if (d.__islocal) return a;
+        if (d['__islocal']) return a;
         const emps = (d.employees || []).length;
         if (d.docstatus === 0) {
           a.push({ label: 'Get Employees', primary: !emps, run: async () => {
@@ -5393,7 +5393,7 @@
       'Data Import': f => {
         const d = f.doc, a = [];
         if (d.reference_doctype) a.push({ label: 'Download Template', run: () => hdImportTemplate(d.reference_doctype) });
-        if (d.__islocal) return a;
+        if (d['__islocal']) return a;
         if (d.import_file && ['Pending', 'Error', 'Partial Success', 'Timed Out', '', undefined, null].includes(d.status)) a.push({ label: 'Check File', run: () => hdImportCheck(f) });
         if (d.import_file && (!d.status || d.status === 'Pending')) a.push({ label: 'Start Import', primary: true, run: () => hdImportStart(f) });
         if (d.status && d.status !== 'Pending') a.push({ label: 'Show Log', run: () => hdImportLog(f) });

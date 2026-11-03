@@ -7,8 +7,8 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
-      - ../hr-desk.html:/home/frappe/frappe-bench/apps/hrms/hrms/www/hr-desk.html:ro
-      - ../hr_desk.py:/home/frappe/frappe-bench/apps/hrms/hrms/www/hr_desk.py:ro
+      - ../hr-desk.html:/home/frappe/frappe-bench/apps/erpnext/erpnext/www/hr-desk.html:ro
+      - ../hr_desk.py:/home/frappe/frappe-bench/apps/erpnext/erpnext/www/hr_desk.py:ro
       - ./seed_demo_data.py:/home/frappe/frappe-bench/seed_demo_data.py:ro
     environment:
       DB_HOST: db
@@ -76,8 +76,7 @@ services:
           echo "Site 'frontend' already exists, ready for use.";
         else
           echo "Initializing fresh local development site...";
-          bench new-site --mariadb-user-host-login-scope='%' --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default frontend;
-          bench --site frontend install-app hrms;
+          bench new-site --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default frontend;
           bench --site frontend set-config developer_mode 1;
         fi;
     depends_on:
