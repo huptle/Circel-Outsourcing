@@ -3409,6 +3409,16 @@
     });
     // FIX-10 #3: openMySettings now opens My Profile inside HR Desk (see below)
     async function hrDeskLogout() {
+      const isDev = window.location.pathname.startsWith('/hr-desk-dev');
+      const targetPage = isDev ? '/hr-desk-dev' : '/hr-desk';
+
+      try {
+        localStorage.removeItem('last_visited');
+        localStorage.removeItem('session_last_route');
+        localStorage.removeItem('current_app');
+        sessionStorage.clear();
+      } catch (e) {}
+
       try {
         await fetch('/api/method/logout', {
           method: 'POST',
@@ -3416,7 +3426,7 @@
           headers: { 'Accept': 'application/json', 'X-Frappe-CSRF-Token': window.csrf_token }
         });
       } catch (e) {}
-      window.location.href = '/login';
+      window.location.href = '/login?redirect-to=' + encodeURIComponent(targetPage);
     }
     async function loadUnreadNotifications() {
       try {
@@ -3451,6 +3461,18 @@
       let url = '/api/resource/' + encodeURIComponent(doctype) + '?limit_page_length=0&fields=' + encodeURIComponent(JSON.stringify(fields));
       if (filters) url += '&filters=' + encodeURIComponent(JSON.stringify(filters));
       const r = await fetch(url, { credentials: 'include', headers: { 'Accept': 'application/json' } });
+      if (r.status === 401) {
+        const isDev = window.location.pathname.startsWith('/hr-desk-dev');
+        const targetPage = isDev ? '/hr-desk-dev' : '/hr-desk';
+        try {
+          localStorage.removeItem('last_visited');
+          localStorage.removeItem('session_last_route');
+          localStorage.removeItem('current_app');
+          sessionStorage.clear();
+        } catch (e) {}
+        window.location.href = '/login?redirect-to=' + encodeURIComponent(targetPage);
+        throw new Error('Session expired. Redirecting to login...');
+      }
       if (r.status === 403) throw new Error('You do not have permission to view ' + doctype + '.');
       if (!r.ok) throw new Error('Could not load ' + doctype + ' (error ' + r.status + ').');
       return (await r.json()).data || [];
@@ -4134,6 +4156,18 @@
       let j = {};
       try { j = await r.json(); } catch (e) {}
       if (!r.ok || j.exc) {
+        if (r.status === 401 || (j.exc_type && String(j.exc_type).includes('AuthenticationError')) || j.session_expired) {
+          const isDev = window.location.pathname.startsWith('/hr-desk-dev');
+          const targetPage = isDev ? '/hr-desk-dev' : '/hr-desk';
+          try {
+            localStorage.removeItem('last_visited');
+            localStorage.removeItem('session_last_route');
+            localStorage.removeItem('current_app');
+            sessionStorage.clear();
+          } catch (e) {}
+          window.location.href = '/login?redirect-to=' + encodeURIComponent(targetPage);
+          return;
+        }
         const err = new Error(hdErrText(j) || (r.status === 403 ? 'You do not have permission for this action.' : 'The request failed (error ' + r.status + ').'));
         err.status = r.status; err.excType = j.exc_type;
         throw err;
