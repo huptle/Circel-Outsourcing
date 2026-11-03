@@ -13,7 +13,6 @@ import os
 import json
 import re
 import urllib.parse
-import webbrowser
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
@@ -62,10 +61,172 @@ MOCK_SALARY_SLIPS = [
     {"name": "Sal Slip/HR-EMP-00399/00001", "employee": "HR-EMP-00399", "employee_name": "Sukhvir Singh", "start_date": "2026-09-01", "end_date": "2026-09-30", "gross_pay": 12796.44, "total_deduction": 1095.26, "net_pay": 11701.18, "status": "Draft", "company": "Circle Outsourcing"}
 ]
 
+LOGIN_PAGE_HTML = """<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - HR Desk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #111827;
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      background: rgba(79, 70, 229, 0.2);
+      color: #818cf8;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #ffffff;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus {
+      border-color: var(--primary);
+    }
+    .btn {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+    .info-note {
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <span class="badge">LOCAL PREVIEW MODE</span>
+    <div class="brand">
+      <div class="brand-icon">H</div>
+      <div>
+        <div class="brand-title">HR Desk</div>
+        <div class="brand-subtitle">Circle Outsourcing</div>
+      </div>
+    </div>
+    <form action="/hr-desk" method="GET">
+      <div class="form-group">
+        <label>User ID</label>
+        <input type="text" name="usr" value="Administrator" readonly>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="pwd" value="••••••••" readonly>
+      </div>
+      <button type="submit" class="btn">Sign In to HR Desk</button>
+    </form>
+    <div class="info-note">
+      You logged out of the local session.<br>Click above to sign back in with demo credentials.
+    </div>
+  </div>
+</body>
+</html>"""
+
 class HRDeskPreviewHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
-        # Concise logging
-        sys.stderr.write(f"[{self.log_date_time_string()}] {args[0]} {args[1]} -> {args[2]}\n")
+        try:
+            sys.stderr.write(f"[{self.log_date_time_string()}] {format % args}\n")
+        except Exception:
+            pass
+
+    def do_HEAD(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        if path in ["/", "/hr-desk", "/hr-desk-dev", "/login"]:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            return
+        super().do_HEAD()
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -77,13 +238,18 @@ class HRDeskPreviewHandler(SimpleHTTPRequestHandler):
             self.serve_hr_desk_html()
             return
 
-        # 2. Mock REST API calls
+        # 2. Login Page route (triggered after clicking Log out)
+        if path == "/login":
+            self.serve_login_html()
+            return
+
+        # 3. Mock REST API calls
         if path.startswith("/api/resource/"):
             doctype = urllib.parse.unquote(path.split("/api/resource/")[1])
             self.serve_mock_resource(doctype, query)
             return
 
-        # 3. Mock Frappe Method calls
+        # 4. Mock Frappe Method calls
         if path.startswith("/api/method/"):
             self.serve_mock_method(path, query)
             return
@@ -94,15 +260,14 @@ class HRDeskPreviewHandler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
-        if path in ["/api/method/logout", "/api/method/login"]:
+        if path in ["/api/method/logout", "/api/method/login", "/login"]:
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps({"message": "Logged In" if "login" in path else "Logged Out"}).encode("utf-8"))
+            self.wfile.write(json.dumps({"message": "Logged Out" if "logout" in path else "Logged In"}).encode("utf-8"))
             return
 
         if path.startswith("/api/resource/"):
-            # Mock successful save/insert
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
@@ -110,6 +275,12 @@ class HRDeskPreviewHandler(SimpleHTTPRequestHandler):
             return
 
         super().do_POST()
+
+    def serve_login_html(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(LOGIN_PAGE_HTML.encode("utf-8"))
 
     def serve_hr_desk_html(self):
         if not os.path.exists(HR_DESK_HTML_PATH):
@@ -189,11 +360,6 @@ def main():
     print(f"  > Status:  Server running on port {PORT}")
     print("=" * 65)
     print("  Press Ctrl+C to stop the local preview server.\n")
-
-    try:
-        webbrowser.open(url)
-    except Exception:
-        pass
 
     try:
         httpd.serve_forever()
