@@ -6,8 +6,15 @@ departments, designations, and salary structures so developers can test the comp
 """
 
 import sys
+import os
 
 def seed_demo_data(site="frontend"):
+    # Ensure current directory is sites/ so frappe can locate site config
+    for candidate_dir in ["/home/frappe/frappe-bench/sites", "./sites", "."]:
+        if os.path.exists(candidate_dir) and os.path.exists(os.path.join(candidate_dir, site)):
+            os.chdir(candidate_dir)
+            break
+
     import frappe
     from frappe.utils import nowdate, add_days
 
@@ -18,34 +25,52 @@ def seed_demo_data(site="frontend"):
     print("  SEEDING SAMPLE DEMO DATA FOR LOCAL TESTING")
     print("==================================================")
 
+    # 0. Ensure Warehouse Type exists to prevent ERPNext company creation hook issues
+    if frappe.db.table_exists("Warehouse Type") and not frappe.db.exists("Warehouse Type", "Transit"):
+        try:
+            frappe.get_doc({"doctype": "Warehouse Type", "name": "Transit"}).insert(ignore_permissions=True)
+            print("  ✓ Ensured Warehouse Type: Transit")
+        except Exception:
+            pass
+
     # 1. Ensure Companies Exist
     companies = ["Circle Outsourcing Demo", "Global Complete Solutions Demo"]
     for cname in companies:
         if not frappe.db.exists("Company", cname):
-            doc = frappe.get_doc({
-                "doctype": "Company",
-                "company_name": cname,
-                "default_currency": "INR",
-                "country": "India"
-            })
-            doc.insert(ignore_permissions=True)
-            print(f"  ✓ Created Company: {cname}")
+            try:
+                doc = frappe.get_doc({
+                    "doctype": "Company",
+                    "company_name": cname,
+                    "default_currency": "INR",
+                    "country": "India"
+                })
+                doc.flags.ignore_mandatory = True
+                doc.insert(ignore_permissions=True)
+                print(f"  ✓ Created Company: {cname}")
+            except Exception as e:
+                print(f"  ! Note on Company {cname}: {e}")
 
     # 2. Ensure Departments
     depts = ["Human Resources", "Engineering", "Quality Assurance", "Plant Operations"]
     for dname in depts:
         if not frappe.db.exists("Department", dname):
-            doc = frappe.get_doc({"doctype": "Department", "department_name": dname})
-            doc.insert(ignore_permissions=True)
-            print(f"  ✓ Created Department: {dname}")
+            try:
+                doc = frappe.get_doc({"doctype": "Department", "department_name": dname})
+                doc.insert(ignore_permissions=True)
+                print(f"  ✓ Created Department: {dname}")
+            except Exception:
+                pass
 
     # 3. Ensure Designations
     designations = ["Senior QA Engineer", "Software Developer", "HR Executive", "Plant Operator"]
     for des in designations:
         if not frappe.db.exists("Designation", des):
-            doc = frappe.get_doc({"doctype": "Designation", "designation_name": des})
-            doc.insert(ignore_permissions=True)
-            print(f"  ✓ Created Designation: {des}")
+            try:
+                doc = frappe.get_doc({"doctype": "Designation", "designation_name": des})
+                doc.insert(ignore_permissions=True)
+                print(f"  ✓ Created Designation: {des}")
+            except Exception:
+                pass
 
     # 4. Create Sample Job Offers (All Stages)
     demo_offers = [
@@ -85,17 +110,20 @@ def seed_demo_data(site="frontend"):
 
     for offer in demo_offers:
         if not frappe.db.exists("Job Offer", {"applicant_name": offer["applicant_name"]}):
-            doc = frappe.get_doc({
-                "doctype": "Job Offer",
-                "applicant_name": offer["applicant_name"],
-                "applicant_email": offer["email"],
-                "designation": offer["designation"],
-                "company": offer["company"],
-                "status": offer["status"],
-                "offer_date": offer["offer_date"]
-            })
-            doc.insert(ignore_permissions=True)
-            print(f"  ✓ Created Job Offer: {offer['applicant_name']} ({offer['status']})")
+            try:
+                doc = frappe.get_doc({
+                    "doctype": "Job Offer",
+                    "applicant_name": offer["applicant_name"],
+                    "applicant_email": offer["email"],
+                    "designation": offer["designation"],
+                    "company": offer["company"],
+                    "status": offer["status"],
+                    "offer_date": offer["offer_date"]
+                })
+                doc.insert(ignore_permissions=True)
+                print(f"  ✓ Created Job Offer: {offer['applicant_name']} ({offer['status']})")
+            except Exception as e:
+                print(f"  ! Job Offer notice: {e}")
 
     # 5. Create Sample Employees
     demo_employees = [
@@ -106,20 +134,23 @@ def seed_demo_data(site="frontend"):
 
     for emp in demo_employees:
         if not frappe.db.exists("Employee", {"first_name": emp["first_name"], "last_name": emp["last_name"]}):
-            doc = frappe.get_doc({
-                "doctype": "Employee",
-                "first_name": emp["first_name"],
-                "last_name": emp["last_name"],
-                "company": emp["company"],
-                "department": emp["dept"],
-                "designation": emp["des"],
-                "status": "Active",
-                "date_of_joining": add_days(nowdate(), -180),
-                "date_of_birth": "1995-05-15",
-                "gender": "Male" if emp["first_name"] in ["Rohan", "Deepak"] else "Female"
-            })
-            doc.insert(ignore_permissions=True)
-            print(f"  ✓ Created Employee: {emp['first_name']} {emp['last_name']}")
+            try:
+                doc = frappe.get_doc({
+                    "doctype": "Employee",
+                    "first_name": emp["first_name"],
+                    "last_name": emp["last_name"],
+                    "company": emp["company"],
+                    "department": emp["dept"],
+                    "designation": emp["des"],
+                    "status": "Active",
+                    "date_of_joining": add_days(nowdate(), -180),
+                    "date_of_birth": "1995-05-15",
+                    "gender": "Male" if emp["first_name"] in ["Rohan", "Deepak"] else "Female"
+                })
+                doc.insert(ignore_permissions=True)
+                print(f"  ✓ Created Employee: {emp['first_name']} {emp['last_name']}")
+            except Exception as e:
+                print(f"  ! Employee notice: {e}")
 
     frappe.db.commit()
     print("==================================================")
@@ -127,5 +158,10 @@ def seed_demo_data(site="frontend"):
     print("==================================================")
 
 if __name__ == "__main__":
+    # If not running in bench virtualenv, auto re-exec with bench python
+    bench_py = "/home/frappe/frappe-bench/env/bin/python"
+    if os.path.exists(bench_py) and sys.executable != bench_py:
+        os.execv(bench_py, [bench_py] + sys.argv)
+
     target_site = sys.argv[1] if len(sys.argv) > 1 else "frontend"
     seed_demo_data(target_site)
